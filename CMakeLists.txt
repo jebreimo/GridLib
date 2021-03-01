@@ -10,29 +10,36 @@ project(GridLib VERSION 0.1.1)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(CHORASMIA_INSTALL ON)
+set(YSON_INSTALL ON)
+set(XYZ_INSTALL ON)
+
 include(FetchContent)
 FetchContent_Declare(chorasmia
     GIT_REPOSITORY "https://github.com/jebreimo/Chorasmia.git"
-    GIT_TAG v0.1.2)
+    GIT_TAG v0.1.3)
+FetchContent_Declare(xyz
+    GIT_REPOSITORY "https://github.com/jebreimo/Xyz.git"
+    GIT_TAG v0.1.0)
 FetchContent_Declare(yson
     GIT_REPOSITORY "https://github.com/jebreimo/Yson.git"
-    GIT_TAG v1.0.8)
-FetchContent_MakeAvailable(yson chorasmia)
+    GIT_TAG v1.1.1)
+FetchContent_MakeAvailable(chorasmia xyz yson)
 
-# Set GRIDLIB_MASTER_PROJECT to ON if Argos is the root level project.
-if(NOT DEFINED GRIDLIB_MASTER_PROJECT)
+# Set GridLib_MASTER_PROJECT to ON if Argos is the root level project.
+if(NOT DEFINED GridLib_MASTER_PROJECT)
     if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-        set(GRIDLIB_MASTER_PROJECT ON)
+        set(GridLib_MASTER_PROJECT ON)
     else()
-        set(GRIDLIB_MASTER_PROJECT OFF)
+        set(GridLib_MASTER_PROJECT OFF)
     endif()
 endif()
 
 # Test option
-option(GRIDLIB_BUILD_TEST "Build tests" ${GRIDLIB_MASTER_PROJECT})
+option(GridLib_BUILD_TEST "Build tests" ${GridLib_MASTER_PROJECT})
 
 # Install option
-option(GRIDLIB_INSTALL "Generate the install target" ${GRIDLIB_MASTER_PROJECT})
+option(GridLib_INSTALL "Generate the install target" ${GridLib_MASTER_PROJECT})
 
 function(GridLib_enable_all_warnings target)
     target_compile_options(${target}
@@ -57,7 +64,7 @@ add_library(GridLib
     src/GridLib/GridView.cpp
     src/GridLib/ReadGrid.cpp
     src/GridLib/WriteGrid.cpp
-    )
+    src/GridLib/Contour.cpp include/GridLib/Contour.hpp)
 
 target_include_directories(GridLib
     PUBLIC
@@ -69,6 +76,7 @@ target_link_libraries(GridLib
     PUBLIC
         Chorasmia::Chorasmia
     PRIVATE
+        Xyz::Xyz
         Yson::Yson
     )
 
@@ -102,14 +110,19 @@ if (GridLib_INSTALL)
             ${CMAKE_INSTALL_LIBDIR}/cmake/GridLib
         )
 
-    file(GLOB_RECURSE PUBLIC_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp)
     install(
-        FILES
-            ${PUBLIC_INCLUDES}
-            ${CMAKE_CURRENT_BINARY_DIR}/GridLibVersion.hpp
+        DIRECTORY
+            include/GridLib
         DESTINATION
-            ${CMAKE_INSTALL_INCLUDEDIR}/GridLib
+            ${CMAKE_INSTALL_INCLUDEDIR}
     )
+
+#    install(
+#        FILES
+#            ${CMAKE_CURRENT_BINARY_DIR}/GridLibVersion.hpp
+#        DESTINATION
+#            ${CMAKE_INSTALL_INCLUDEDIR}/GridLib
+#    )
 
     include(CMakePackageConfigHelpers)
 
