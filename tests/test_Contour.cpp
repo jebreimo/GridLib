@@ -25,8 +25,9 @@ TEST_CASE("Something")
                                      4, 5, 6,
                                      7, 8, 9},
                                     3, 3);
-    auto contour = GridLib::getContour(grid, 0.5, 0.5, 1.0, 1.0, 2);
-    REQUIRE(contour.size() == 2);
-    REQUIRE(contour[0] == Approx(3));
-    REQUIRE(contour[1] == Approx(7));
+    auto contour = GridLib::getContour(grid, {0.5, 0.5}, {1.5, 1.5}, 2);
+    REQUIRE(contour.size() == 3);
+    REQUIRE(contour[0][2] == Approx(3));
+    REQUIRE(contour[1][2] == Approx(5));
+    REQUIRE(contour[2][2] == Approx(7));
 }

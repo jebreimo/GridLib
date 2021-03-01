@@ -76,6 +76,26 @@ namespace GridLib
         }
     }
 
+    std::vector<Xyz::Vector3d>
+    getContour(Chorasmia::ArrayView2D<double> grid,
+               Xyz::Vector2d from,
+               Xyz::Vector2d to,
+               size_t steps)
+    {
+        std::vector<Xyz::Vector3d> result;
+        auto delta = to - from;
+        auto step = delta / double(steps);
+        for (size_t i = 0; i <= steps; ++i)
+        {
+            auto pos = from + double(i) * step;
+            if (0 <= pos[0] <= grid.rowCount() && 0 <= pos[1] <= grid.columnCount())
+            {
+                result.push_back(Xyz::makeVector3(pos, getValue(grid, pos[0], pos[1])));
+            }
+        }
+        return result;
+    }
+
     std::vector<double>
     getContour(Chorasmia::ArrayView2D<double> grid,
                double x, double y, double dx, double dy,

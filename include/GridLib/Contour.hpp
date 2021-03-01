@@ -8,16 +8,17 @@
 #pragma once
 #include <vector>
 #include <Chorasmia/ArrayView2D.hpp>
+#include <Xyz/Vector.hpp>
 
 namespace GridLib
 {
     double getValue(Chorasmia::ArrayView2D<double> grid,
                     double x, double y);
 
-    std::vector<double>
+    std::vector<Xyz::Vector3d>
     getContour(Chorasmia::ArrayView2D<double> grid,
-               double x, double y,
-               double dx, double dy,
-               size_t count);
+               Xyz::Vector2d from,
+               Xyz::Vector2d to,
+               size_t steps);
 
 }

@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.17)
-project(GridLib VERSION 0.1.1)
+project(GridLib VERSION 0.1.2)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -75,8 +75,8 @@ target_include_directories(GridLib
 target_link_libraries(GridLib
     PUBLIC
         Chorasmia::Chorasmia
-    PRIVATE
         Xyz::Xyz
+    PRIVATE
         Yson::Yson
     )
 
