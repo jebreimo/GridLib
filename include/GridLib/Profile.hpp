@@ -7,8 +7,8 @@
 //****************************************************************************
 #pragma once
 #include <vector>
-#include <Chorasmia/ArrayView2D.hpp>
 #include <Xyz/Vector.hpp>
+#include "GridView.hpp"
 
 namespace GridLib
 {
@@ -16,9 +16,14 @@ namespace GridLib
                     double x, double y);
 
     std::vector<Xyz::Vector3d>
-    getContour(Chorasmia::ArrayView2D<double> grid,
-               Xyz::Vector2d from,
-               Xyz::Vector2d to,
-               size_t steps);
+    makeProfile(Chorasmia::ArrayView2D<double> grid,
+                Xyz::Vector2d from,
+                Xyz::Vector2d to,
+                size_t steps);
 
+    std::vector<Xyz::Vector3d>
+    makeProfile(const GridView& grid,
+                Xyz::Vector2d from,
+                Xyz::Vector2d to,
+                size_t steps);
 }

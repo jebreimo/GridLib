@@ -16,7 +16,7 @@ FetchContent_MakeAvailable(catch)
 
 add_executable(GridLibTest
     GridLibTestMain.cpp
-    test_Contour.cpp
+    test_Profile.cpp
     test_ReadAndWriteGrid.cpp
     )
 

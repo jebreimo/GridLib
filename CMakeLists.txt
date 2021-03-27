@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.17)
-project(GridLib VERSION 0.1.2)
+project(GridLib VERSION 0.1.3)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -17,7 +17,7 @@ set(XYZ_INSTALL ON)
 include(FetchContent)
 FetchContent_Declare(chorasmia
     GIT_REPOSITORY "https://github.com/jebreimo/Chorasmia.git"
-    GIT_TAG v0.1.3)
+    GIT_TAG v0.1.8)
 FetchContent_Declare(xyz
     GIT_REPOSITORY "https://github.com/jebreimo/Xyz.git"
     GIT_TAG v0.1.0)
@@ -57,14 +57,18 @@ add_library(GridLib
     include/GridLib/GridLibException.hpp
     include/GridLib/GridMemberTypes.hpp
     include/GridLib/GridView.hpp
+    include/GridLib/Profile.hpp
     include/GridLib/ReadGrid.hpp
     include/GridLib/WriteGrid.hpp
     src/GridLib/Grid.cpp
     src/GridLib/GridMemberTypes.cpp
     src/GridLib/GridView.cpp
+    src/GridLib/Profile.cpp
     src/GridLib/ReadGrid.cpp
     src/GridLib/WriteGrid.cpp
-    src/GridLib/Contour.cpp include/GridLib/Contour.hpp)
+    src/GridLib/Rasterize.cpp
+    include/GridLib/Rasterize.hpp
+    )
 
 target_include_directories(GridLib
     PUBLIC

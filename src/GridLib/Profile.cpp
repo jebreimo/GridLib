@@ -5,37 +5,13 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "GridLib/Contour.hpp"
+#include "GridLib/Profile.hpp"
 #include <cmath>
 #include <Xyz/Vector.hpp>
 #include "GridLib/GridLibException.hpp"
 
 namespace GridLib
 {
-    //double getValue(Chorasmia::ArrayView2D<double> grid, double x, double y)
-    //{
-    //    double x0i;
-    //    const auto x0f = std::modf(x, &x0i);
-    //    const auto x0f2 = x0f * x0f;
-    //    const auto x1f = 1 - x0f;
-    //    const auto x1f2 = x1f * x1f;
-    //    double y0i;
-    //    const auto y0f = std::modf(y, &y0i);
-    //    const auto y0f2 = y0f * y0f;
-    //    const auto y1f = 1 - y0f;
-    //    const auto y1f2 = y1f * y1f;
-    //    double z = 0;
-    //    if (x0f2 + y0f2 < 1)
-    //        z += grid(size_t(x0i), size_t(y0i)) * std::sqrt(1 - x0f2 - y0f2);
-    //    if (x1f2 + y0f2 < 1)
-    //        z += grid(size_t(x0i) + 1, size_t(y0i)) * std::sqrt(1 - x1f2 - y0f2);
-    //    if (x0f2 + y1f2 < 1)
-    //        z += grid(size_t(x0i), size_t(y0i) + 1) * std::sqrt(1 - x0f2 - y1f2);
-    //    if (x1f2 + y1f2 < 1)
-    //        z += grid(size_t(x0i) + 1, size_t(y0i) + 1) * std::sqrt(1 - x1f2 - y1f2);
-    //    return z;
-    //}
-
     double getValue(Chorasmia::ArrayView2D<double> grid, double x, double y)
     {
         double xi;
@@ -77,10 +53,10 @@ namespace GridLib
     }
 
     std::vector<Xyz::Vector3d>
-    getContour(Chorasmia::ArrayView2D<double> grid,
-               Xyz::Vector2d from,
-               Xyz::Vector2d to,
-               size_t steps)
+    makeProfile(Chorasmia::ArrayView2D<double> grid,
+                Xyz::Vector2d from,
+                Xyz::Vector2d to,
+                size_t steps)
     {
         std::vector<Xyz::Vector3d> result;
         auto delta = to - from;
@@ -96,18 +72,12 @@ namespace GridLib
         return result;
     }
 
-    std::vector<double>
-    getContour(Chorasmia::ArrayView2D<double> grid,
-               double x, double y, double dx, double dy,
-               size_t count)
+    std::vector<Xyz::Vector3d>
+    makeProfile(const GridView& grid,
+                Xyz::Vector2d from,
+                Xyz::Vector2d to,
+                size_t steps)
     {
-        std::vector<double> result;
-        for (size_t i = 0; i < count; ++i)
-        {
-            result.push_back(getValue(grid, x, y));
-            x += dx;
-            y += dy;
-        }
-        return result;
+        return makeProfile(grid.elevations(), from, to, steps);
     }
 }
