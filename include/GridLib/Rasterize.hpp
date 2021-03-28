@@ -14,6 +14,7 @@
 
 namespace GridLib
 {
+    using GridTraversal = Chorasmia::MatrixTraversal;
     struct ElevationGradient
     {
         explicit ElevationGradient(Chorasmia::IntervalMap<double, uint32_t> colorMap)
@@ -39,9 +40,9 @@ namespace GridLib
         double groundLevel4Max,
         double groundLevel5Max);
 
-    Chorasmia::IntervalMap<double, uint32_t> makeEarthGradient2500();
+    Chorasmia::IntervalMap<double, uint32_t> makeDefaultGradient2500();
 
-    Chorasmia::IntervalMap<double, uint32_t> makeEarthGradient9000();
+    Chorasmia::IntervalMap<double, uint32_t> makeDefaultGradient9000();
 
     template <typename ColorFunc>
     Chorasmia::Array2D<uint32_t>
@@ -68,5 +69,17 @@ namespace GridLib
         return rasterizeRgba(grid.elevations(),
                              std::forward<ColorFunc>(colorFunc),
                              iterator);
+    }
+
+    template <typename ColorFunc>
+    Chorasmia::Array2D<uint32_t>
+    rasterizeRgba(const GridView& grid, ColorFunc colorFunc,
+                  GridTraversal traversal = GridTraversal::RIGHT_DOWN)
+    {
+        return rasterizeRgba(grid.elevations(),
+                             std::forward<ColorFunc>(colorFunc),
+                             Chorasmia::Index2DIterator(grid.rowCount(),
+                                                        grid.columnCount(),
+                                                        traversal));
     }
 }
