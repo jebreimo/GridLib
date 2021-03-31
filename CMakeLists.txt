@@ -41,6 +41,9 @@ option(GridLib_BUILD_TEST "Build tests" ${GridLib_MASTER_PROJECT})
 # Install option
 option(GridLib_INSTALL "Generate the install target" ${GridLib_MASTER_PROJECT})
 
+# DEM file option
+option(GridLib_DEM_SUPPORT "Enable support for DEM files" ON)
+
 function(GridLib_enable_all_warnings target)
     target_compile_options(${target}
         PRIVATE
@@ -49,6 +52,12 @@ function(GridLib_enable_all_warnings target)
             $<$<CXX_COMPILER_ID:AppleClang>:-Wall>
             $<$<CXX_COMPILER_ID:MSVC>:/W4>)
 endfunction()
+
+set(GridLib_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+if (GridLib_DEM_SUPPORT)
+    add_subdirectory(extras/DemFiles)
+endif ()
 
 include(GNUInstallDirs)
 
@@ -81,6 +90,7 @@ target_link_libraries(GridLib
         Chorasmia::Chorasmia
         Xyz::Xyz
     PRIVATE
+        $<$<BOOL:GridLib_DEM_SUPPORT>:GridLib_ReadDem>
         Yson::Yson
     )
 
