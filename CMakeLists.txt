@@ -89,8 +89,8 @@ target_link_libraries(GridLib
     PUBLIC
         Chorasmia::Chorasmia
         Xyz::Xyz
-    PRIVATE
         $<$<BOOL:GridLib_DEM_SUPPORT>:GridLib_ReadDem>
+    PRIVATE
         Yson::Yson
     )
 
