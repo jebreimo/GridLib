@@ -67,26 +67,6 @@ namespace GridLib
         Grid& setPlanarCoords(const std::optional<PlanarCoords>& coords);
 
         [[nodiscard]]
-        double rotationAngle() const;
-
-        /**
-         * @brief Set the ccw angle, in radians, that the row (major) axis
-         * has been rotated relative to due east.
-         *
-         * @param angle The counter-clockwise angle from due east in radians.
-         */
-        Grid& setRotationAngle(double angle);
-
-        [[nodiscard]]
-        RotationDir axisOrientation() const;
-
-        /**
-         * @brief Set the orientation of the column (minor) axis relative to
-         *  the row (major) axis.
-         */
-        Grid& setAxisOrientation(RotationDir dir);
-
-        [[nodiscard]]
         const std::optional<ReferenceSystem>& referenceSystem() const;
 
         Grid& setReferenceSystem(std::optional<ReferenceSystem> system);
@@ -104,10 +84,12 @@ namespace GridLib
         Axis m_Axis[3];
         std::optional<SphericalCoords> m_SphericalCoords;
         std::optional<PlanarCoords> m_PlanarCoords;
-        double m_RotationAngle = 0;
+        //double m_RotationAngle = 0;
         std::optional<ReferenceSystem> m_ReferenceSystem;
-        RotationDir m_AxisOrientation = RotationDir::COUNTERCLOCKWISE;
+        //RotationDir m_AxisOrientation = RotationDir::COUNTERCLOCKWISE;
     };
 
     bool operator==(const Grid& a, const Grid& b);
+
+    bool operator!=(const Grid& a, const Grid& b);
 }

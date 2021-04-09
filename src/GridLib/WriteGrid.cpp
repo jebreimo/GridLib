@@ -16,9 +16,15 @@ namespace GridLib
     {
         void writeAxis(Yson::Writer& writer, const Axis& axis)
         {
+            using namespace Yson;
             writer.beginObject();
             writer.key("unit").value(std::string(toString(axis.unit)));
-            writer.key("resolution").value(axis.resolution);
+            writer.key("direction")
+                .beginArray(JsonParameters(JsonFormatting::FLAT))
+                .value(axis.direction[0])
+                .value(axis.direction[1])
+                .value(axis.direction[2])
+                .endArray();
             writer.endObject();
         }
 
@@ -33,10 +39,6 @@ namespace GridLib
             writeAxis(writer, grid.columnAxis());
             writer.key("vertical_axis");
             writeAxis(writer, grid.verticalAxis());
-            writer.key("rotation_angle").value(grid.rotationAngle());
-
-            if (grid.axisOrientation() != RotationDir::COUNTERCLOCKWISE)
-                writer.key("axis_orientation").value("CLOCKWISE");
 
             if (const auto& coords = grid.planarCoords())
             {

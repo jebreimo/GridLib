@@ -36,11 +36,11 @@ namespace GridLib
         DemReader reader(stream);
         auto& a = reader.record_a();
         auto hUnit = fromDemUnit(a.horizontal_unit.value_or(0));
-        auto cRes = a.x_resolution.value_or(1.0);
-        auto rRes = a.y_resolution.value_or(1.0);
+        double cRes = a.x_resolution.value_or(1.0);
+        double rRes = a.y_resolution.value_or(1.0);
 
         auto vUnit = fromDemUnit(a.vertical_unit.value_or(0));
-        auto vRes = a.z_resolution.value_or(1.0);
+        double vRes = a.z_resolution.value_or(1.0);
 
         if (a.longitude && a.latitude)
         {
@@ -104,10 +104,12 @@ namespace GridLib
             }
         }
 
-        grid.setVerticalAxis({vRes, vUnit});
-        grid.setRowAxis({rRes, hUnit});
-        grid.setColumnAxis({cRes, hUnit});
-        grid.setRotationAngle(a.rotation_angle.value_or(0));
+        auto rot = a.rotation_angle.value_or(0);
+        auto rowAxis = rotate(Xyz::makeVector2(0.0, rRes), rot);
+        grid.setRowAxis({Xyz::makeVector3(rowAxis, 0.0), hUnit});
+        auto colAxis = rotate(Xyz::makeVector2(cRes, 0.0), rot);
+        grid.setColumnAxis({Xyz::makeVector3(colAxis, 0.0), hUnit});
+        grid.setVerticalAxis({{0, 0, vRes}, vUnit});
         grid.setUnknownElevation(UNKNOWN * factor);
 
         Chorasmia::MutableArrayView2D<double> values;
@@ -119,7 +121,8 @@ namespace GridLib
             {
                 if (rows == 1)
                     rows = b->rows;
-                // DEM files uses columnCount (x) as the major axis.
+                // DEM files uses columns as the primary dimension, while Grid
+                // uses rows.
                 grid.resize(cols, rows);
                 values = grid.elevations();
             }

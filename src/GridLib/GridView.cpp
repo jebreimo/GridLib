@@ -79,18 +79,6 @@ namespace GridLib
         return m_PlanarCoords;
     }
 
-    double GridView::rotationAngle() const
-    {
-        assertGrid();
-        return m_Grid->rotationAngle();
-    }
-
-    RotationDir GridView::axisOrientation() const
-    {
-        assertGrid();
-        return m_Grid->axisOrientation();
-    }
-
     const std::optional<ReferenceSystem>& GridView::referenceSystem() const
     {
         assertGrid();
@@ -109,22 +97,10 @@ namespace GridLib
         auto planarCoords = m_PlanarCoords;
         if (planarCoords && (row != 0 || column != 0))
         {
-            constexpr double METERS_PER_FOOT = 0.3048;
-            std::pair<double, double> dr = {rowAxis().resolution, 0};
-            std::pair<double, double> dc = {0, columnAxis().resolution};
-            if (rowAxis().unit == Unit::FEET)
-                dr.first /= METERS_PER_FOOT;
-            if (columnAxis().unit == Unit::FEET)
-                dc.second /= METERS_PER_FOOT;
-            if (axisOrientation() == RotationDir::CLOCKWISE)
-                dc.second = -dc.second;
-            if (rotationAngle() != 0)
-            {
-                dr = {dr.first * cos(rotationAngle()), dr.first * sin(rotationAngle())};
-                dc = {-dc.second * sin(rotationAngle()), dc.second * cos(rotationAngle())};
-            }
-            planarCoords->easting += dr.first * row + dc.first * column;
-            planarCoords->northing += dr.second * row + dc.second * column;
+            auto offset = row * columnAxis().direction
+                          + column * rowAxis().direction;
+            planarCoords->easting += offset[0];
+            planarCoords->northing += offset[1];
         }
         auto sphericalCoords = row == 0 && column == 0
                                ? m_SphericalCoords

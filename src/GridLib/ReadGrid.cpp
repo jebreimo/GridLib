@@ -13,6 +13,20 @@
 
 namespace GridLib
 {
+    template <typename T, size_t N>
+    Xyz::Vector<T, N> readVector(Yson::Reader& reader)
+    {
+        Xyz::Vector<T, N> result;
+        reader.enter();
+        for (size_t i = 0; i < N; ++i)
+        {
+            reader.nextValue();
+            result[i] = Yson::read<T>(reader);
+        }
+        reader.leave();
+        return result;
+    }
+
     Axis readAxis(Yson::Reader& reader)
     {
         using Yson::read;
@@ -27,9 +41,9 @@ namespace GridLib
                 axis.unit = parseUnit(read<std::string>(reader))
                     .value_or(Unit::UNDEFINED);
             }
-            else if (key == "resolution")
+            else if (key == "direction")
             {
-                axis.resolution = read<double>(reader);
+                axis.direction = readVector<double, 3>(reader);
             }
         }
         reader.leave();
@@ -112,8 +126,6 @@ namespace GridLib
                 grid.setColumnAxis(readAxis(reader));
             else if (key == "vertical_axis")
                 grid.setVerticalAxis(readAxis(reader));
-            else if (key == "rotation_angle")
-                grid.setRotationAngle(read<double>(reader));
             else if (key == "planar_coords")
                 grid.setPlanarCoords(readPlanarCoords(reader));
             else if (key == "spherical_coords")

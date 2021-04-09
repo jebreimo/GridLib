@@ -111,28 +111,6 @@ namespace GridLib
         return *this;
     }
 
-    double Grid::rotationAngle() const
-    {
-        return m_RotationAngle;
-    }
-
-    Grid& Grid::setRotationAngle(double angle)
-    {
-        m_RotationAngle = angle;
-        return *this;
-    }
-
-    RotationDir Grid::axisOrientation() const
-    {
-        return m_AxisOrientation;
-    }
-
-    Grid& Grid::setAxisOrientation(RotationDir dir)
-    {
-        m_AxisOrientation = dir;
-        return *this;
-    }
-
     const std::optional<ReferenceSystem>& Grid::referenceSystem() const
     {
         return m_ReferenceSystem;
@@ -166,8 +144,11 @@ namespace GridLib
                && a.verticalAxis() == b.verticalAxis()
                && a.sphericalCoords() == b.sphericalCoords()
                && a.planarCoords() == b.planarCoords()
-               && a.rotationAngle() == b.rotationAngle()
-               && a.referenceSystem() == b.referenceSystem()
-               && a.axisOrientation() == b.axisOrientation();
+               && a.referenceSystem() == b.referenceSystem();
+    }
+
+    bool operator!=(const Grid& a, const Grid& b)
+    {
+        return !(a == b);
     }
 }

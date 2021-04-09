@@ -35,6 +35,7 @@ target_include_directories(GridLib_ReadDem
 
 target_link_libraries(GridLib_ReadDem
     Chorasmia::Chorasmia
+    Xyz::Xyz
     )
 
 if (GridLib_INSTALL)

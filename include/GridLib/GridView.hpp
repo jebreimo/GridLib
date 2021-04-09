@@ -54,16 +54,12 @@ namespace GridLib
         const std::optional<PlanarCoords>& planarCoords() const;
 
         [[nodiscard]]
-        double rotationAngle() const;
-
-        [[nodiscard]]
-        RotationDir axisOrientation() const;
-
-        [[nodiscard]]
         const std::optional<ReferenceSystem>& referenceSystem() const;
 
+        [[nodiscard]]
         const Grid* baseGrid() const;
 
+        [[nodiscard]]
         GridView subgrid(size_t row, size_t column,
                          size_t nrows, size_t ncolumns) const;
     private:

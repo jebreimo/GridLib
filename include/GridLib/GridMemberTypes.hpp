@@ -8,6 +8,7 @@
 #pragma once
 #include <optional>
 #include <string_view>
+#include <Xyz/Vector.hpp>
 
 namespace GridLib
 {
@@ -25,13 +26,23 @@ namespace GridLib
 
     struct Axis
     {
-        double resolution = {};
-        Unit unit = {};
+        /**
+         * @brief The axis' direction and point distance in a metric easting,
+         *  northing, height (i.e. x, y, z) coordinate system.
+         *
+         * The length of this vector is the distance in meters between points
+         * along the axis. If the distance between points is 10 meters, the
+         * length of the vector should be 10, if it is 10 feet it should be
+         * 10 * 0.3048 = 3.048.
+         */
+        Xyz::Vector3d direction;
+        Unit unit;
     };
 
     constexpr bool operator==(const Axis& a, const Axis& b)
     {
-        return a.resolution == b.resolution && a.unit == b.unit;
+        return a.direction == b.direction
+               && a.unit == b.unit;
     }
 
     struct SphericalCoords
@@ -75,4 +86,9 @@ namespace GridLib
         CLOCKWISE,
         COUNTERCLOCKWISE
     };
+
+    constexpr double NORTH = 0.0;
+    constexpr double WEST = 1.5707963267948966;
+    constexpr double SOUTH = 3.141592653589793;
+    constexpr double EAST = 4.71238898038469;
 }

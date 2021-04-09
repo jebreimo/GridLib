@@ -19,9 +19,9 @@ TEST_CASE("Test writeJsonGrid and readGrid")
     std::iota(array.begin(), array.end(), 0.0);
     grid.setReferenceSystem(GridLib::ReferenceSystem{3000, 1000});
     grid.setPlanarCoords(GridLib::PlanarCoords{5000, 7000, 30});
-    grid.setRowAxis(GridLib::Axis{10, GridLib::Unit::METERS});
-    grid.setColumnAxis(GridLib::Axis{10, GridLib::Unit::METERS});
-    grid.setVerticalAxis(GridLib::Axis{1, GridLib::Unit::METERS});
+    grid.setRowAxis(GridLib::Axis{{0, -10, 0}, GridLib::Unit::METERS});
+    grid.setColumnAxis(GridLib::Axis{{10, 0, 0}, GridLib::Unit::METERS});
+    grid.setVerticalAxis(GridLib::Axis{{0, 0, 1}, GridLib::Unit::METERS});
     std::stringstream ss;
     GridLib::writeJsonGrid(ss, grid);
     auto inGrid = GridLib::readJsonGrid(ss);
