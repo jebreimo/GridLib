@@ -21,6 +21,8 @@ namespace GridLib
 
         Grid(size_t rows, size_t columns);
 
+        explicit Grid(Chorasmia::Array2D<double> values);
+
         void clear();
 
         [[nodiscard]]
@@ -81,12 +83,12 @@ namespace GridLib
     private:
         Chorasmia::Array2D<double> m_Grid;
         std::optional<double> m_UnknownElevation;
-        Axis m_Axis[3];
+        Axis m_RowAxis;
+        Axis m_ColumnAxis;
+        Axis m_VerticalAxis;
         std::optional<SphericalCoords> m_SphericalCoords;
         std::optional<PlanarCoords> m_PlanarCoords;
-        //double m_RotationAngle = 0;
         std::optional<ReferenceSystem> m_ReferenceSystem;
-        //RotationDir m_AxisOrientation = RotationDir::COUNTERCLOCKWISE;
     };
 
     bool operator==(const Grid& a, const Grid& b);

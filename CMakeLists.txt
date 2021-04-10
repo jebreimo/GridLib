@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.17)
-project(GridLib VERSION 0.1.6.0)
+project(GridLib VERSION 0.1.6.1)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -14,13 +14,13 @@ set(CHORASMIA_INSTALL ON)
 set(YSON_INSTALL ON)
 set(XYZ_INSTALL ON)
 
-include(FetchContent)
-
 if (DEFINED LOCAL_SOURCE_PACKAGE_DIR OR DEFINED ENV{LOCAL_SOURCE_PACKAGE_DIR})
     if (NOT LOCAL_SOURCE_PACKAGE_DIR)
         set(LOCAL_SOURCE_PACKAGE_DIR $ENV{LOCAL_SOURCE_PACKAGE_DIR})
     endif ()
 endif ()
+
+include(FetchContent)
 
 if (DEFINED LOCAL_SOURCE_PACKAGE_DIR)
     FetchContent_Declare(chorasmia

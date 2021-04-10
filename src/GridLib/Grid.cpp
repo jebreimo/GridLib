@@ -9,10 +9,19 @@
 
 namespace GridLib
 {
-    Grid::Grid() = default;
+    Grid::Grid()
+        : Grid(Chorasmia::Array2D<double>())
+    {}
 
     Grid::Grid(size_t rows, size_t columns)
-        : m_Grid(rows, columns)
+        : Grid(Chorasmia::Array2D<double>(rows, columns))
+    {}
+
+    Grid::Grid(Chorasmia::Array2D<double> values)
+        : m_Grid(std::move(values)),
+          m_RowAxis{{1, 0, 0}, Unit::METERS},
+          m_ColumnAxis{{0, -1, 0}, Unit::METERS},
+          m_VerticalAxis{{0, 0, 1}, Unit::METERS}
     {}
 
     void Grid::clear()
@@ -58,34 +67,34 @@ namespace GridLib
 
     const Axis& Grid::rowAxis() const
     {
-        return m_Axis[0];
+        return m_RowAxis;
     }
 
     Grid& Grid::setRowAxis(const Axis& axis)
     {
-        m_Axis[0] = axis;
+        m_RowAxis = axis;
         return *this;
     }
 
     const Axis& Grid::columnAxis() const
     {
-        return m_Axis[1];
+        return m_ColumnAxis;
     }
 
     Grid& Grid::setColumnAxis(const Axis& axis)
     {
-        m_Axis[1] = axis;
+        m_ColumnAxis = axis;
         return *this;
     }
 
     const Axis& Grid::verticalAxis() const
     {
-        return m_Axis[2];
+        return m_VerticalAxis;
     }
 
     Grid& Grid::setVerticalAxis(const Axis& axis)
     {
-        m_Axis[2] = axis;
+        m_VerticalAxis = axis;
         return *this;
     }
 
@@ -118,7 +127,7 @@ namespace GridLib
 
     Grid& Grid::setReferenceSystem(std::optional<ReferenceSystem> system)
     {
-        m_ReferenceSystem = move(system);
+        m_ReferenceSystem = system;
         return *this;
     }
 
