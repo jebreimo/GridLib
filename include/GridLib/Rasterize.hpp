@@ -8,13 +8,13 @@
 #pragma once
 #include <cfloat>
 #include <Chorasmia/Array2D.hpp>
-#include <Chorasmia/Index2DIterator.hpp>
+#include <Chorasmia/MatrixPath.hpp>
 #include <Chorasmia/IntervalMap.hpp>
 #include "Grid.hpp"
 
 namespace GridLib
 {
-    using GridTraversal = Chorasmia::MatrixTraversal;
+    using GridPath = Chorasmia::MatrixPath;
     struct ElevationGradient
     {
         explicit ElevationGradient(Chorasmia::IntervalMap<double, uint32_t> colorMap)
@@ -48,14 +48,16 @@ namespace GridLib
     Chorasmia::Array2D<uint32_t>
     rasterizeRgba(const Chorasmia::ArrayView2D<double>& grid,
                   ColorFunc colorFunc,
-                  Chorasmia::Index2DIterator iterator)
+                  GridPath path)
     {
-        Chorasmia::Array2D<uint32_t> result(grid.rowCount(),
-                                            grid.columnCount());
+        Chorasmia::MatrixIndexMapping mapping(grid.dimensions(), path);
+        auto [rows, cols] = mapping.getToSize();
+        Chorasmia::Array2D<uint32_t> result(rows, cols);
         auto* outIt = result.data();
-        while (auto index = iterator.next())
+        for (size_t i = 0; i < rows; ++i)
         {
-            *outIt++ = colorFunc(grid(index->row, index->column));
+            for (size_t j = 0; j < cols; ++j)
+                *outIt++ = colorFunc(grid(mapping.getFromIndices(i, j)));
         }
 
         return result;
@@ -64,22 +66,10 @@ namespace GridLib
     template <typename ColorFunc>
     Chorasmia::Array2D<uint32_t>
     rasterizeRgba(const GridView& grid, ColorFunc colorFunc,
-                  Chorasmia::Index2DIterator iterator)
+                  GridPath path = GridPath::RIGHT_DOWN)
     {
         return rasterizeRgba(grid.elevations(),
                              std::forward<ColorFunc>(colorFunc),
-                             iterator);
-    }
-
-    template <typename ColorFunc>
-    Chorasmia::Array2D<uint32_t>
-    rasterizeRgba(const GridView& grid, ColorFunc colorFunc,
-                  GridTraversal traversal = GridTraversal::RIGHT_DOWN)
-    {
-        return rasterizeRgba(grid.elevations(),
-                             std::forward<ColorFunc>(colorFunc),
-                             Chorasmia::Index2DIterator(grid.rowCount(),
-                                                        grid.columnCount(),
-                                                        traversal));
+                             path);
     }
 }
