@@ -8,13 +8,12 @@
 #pragma once
 #include <cfloat>
 #include <Chorasmia/Array2D.hpp>
-#include <Chorasmia/MatrixPath.hpp>
+#include <Chorasmia/Index2DMap.hpp>
 #include <Chorasmia/IntervalMap.hpp>
 #include "Grid.hpp"
 
 namespace GridLib
 {
-    using GridPath = Chorasmia::MatrixPath;
     struct ElevationGradient
     {
         explicit ElevationGradient(Chorasmia::IntervalMap<double, uint32_t> colorMap)
@@ -48,9 +47,9 @@ namespace GridLib
     Chorasmia::Array2D<uint32_t>
     rasterizeRgba(const Chorasmia::ArrayView2D<double>& grid,
                   ColorFunc colorFunc,
-                  GridPath path)
+                  Chorasmia::Index2DMode path)
     {
-        Chorasmia::MatrixIndexMapping mapping(grid.dimensions(), path);
+        Chorasmia::Index2DMap mapping(grid.dimensions(), path);
         auto [rows, cols] = mapping.getToSize();
         Chorasmia::Array2D<uint32_t> result(rows, cols);
         auto* outIt = result.data();
@@ -66,7 +65,7 @@ namespace GridLib
     template <typename ColorFunc>
     Chorasmia::Array2D<uint32_t>
     rasterizeRgba(const GridView& grid, ColorFunc colorFunc,
-                  GridPath path = GridPath::RIGHT_DOWN)
+                  Chorasmia::Index2DMode path = Chorasmia::Index2DMode::ROWS)
     {
         return rasterizeRgba(grid.elevations(),
                              std::forward<ColorFunc>(colorFunc),

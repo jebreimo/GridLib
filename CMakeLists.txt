@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.17)
-project(GridLib VERSION 0.1.6.3)
+project(GridLib VERSION 0.1.6.4)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -24,7 +24,7 @@ include(FetchContent)
 
 if (DEFINED LOCAL_SOURCE_PACKAGE_DIR)
     FetchContent_Declare(chorasmia
-        URL "file://${LOCAL_SOURCE_PACKAGE_DIR}/Chorasmia-0.1.9.4.tar.gz")
+        URL "file://${LOCAL_SOURCE_PACKAGE_DIR}/Chorasmia-0.1.9.6.tar.gz")
     FetchContent_Declare(xyz
         URL "file://${LOCAL_SOURCE_PACKAGE_DIR}/Xyz-0.1.1.3.tar.gz")
     FetchContent_Declare(yson
