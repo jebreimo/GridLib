@@ -18,7 +18,7 @@ add_executable(GridLibTest
     GridLibTestMain.cpp
     test_Profile.cpp
     test_ReadAndWriteGrid.cpp
-    )
+    test_GridView.cpp)
 
 target_link_libraries(GridLibTest
     PRIVATE

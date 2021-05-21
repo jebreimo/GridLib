@@ -70,4 +70,6 @@ namespace GridLib
         std::optional<SphericalCoords> m_SphericalCoords;
         std::optional<PlanarCoords> m_PlanarCoords;
     };
+
+    std::pair<double, double> getMinMaxElevation(const GridView& grid);
 }

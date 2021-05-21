@@ -115,4 +115,28 @@ namespace GridLib
         if (!m_Grid)
             GRIDLIB_THROW("grid is NULL");
     }
+
+    std::pair<double, double> getMinMaxElevation(const GridView& grid)
+    {
+        const auto elevations = grid.elevations();
+        const auto noValue = grid.unknownElevation();
+        auto min = DBL_MAX, max = DBL_TRUE_MIN;
+        for (const auto row : elevations)
+        {
+            for (const auto value : row)
+            {
+                if (noValue && value == *noValue)
+                    continue;
+                if (value < min)
+                    min = value;
+                if (value > max)
+                    max = value;
+            }
+        }
+
+        if (min > max)
+            return {};
+
+        return {min, max};
+    }
 }
