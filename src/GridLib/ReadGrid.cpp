@@ -8,7 +8,7 @@
 #include "GridLib/ReadGrid.hpp"
 
 #include <map>
-#include <Yson/Reader.hpp>
+#include <Yson/ReaderIterators.hpp>
 #include "GridLib/GridLibException.hpp"
 
 namespace GridLib
@@ -23,6 +23,8 @@ namespace GridLib
             reader.nextValue();
             result[i] = Yson::read<T>(reader);
         }
+        if (reader.nextValue())
+            GRIDLIB_THROW("vector contains too many values.");
         reader.leave();
         return result;
     }
@@ -31,11 +33,8 @@ namespace GridLib
     {
         using Yson::read;
         Axis axis;
-        reader.enter();
-        while (reader.nextKey())
+        for (const auto& key : Yson::keys(reader))
         {
-            auto key = read<std::string>(reader);
-            reader.nextValue();
             if (key == "unit")
             {
                 axis.unit = parseUnit(read<std::string>(reader))
@@ -46,7 +45,6 @@ namespace GridLib
                 axis.direction = readVector<double, 3>(reader);
             }
         }
-        reader.leave();
         return axis;
     }
 
@@ -54,11 +52,8 @@ namespace GridLib
     {
         using Yson::read;
         PlanarCoords coords;
-        reader.enter();
-        while (reader.nextKey())
+        for (const auto& key : Yson::keys(reader))
         {
-            auto key = read<std::string>(reader);
-            reader.nextValue();
             if (key == "northing")
                 coords.northing = read<double>(reader);
             else if (key == "easting")
@@ -66,7 +61,6 @@ namespace GridLib
             else if (key == "zone")
                 coords.zone = read<int>(reader);
         }
-        reader.leave();
         return coords;
     }
 
@@ -74,17 +68,13 @@ namespace GridLib
     {
         using Yson::read;
         SphericalCoords coords;
-        reader.enter();
-        while (reader.nextKey())
+        for (const auto& key : Yson::keys(reader))
         {
-            auto key = read<std::string>(reader);
-            reader.nextValue();
             if (key == "latitude")
                 coords.latitude = read<double>(reader);
             else if (key == "longitude")
                 coords.longitude = read<double>(reader);
         }
-        reader.leave();
         return coords;
     }
 
@@ -92,17 +82,13 @@ namespace GridLib
     {
         using Yson::read;
         ReferenceSystem system;
-        reader.enter();
-        while (reader.nextKey())
+        for (const auto& key : Yson::keys(reader))
         {
-            auto key = read<std::string>(reader);
-            reader.nextValue();
             if (key == "horizontal_system")
                 system.horizontal = read<int>(reader);
             else if (key == "vertical_system")
                 system.vertical = read<int>(reader);
         }
-        reader.leave();
         return system;
     }
 
@@ -111,11 +97,8 @@ namespace GridLib
         using Yson::read;
         size_t rowCount = 0;
         size_t columnCount = 0;
-        reader.enter();
-        while (reader.nextKey())
+        for (const auto& key : Yson::keys(reader))
         {
-            auto key = read<std::string>(reader);
-            reader.nextValue();
             if (key == "row_count")
                 rowCount = read<uint32_t>(reader);
             else if (key == "column_count")
@@ -133,7 +116,6 @@ namespace GridLib
             else if (key == "reference_system")
                 grid.setReferenceSystem(readReferenceSystem(reader));
         }
-        reader.leave();
         grid.resize(rowCount, columnCount);
     }
 
@@ -142,36 +124,27 @@ namespace GridLib
         using Yson::read;
         auto array = grid.elevations().array();
         size_t index = 0;
-        reader.enter();
-        while (reader.nextValue())
+        for (Yson::ArrayIterator it(reader); it.next();)
         {
-            reader.enter();
-            while (reader.nextValue())
+            for (const auto& value : Yson::arrayValues<double>(reader))
             {
                 if (index == array.size())
                     GRIDLIB_THROW("Too many elevations.");
-                array[index++] = read<double>(reader);
+                array[index++] = value;
             }
-            reader.leave();
         }
-        reader.leave();
     }
 
     Grid readGrid(Yson::Reader& reader)
     {
         Grid grid;
-        reader.nextValue();
-        reader.enter();
-        while (reader.nextKey())
+        for (const auto& key : Yson::keys(reader))
         {
-            auto key = Yson::read<std::string>(reader);
-            reader.nextValue();
             if (key == "metadata")
                 readMetadata(reader, grid);
             else if (key == "elevations")
                 readElevations(reader, grid);
         }
-        reader.leave();
         return grid;
     }
 
