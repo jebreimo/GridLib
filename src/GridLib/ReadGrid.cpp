@@ -11,6 +11,10 @@
 #include <Yson/ReaderIterators.hpp>
 #include "GridLib/GridLibException.hpp"
 
+#ifdef GRIDLIB_DEM_SUPPORT
+    #include "GridLib/ReadDem.hpp"
+#endif
+
 namespace GridLib
 {
     template <typename T, size_t N>
@@ -156,5 +160,67 @@ namespace GridLib
     Grid readJsonGrid(const std::string& fileName)
     {
         return readGrid(*Yson::makeReader(fileName));
+    }
+
+    #define CASE_ENUM(type, value) \
+        case type::value: return #value;
+
+    std::string GridLib::toString(GridFileType type)
+    {
+        switch (type)
+        {
+        CASE_ENUM(GridFileType, UNKNOWN);
+        CASE_ENUM(GridFileType, GRIDLIB_JSON);
+        CASE_ENUM(GridFileType, DEM);
+        CASE_ENUM(GridFileType, AUTO_DETECT);
+        default:
+            GRIDLIB_THROW("Unknown GridFileType: "
+                          + std::to_string(int(type)));
+        }
+    }
+
+    Grid readGrid(std::istream& stream, GridFileType type)
+    {
+        switch (type)
+        {
+        case GridFileType::GRIDLIB_JSON:
+            return readJsonGrid(stream);
+#ifdef GRIDLIB_DEM_SUPPORT
+        case GridFileType::DEM:
+            return readDem(stream, Unit::METERS);
+#endif
+        default:
+            GRIDLIB_THROW("Can not read stream of type " + toString(type));
+        }
+        return Grid();
+    }
+
+    GridFileType detectFileType(const std::string& fileName)
+    {
+#ifdef GRIDLIB_DEM_SUPPORT
+        if (isDem(fileName))
+            return GridFileType::DEM;
+#endif
+        if (Yson::makeReader(fileName))
+            return GridFileType::GRIDLIB_JSON;
+        return GridFileType::UNKNOWN;
+    }
+
+    Grid readGrid(const std::string& fileName, GridFileType type)
+    {
+        if (type == GridFileType::AUTO_DETECT)
+            type = detectFileType(fileName);
+
+        switch (type)
+        {
+        case GridFileType::GRIDLIB_JSON:
+            return readJsonGrid(fileName);
+#ifdef GRIDLIB_DEM_SUPPORT
+        case GridFileType::DEM:
+            return readDem(fileName, Unit::METERS);
+#endif
+        default:
+            GRIDLIB_THROW("Unsupported file type: " + fileName);
+        }
     }
 }

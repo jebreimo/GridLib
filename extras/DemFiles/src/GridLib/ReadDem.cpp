@@ -6,7 +6,11 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include "GridLib/ReadDem.hpp"
+
+#include <filesystem>
+#include <fstream>
 #include "DemReader.hpp"
+
 
 namespace GridLib
 {
@@ -139,5 +143,22 @@ namespace GridLib
         }
 
         return grid;
+    }
+
+    GridLib::Grid readDem(const std::string& fileName,
+                          GridLib::Unit verticalUnit,
+                          const ProgressCallback& progressCallback)
+    {
+        std::ifstream file(fileName, std::ios::binary);
+        return readDem(file, verticalUnit, progressCallback);
+    }
+
+    bool isDem(const std::string& fileName)
+    {
+        auto ext = std::filesystem::path(fileName).extension().string();
+        const char SUFFIX[] = {'.', 'D', 'E', 'M'};
+        return std::equal(ext.begin(), ext.end(),
+                          std::begin(SUFFIX), std::end(SUFFIX),
+                          [](auto a, auto b){return toupper(a) == b;});
     }
 }

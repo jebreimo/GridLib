@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.17)
-project(GridLib VERSION 0.1.6.8)
+project(GridLib VERSION 0.1.6.9)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -100,6 +100,11 @@ target_include_directories(GridLib
     PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    )
+
+target_compile_definitions(GridLib
+    PUBLIC
+        $<$<BOOL:GridLib_DEM_SUPPORT>:GRIDLIB_DEM_SUPPORT>
     )
 
 target_link_libraries(GridLib

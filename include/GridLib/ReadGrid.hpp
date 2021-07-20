@@ -13,4 +13,19 @@ namespace GridLib
     Grid readJsonGrid(std::istream& stream);
 
     Grid readJsonGrid(const std::string& fileName);
+
+    enum class GridFileType
+    {
+        UNKNOWN,
+        GRIDLIB_JSON,
+        DEM,
+        AUTO_DETECT
+    };
+
+    std::string toString(GridFileType type);
+
+    Grid readGrid(std::istream& stream, GridFileType type);
+
+    Grid readGrid(const std::string& fileName,
+                  GridFileType type = GridFileType::AUTO_DETECT);
 }

@@ -18,4 +18,11 @@ namespace GridLib
     readDem(std::istream& stream,
             GridLib::Unit vertical_unit,
             const ProgressCallback& progress_callback = {});
+
+    GridLib::Grid
+    readDem(const std::string& fileName,
+            GridLib::Unit verticalUnit,
+            const ProgressCallback& progressCallback = {});
+
+    bool isDem(const std::string& fileName);
 }
