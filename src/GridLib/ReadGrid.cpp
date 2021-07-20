@@ -165,7 +165,7 @@ namespace GridLib
     #define CASE_ENUM(type, value) \
         case type::value: return #value;
 
-    std::string GridLib::toString(GridFileType type)
+    std::string toString(GridFileType type)
     {
         switch (type)
         {
@@ -187,7 +187,7 @@ namespace GridLib
             return readJsonGrid(stream);
 #ifdef GRIDLIB_DEM_SUPPORT
         case GridFileType::DEM:
-            return readDem(stream, Unit::METERS);
+            return readDem(stream, Unit::UNDEFINED);
 #endif
         default:
             GRIDLIB_THROW("Can not read stream of type " + toString(type));
