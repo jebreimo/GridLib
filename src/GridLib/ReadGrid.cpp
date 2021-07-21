@@ -25,7 +25,7 @@ namespace GridLib
         for (size_t i = 0; i < N; ++i)
         {
             reader.nextValue();
-            result[i] = Yson::read<T>(reader);
+            result[i] = Yson::get<T>(reader);
         }
         if (reader.nextValue())
             GRIDLIB_THROW("vector contains too many values.");
@@ -35,13 +35,13 @@ namespace GridLib
 
     Axis readAxis(Yson::Reader& reader)
     {
-        using Yson::read;
+        using Yson::get;
         Axis axis;
         for (const auto& key : Yson::keys(reader))
         {
             if (key == "unit")
             {
-                axis.unit = parseUnit(read<std::string>(reader))
+                axis.unit = parseUnit(get<std::string>(reader))
                     .value_or(Unit::UNDEFINED);
             }
             else if (key == "direction")
@@ -54,59 +54,59 @@ namespace GridLib
 
     PlanarCoords readPlanarCoords(Yson::Reader& reader)
     {
-        using Yson::read;
+        using Yson::get;
         PlanarCoords coords;
         for (const auto& key : Yson::keys(reader))
         {
             if (key == "northing")
-                coords.northing = read<double>(reader);
+                coords.northing = get<double>(reader);
             else if (key == "easting")
-                coords.easting = read<double>(reader);
+                coords.easting = get<double>(reader);
             else if (key == "zone")
-                coords.zone = read<int>(reader);
+                coords.zone = get<int>(reader);
         }
         return coords;
     }
 
     std::optional<SphericalCoords> readSphericalCoords(Yson::Reader& reader)
     {
-        using Yson::read;
+        using Yson::get;
         SphericalCoords coords;
         for (const auto& key : Yson::keys(reader))
         {
             if (key == "latitude")
-                coords.latitude = read<double>(reader);
+                coords.latitude = get<double>(reader);
             else if (key == "longitude")
-                coords.longitude = read<double>(reader);
+                coords.longitude = get<double>(reader);
         }
         return coords;
     }
 
     ReferenceSystem readReferenceSystem(Yson::Reader& reader)
     {
-        using Yson::read;
+        using Yson::get;
         ReferenceSystem system;
         for (const auto& key : Yson::keys(reader))
         {
             if (key == "horizontal_system")
-                system.horizontal = read<int>(reader);
+                system.horizontal = get<int>(reader);
             else if (key == "vertical_system")
-                system.vertical = read<int>(reader);
+                system.vertical = get<int>(reader);
         }
         return system;
     }
 
     void readMetadata(Yson::Reader& reader, Grid& grid)
     {
-        using Yson::read;
+        using Yson::get;
         size_t rowCount = 0;
         size_t columnCount = 0;
         for (const auto& key : Yson::keys(reader))
         {
             if (key == "row_count")
-                rowCount = read<uint32_t>(reader);
+                rowCount = get<uint32_t>(reader);
             else if (key == "column_count")
-                columnCount = read<uint32_t>(reader);
+                columnCount = get<uint32_t>(reader);
             else if (key == "row_axis")
                 grid.setRowAxis(readAxis(reader));
             else if (key == "column_axis")
@@ -125,16 +125,23 @@ namespace GridLib
 
     void readElevations(Yson::Reader& reader, Grid& grid)
     {
-        using Yson::read;
+        using Yson::get;
         auto array = grid.elevations().array();
         size_t index = 0;
-        for (Yson::ArrayIterator it(reader); it.next();)
+        for (Yson::ArrayIterator rowIt(reader); rowIt.next();)
         {
-            for (const auto& value : Yson::arrayValues<double>(reader))
+            for (Yson::ArrayIterator colIt(reader); colIt.next();)
             {
-                if (index == array.size())
-                    GRIDLIB_THROW("Too many elevations.");
-                array[index++] = value;
+                if (reader.isNull())
+                {
+                    if (!grid.unknownElevation())
+                        grid.setUnknownElevation(DBL_TRUE_MIN);
+                    array[index++] = DBL_TRUE_MIN;
+                }
+                else
+                {
+                    array[index++] = get<double>(reader);
+                }
             }
         }
     }

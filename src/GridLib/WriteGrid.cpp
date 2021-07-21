@@ -79,7 +79,8 @@ namespace GridLib
             writer.beginArray();
             for (const auto& row : values)
             {
-                writer.beginArray(Yson::JsonParameters(10));
+                writer.beginArray({Yson::JsonParameters(10),
+                                   Yson::UBJsonParameters(ptrdiff_t (row.size()))});
                 for (const auto& value : row)
                 {
                     if (!unknownElevation || value != *unknownElevation)
