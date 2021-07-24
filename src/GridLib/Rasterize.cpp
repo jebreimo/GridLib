@@ -6,6 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include "GridLib/Rasterize.hpp"
+#include "GridLib/GridLibException.hpp"
 
 namespace GridLib
 {
@@ -84,5 +85,108 @@ namespace GridLib
     Chorasmia::IntervalMap<double, uint32_t> makeDefaultGradient9000()
     {
         return makeMapGradient(2500, 0, 1000, 2000, 3000, 5000, 9000);
+    }
+
+    namespace
+    {
+        enum class CardinalDirection
+        {
+            NORTH,
+            EAST,
+            SOUTH,
+            WEST
+        };
+
+        CardinalDirection rotate(CardinalDirection dir, int times)
+        {
+            return CardinalDirection((int(dir) + times) % 4);
+        }
+
+        int getRotation(CardinalDirection srcDir, CardinalDirection dstDir)
+        {
+            return (int(dstDir) + 4 - int(srcDir)) % 4;
+        }
+
+        bool isFlipped(CardinalDirection rowDir, CardinalDirection colDir)
+        {
+            return (int(rowDir) + 4 - int(colDir)) % 4 == 1;
+        }
+
+        bool areOrthogonal(CardinalDirection a, CardinalDirection b)
+        {
+            return std::abs(int(a) - int(b)) % 2 == 1;
+        }
+
+        Chorasmia::Index2DMode
+        getIndex2DMode(CardinalDirection srcRowDir, CardinalDirection srcColDir,
+                       CardinalDirection dstRowDir, CardinalDirection dstColDir)
+        {
+            if (!areOrthogonal(srcRowDir, srcColDir))
+                GRIDLIB_THROW("Source coordinate axes are non-orthogonal.");
+            if (!areOrthogonal(dstRowDir, dstColDir))
+                GRIDLIB_THROW("Destination coordinate axes are non-orthogonal.");
+
+            if (auto rot = getRotation(dstRowDir, CardinalDirection::EAST))
+            {
+                srcRowDir = rotate(srcRowDir, rot);
+                srcColDir = rotate(srcColDir, rot);
+            }
+
+            if (isFlipped(dstRowDir, dstColDir))
+                srcColDir = rotate(srcColDir, 2);
+
+            switch (srcRowDir)
+            {
+            case CardinalDirection::NORTH:
+                if (srcColDir == CardinalDirection::EAST)
+                    return Chorasmia::Index2DMode::COLUMNS_REVERSED_ORDER;
+                else
+                    return Chorasmia::Index2DMode::REVERSED_COLUMNS_REVERSED_ORDER;
+            case CardinalDirection::EAST:
+                if (srcColDir == CardinalDirection::NORTH)
+                    return Chorasmia::Index2DMode::ROWS_REVERSED_ORDER;
+                else
+                    return Chorasmia::Index2DMode::ROWS;
+            case CardinalDirection::SOUTH:
+                if (srcColDir == CardinalDirection::EAST)
+                    return Chorasmia::Index2DMode::COLUMNS;
+                else
+                    return Chorasmia::Index2DMode::REVERSED_COLUMNS;
+            case CardinalDirection::WEST:
+                if (srcColDir == CardinalDirection::NORTH)
+                    return Chorasmia::Index2DMode::REVERSED_ROWS_REVERSED_ORDER;
+                else
+                    return Chorasmia::Index2DMode::REVERSED_ROWS;
+            }
+        }
+
+        CardinalDirection getCardinalDirection(const Xyz::Vector2d& v)
+        {
+            constexpr auto PI = Xyz::Constants<double>::PI;
+            auto a = Xyz::getCcwAngle<double>(v, {-1, 1});
+            switch (int(floor(2 * a / PI)))
+            {
+            case 0:
+                return CardinalDirection::NORTH;
+            case 1:
+                return CardinalDirection::EAST;
+            case 2:
+                return CardinalDirection::SOUTH;
+            default:
+                return CardinalDirection::WEST;
+            }
+        }
+    }
+
+    Chorasmia::Index2DMode
+    getIndexModeForTopLeftOrigin(const GridView& grid)
+    {
+        auto rv = grid.rowAxis().direction;
+        auto cv = grid.columnAxis().direction;
+        auto rDir = getCardinalDirection(Xyz::makeVector2(rv[0], rv[1]));
+        auto cDir = getCardinalDirection(Xyz::makeVector2(cv[0], cv[1]));
+        return getIndex2DMode(rDir, cDir,
+                              CardinalDirection::EAST,
+                              CardinalDirection::SOUTH);
     }
 }

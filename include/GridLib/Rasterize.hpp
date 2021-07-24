@@ -47,9 +47,9 @@ namespace GridLib
     Chorasmia::Array2D<uint32_t>
     rasterizeRgba(const Chorasmia::ArrayView2D<double>& grid,
                   ColorFunc colorFunc,
-                  Chorasmia::Index2DMode path)
+                  Chorasmia::Index2DMode mode)
     {
-        Chorasmia::Index2DMap mapping(grid.dimensions(), path);
+        Chorasmia::Index2DMap mapping(grid.dimensions(), mode);
         auto [rows, cols] = mapping.getToSize();
         Chorasmia::Array2D<uint32_t> result(rows, cols);
         auto* outIt = result.data();
@@ -65,10 +65,17 @@ namespace GridLib
     template <typename ColorFunc>
     Chorasmia::Array2D<uint32_t>
     rasterizeRgba(const GridView& grid, ColorFunc colorFunc,
-                  Chorasmia::Index2DMode path = Chorasmia::Index2DMode::ROWS)
+                  Chorasmia::Index2DMode mode = Chorasmia::Index2DMode::ROWS)
     {
         return rasterizeRgba(grid.elevations(),
                              std::forward<ColorFunc>(colorFunc),
-                             path);
+                             mode);
     }
+
+    /**
+     * @brief Returns the index mode to use when producing a bitmap with the
+     *  origin in its top left corner.
+     */
+    Chorasmia::Index2DMode
+    getIndexModeForTopLeftOrigin(const GridView& grid);
 }

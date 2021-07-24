@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.17)
-project(GridLib VERSION 0.1.6.11)
+project(GridLib VERSION 0.1.6.12)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -26,7 +26,7 @@ if (DEFINED LOCAL_SOURCE_PACKAGE_DIR)
     FetchContent_Declare(chorasmia
         URL "file://${LOCAL_SOURCE_PACKAGE_DIR}/Chorasmia-0.1.9.7.tar.gz")
     FetchContent_Declare(xyz
-        URL "file://${LOCAL_SOURCE_PACKAGE_DIR}/Xyz-0.1.1.4.tar.gz")
+        URL "file://${LOCAL_SOURCE_PACKAGE_DIR}/Xyz-0.1.2.tar.gz")
     FetchContent_Declare(yson
         URL "file://${LOCAL_SOURCE_PACKAGE_DIR}/Yson-1.99.0.tar.gz")
 else()
@@ -35,7 +35,7 @@ else()
         GIT_TAG v0.1.8)
     FetchContent_Declare(xyz
         GIT_REPOSITORY "https://github.com/jebreimo/Xyz.git"
-        GIT_TAG v0.1.1)
+        GIT_TAG v0.1.2)
     FetchContent_Declare(yson
         GIT_REPOSITORY "https://github.com/jebreimo/Yson.git"
         GIT_TAG v2.0.0)
