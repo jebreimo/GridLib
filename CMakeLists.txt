@@ -24,7 +24,7 @@ include(FetchContent)
 
 if (DEFINED LOCAL_SOURCE_PACKAGE_DIR)
     FetchContent_Declare(chorasmia
-        URL "file://${LOCAL_SOURCE_PACKAGE_DIR}/Chorasmia-0.1.9.7.tar.gz")
+        URL "file://${LOCAL_SOURCE_PACKAGE_DIR}/Chorasmia-0.1.9.9.tar.gz")
     FetchContent_Declare(xyz
         URL "file://${LOCAL_SOURCE_PACKAGE_DIR}/Xyz-0.1.2.tar.gz")
     FetchContent_Declare(yson
@@ -32,7 +32,7 @@ if (DEFINED LOCAL_SOURCE_PACKAGE_DIR)
 else()
     FetchContent_Declare(chorasmia
         GIT_REPOSITORY "https://github.com/jebreimo/Chorasmia.git"
-        GIT_TAG v0.1.8)
+        GIT_TAG v0.1.9)
     FetchContent_Declare(xyz
         GIT_REPOSITORY "https://github.com/jebreimo/Xyz.git"
         GIT_TAG v0.1.2)
