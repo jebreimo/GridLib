@@ -6,13 +6,33 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.17)
-project(GridLib VERSION 0.1.6.14)
+project(GridLib VERSION 0.1.6.15)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(CHORASMIA_INSTALL ON)
-set(YSON_INSTALL ON)
-set(XYZ_INSTALL ON)
+# Set GridLib_MASTER_PROJECT to ON if Argos is the root level project.
+if (NOT DEFINED GridLib_MASTER_PROJECT)
+    if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+        set(GridLib_MASTER_PROJECT ON)
+    else ()
+        set(GridLib_MASTER_PROJECT OFF)
+    endif ()
+endif ()
+
+# Test option
+option(GridLib_BUILD_TEST "Build tests" ${GridLib_MASTER_PROJECT})
+
+# Install option
+option(GridLib_INSTALL "Generate the install target" ${GridLib_MASTER_PROJECT})
+
+# DEM file option
+option(GridLib_DEM_SUPPORT "Enable support for DEM files" ON)
+
+if (GridLib_INSTALL)
+    set(CHORASMIA_INSTALL ON)
+    set(YSON_INSTALL ON)
+    set(XYZ_INSTALL ON)
+endif ()
 
 if (DEFINED LOCAL_SOURCE_PACKAGE_DIR OR DEFINED ENV{LOCAL_SOURCE_PACKAGE_DIR})
     if (NOT LOCAL_SOURCE_PACKAGE_DIR)
@@ -29,7 +49,7 @@ if (DEFINED LOCAL_SOURCE_PACKAGE_DIR)
         URL "file://${LOCAL_SOURCE_PACKAGE_DIR}/Xyz-0.1.2.tar.gz")
     FetchContent_Declare(yson
         URL "file://${LOCAL_SOURCE_PACKAGE_DIR}/Yson-1.99.0.tar.gz")
-else()
+else ()
     FetchContent_Declare(chorasmia
         GIT_REPOSITORY "https://github.com/jebreimo/Chorasmia.git"
         GIT_TAG v0.1.9)
@@ -39,35 +59,17 @@ else()
     FetchContent_Declare(yson
         GIT_REPOSITORY "https://github.com/jebreimo/Yson.git"
         GIT_TAG v2.0.0)
-endif()
+endif ()
 
 FetchContent_MakeAvailable(chorasmia xyz yson)
-
-# Set GridLib_MASTER_PROJECT to ON if Argos is the root level project.
-if(NOT DEFINED GridLib_MASTER_PROJECT)
-    if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-        set(GridLib_MASTER_PROJECT ON)
-    else()
-        set(GridLib_MASTER_PROJECT OFF)
-    endif()
-endif()
-
-# Test option
-option(GridLib_BUILD_TEST "Build tests" ${GridLib_MASTER_PROJECT})
-
-# Install option
-option(GridLib_INSTALL "Generate the install target" ${GridLib_MASTER_PROJECT})
-
-# DEM file option
-option(GridLib_DEM_SUPPORT "Enable support for DEM files" ON)
 
 function(GridLib_enable_all_warnings target)
     target_compile_options(${target}
         PRIVATE
-            $<$<CXX_COMPILER_ID:Clang>:-Wall>
-            $<$<CXX_COMPILER_ID:GNU>:-Wall>
-            $<$<CXX_COMPILER_ID:AppleClang>:-Wall>
-            $<$<CXX_COMPILER_ID:MSVC>:/W4>)
+        $<$<CXX_COMPILER_ID:Clang>:-Wall>
+        $<$<CXX_COMPILER_ID:GNU>:-Wall>
+        $<$<CXX_COMPILER_ID:AppleClang>:-Wall>
+        $<$<CXX_COMPILER_ID:MSVC>:/W4>)
 endfunction()
 
 set(GridLib_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
@@ -98,22 +100,22 @@ add_library(GridLib
 
 target_include_directories(GridLib
     PUBLIC
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     )
 
 target_compile_definitions(GridLib
     PUBLIC
-        $<$<BOOL:GridLib_DEM_SUPPORT>:GRIDLIB_DEM_SUPPORT>
+    $<$<BOOL:GridLib_DEM_SUPPORT>:GRIDLIB_DEM_SUPPORT>
     )
 
 target_link_libraries(GridLib
     PUBLIC
-        Chorasmia::Chorasmia
-        Xyz::Xyz
-        $<$<BOOL:GridLib_DEM_SUPPORT>:GridLib_ReadDem>
+    Chorasmia::Chorasmia
+    Xyz::Xyz
+    $<$<BOOL:GridLib_DEM_SUPPORT>:GridLib_ReadDem>
     PRIVATE
-        Yson::Yson
+    Yson::Yson
     )
 
 GridLib_enable_all_warnings(GridLib)
@@ -139,26 +141,26 @@ if (GridLib_INSTALL)
 
     install(EXPORT GridLibConfig
         FILE
-            GridLibConfig.cmake
+        GridLibConfig.cmake
         NAMESPACE
-            GridLib::
+        GridLib::
         DESTINATION
-            ${CMAKE_INSTALL_LIBDIR}/cmake/GridLib
+        ${CMAKE_INSTALL_LIBDIR}/cmake/GridLib
         )
 
     install(
         DIRECTORY
-            include/GridLib
+        include/GridLib
         DESTINATION
-            ${CMAKE_INSTALL_INCLUDEDIR}
+        ${CMAKE_INSTALL_INCLUDEDIR}
     )
 
-#    install(
-#        FILES
-#            ${CMAKE_CURRENT_BINARY_DIR}/GridLibVersion.hpp
-#        DESTINATION
-#            ${CMAKE_INSTALL_INCLUDEDIR}/GridLib
-#    )
+    #    install(
+    #        FILES
+    #            ${CMAKE_CURRENT_BINARY_DIR}/GridLibVersion.hpp
+    #        DESTINATION
+    #            ${CMAKE_INSTALL_INCLUDEDIR}/GridLib
+    #    )
 
     include(CMakePackageConfigHelpers)
 
