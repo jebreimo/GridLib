@@ -10,12 +10,11 @@ cmake_minimum_required(VERSION 3.13)
 include(FetchContent)
 FetchContent_Declare(catch
     GIT_REPOSITORY "https://github.com/catchorg/Catch2.git"
-    GIT_TAG "v2.11.1"
+    GIT_TAG "v3.5.2"
     )
 FetchContent_MakeAvailable(catch)
 
 add_executable(GridLibTest
-    GridLibTestMain.cpp
     test_GridView.cpp
     test_Profile.cpp
     test_Rasterize.cpp
@@ -25,8 +24,8 @@ add_executable(GridLibTest
 target_link_libraries(GridLibTest
     PRIVATE
         GridLib::GridLib
-        Catch2::Catch2
-    )
+        Catch2::Catch2WithMain
+)
 
 GridLib_enable_all_warnings(GridLibTest)
 

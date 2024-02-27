@@ -26,8 +26,8 @@ namespace GridLib
                        std::optional<PlanarCoords> planarCoords) noexcept
         : m_Grid(&grid),
           m_Elevations(elevations),
-          m_SphericalCoords(move(sphericalCoords)),
-          m_PlanarCoords(move(planarCoords))
+          m_SphericalCoords(sphericalCoords),
+          m_PlanarCoords(planarCoords)
     {}
 
     size_t GridView::rowCount() const
@@ -105,9 +105,9 @@ namespace GridLib
         auto sphericalCoords = row == 0 && column == 0
                                ? m_SphericalCoords
                                : std::optional<SphericalCoords>();
-        return GridView(*m_Grid,
-                        m_Elevations.subarray(row, column, nrows, ncolumns),
-                        sphericalCoords, planarCoords);
+        return {*m_Grid,
+                m_Elevations.subarray(row, column, nrows, ncolumns),
+                sphericalCoords, planarCoords};
     }
 
     void GridView::assertGrid() const

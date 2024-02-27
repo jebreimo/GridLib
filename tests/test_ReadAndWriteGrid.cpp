@@ -7,9 +7,10 @@
 //****************************************************************************
 #include <GridLib/ReadGrid.hpp>
 #include <GridLib/WriteGrid.hpp>
-#include <catch2/catch.hpp>
-
 #include <sstream>
+#include <numeric>
+#include <catch2/catch_test_macros.hpp>
+
 
 TEST_CASE("Test writeJsonGrid and readGrid")
 {

@@ -25,7 +25,7 @@ namespace GridLib
         for (size_t i = 0; i < N; ++i)
         {
             reader.nextValue();
-            result[i] = Yson::get<T>(reader);
+            result[i] = Yson::read<T>(reader);
         }
         if (reader.nextValue())
             GRIDLIB_THROW("vector contains too many values.");
@@ -35,13 +35,13 @@ namespace GridLib
 
     Axis readAxis(Yson::Reader& reader)
     {
-        using Yson::get;
+        using Yson::read;
         Axis axis;
         for (const auto& key : Yson::keys(reader))
         {
             if (key == "unit")
             {
-                axis.unit = parseUnit(get<std::string>(reader))
+                axis.unit = parseUnit(read<std::string>(reader))
                     .value_or(Unit::UNDEFINED);
             }
             else if (key == "direction")
@@ -54,59 +54,59 @@ namespace GridLib
 
     PlanarCoords readPlanarCoords(Yson::Reader& reader)
     {
-        using Yson::get;
+        using Yson::read;
         PlanarCoords coords;
         for (const auto& key : Yson::keys(reader))
         {
             if (key == "northing")
-                coords.northing = get<double>(reader);
+                coords.northing = read<double>(reader);
             else if (key == "easting")
-                coords.easting = get<double>(reader);
+                coords.easting = read<double>(reader);
             else if (key == "zone")
-                coords.zone = get<int>(reader);
+                coords.zone = read<int>(reader);
         }
         return coords;
     }
 
     std::optional<SphericalCoords> readSphericalCoords(Yson::Reader& reader)
     {
-        using Yson::get;
+        using Yson::read;
         SphericalCoords coords;
         for (const auto& key : Yson::keys(reader))
         {
             if (key == "latitude")
-                coords.latitude = get<double>(reader);
+                coords.latitude = read<double>(reader);
             else if (key == "longitude")
-                coords.longitude = get<double>(reader);
+                coords.longitude = read<double>(reader);
         }
         return coords;
     }
 
     ReferenceSystem readReferenceSystem(Yson::Reader& reader)
     {
-        using Yson::get;
+        using Yson::read;
         ReferenceSystem system;
         for (const auto& key : Yson::keys(reader))
         {
             if (key == "horizontal_system")
-                system.horizontal = get<int>(reader);
+                system.horizontal = read<int>(reader);
             else if (key == "vertical_system")
-                system.vertical = get<int>(reader);
+                system.vertical = read<int>(reader);
         }
         return system;
     }
 
     void readMetadata(Yson::Reader& reader, Grid& grid)
     {
-        using Yson::get;
+        using Yson::read;
         size_t rowCount = 0;
         size_t columnCount = 0;
         for (const auto& key : Yson::keys(reader))
         {
             if (key == "row_count")
-                rowCount = get<uint32_t>(reader);
+                rowCount = read<uint32_t>(reader);
             else if (key == "column_count")
-                columnCount = get<uint32_t>(reader);
+                columnCount = read<uint32_t>(reader);
             else if (key == "row_axis")
                 grid.setRowAxis(readAxis(reader));
             else if (key == "column_axis")
@@ -125,14 +125,14 @@ namespace GridLib
 
     void readElevations(Yson::Reader& reader, Grid& grid)
     {
-        using Yson::get;
+        using Yson::read;
         auto array = grid.elevations().array();
         size_t index = 0;
         for (Yson::ArrayIterator rowIt(reader); rowIt.next();)
         {
             for (Yson::ArrayIterator colIt(reader); colIt.next();)
             {
-                if (reader.isNull())
+                if (reader.readNull())
                 {
                     if (!grid.unknownElevation())
                         grid.setUnknownElevation(DBL_TRUE_MIN);
@@ -140,7 +140,7 @@ namespace GridLib
                 }
                 else
                 {
-                    array[index++] = get<double>(reader);
+                    array[index++] = read<double>(reader);
                 }
             }
         }
@@ -199,7 +199,7 @@ namespace GridLib
         default:
             GRIDLIB_THROW("Can not read stream of type " + toString(type));
         }
-        return Grid();
+        return {};
     }
 
     GridFileType detectFileType(const std::string& fileName)

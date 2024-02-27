@@ -46,7 +46,7 @@ namespace GridLib
 
     Chorasmia::ArrayView2D<double> Grid::elevations() const
     {
-        return m_Grid;
+        return m_Grid.view();
     }
 
     Chorasmia::MutableArrayView2D<double> Grid::elevations()

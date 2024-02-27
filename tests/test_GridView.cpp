@@ -6,8 +6,8 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include <GridLib/Grid.hpp>
+#include <catch2/catch_test_macros.hpp>
 
-#include <catch2/catch.hpp>
 
 TEST_CASE("test getMinMaxElevation")
 {
