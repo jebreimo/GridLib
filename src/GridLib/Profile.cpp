@@ -12,22 +12,22 @@
 
 namespace GridLib
 {
-    double getValue(Chorasmia::ArrayView2D<double> grid, double x, double y)
+    double get_value(Chorasmia::ArrayView2D<double> grid, double x, double y)
     {
         double xi;
         auto xf = std::modf(x, &xi);
         const auto xs = size_t(xi);
-        if (xi < 0 || grid.columnCount() - 1 <= xs)
+        if (xi < 0 || grid.col_count() - 1 <= xs)
         {
-            if (grid.columnCount() - 1 != xs || xf != 0)
+            if (grid.col_count() - 1 != xs || xf != 0)
                 GRIDLIB_THROW("x is outside the grid.");
         }
         double yi;
         auto yf = std::modf(y, &yi);
         const auto ys = size_t(yi);
-        if (yi < 0 || grid.columnCount() - 1 <= ys)
+        if (yi < 0 || grid.col_count() - 1 <= ys)
         {
-            if (grid.columnCount() - 1 != ys || yf != 0)
+            if (grid.col_count() - 1 != ys || yf != 0)
                 GRIDLIB_THROW("y is outside the grid.");
         }
 
@@ -52,32 +52,32 @@ namespace GridLib
         }
     }
 
-    std::vector<Xyz::Vector3d>
-    makeProfile(Chorasmia::ArrayView2D<double> grid,
-                Xyz::Vector2d from,
-                Xyz::Vector2d to,
-                size_t steps)
+    std::vector<Xyz::Vector3D>
+    make_profile(Chorasmia::ArrayView2D<double> grid,
+                 const Xyz::Vector2D& from,
+                 const Xyz::Vector2D& to,
+                 size_t steps)
     {
-        std::vector<Xyz::Vector3d> result;
+        std::vector<Xyz::Vector3D> result;
         auto delta = to - from;
         auto step = delta / double(steps);
         for (size_t i = 0; i <= steps; ++i)
         {
             auto pos = from + double(i) * step;
-            if (0 <= pos[0] <= grid.rowCount() && 0 <= pos[1] <= grid.columnCount())
+            if (0 <= pos[0] <= grid.row_count() && 0 <= pos[1] <= grid.col_count())
             {
-                result.push_back(Xyz::makeVector3(pos, getValue(grid, pos[0], pos[1])));
+                result.push_back(Xyz::make_vector3(pos, get_value(grid, pos[0], pos[1])));
             }
         }
         return result;
     }
 
-    std::vector<Xyz::Vector3d>
-    makeProfile(const GridView& grid,
-                Xyz::Vector2d from,
-                Xyz::Vector2d to,
-                size_t steps)
+    std::vector<Xyz::Vector3D>
+    make_profile(const GridView& grid,
+                 const Xyz::Vector2D& from,
+                 const Xyz::Vector2D& to,
+                 size_t steps)
     {
-        return makeProfile(grid.elevations(), from, to, steps);
+        return make_profile(grid.elevations(), from, to, steps);
     }
 }

@@ -23,53 +23,53 @@ namespace GridLib
 
         GridView(const Grid& grid,
                  Chorasmia::ArrayView2D<double> elevations,
-                 std::optional<SphericalCoords> sphericalCoords,
-                 std::optional<PlanarCoords> planarCoords) noexcept;
+                 std::optional<SphericalCoords> spherical_coords,
+                 std::optional<PlanarCoords> planar_coords) noexcept;
 
         [[nodiscard]]
-        size_t rowCount() const;
+        size_t row_count() const;
 
         [[nodiscard]]
-        size_t columnCount() const;
+        size_t col_count() const;
 
         [[nodiscard]]
         Chorasmia::ArrayView2D<double> elevations() const;
 
         [[nodiscard]]
-        std::optional<double> unknownElevation() const;
+        std::optional<double> unknown_elevation() const;
 
         [[nodiscard]]
-        const Axis& rowAxis() const;
+        const Axis& row_axis() const;
 
         [[nodiscard]]
-        const Axis& columnAxis() const;
+        const Axis& col_axis() const;
 
         [[nodiscard]]
-        const Axis& verticalAxis() const;
+        const Axis& vertical_axis() const;
 
         [[nodiscard]]
-        const std::optional<SphericalCoords>& sphericalCoords() const;
+        const std::optional<SphericalCoords>& spherical_coords() const;
 
         [[nodiscard]]
-        const std::optional<PlanarCoords>& planarCoords() const;
+        const std::optional<PlanarCoords>& planar_coords() const;
 
         [[nodiscard]]
-        const std::optional<ReferenceSystem>& referenceSystem() const;
+        const std::optional<ReferenceSystem>& reference_system() const;
 
         [[nodiscard]]
-        const Grid* baseGrid() const;
+        const Grid* base_grid() const;
 
         [[nodiscard]]
         GridView subgrid(size_t row, size_t column,
-                         size_t nrows, size_t ncolumns) const;
+                         size_t n_rows, size_t n_cols) const;
     private:
-        void assertGrid() const;
+        void assert_grid() const;
 
-        const Grid* m_Grid = nullptr;
-        Chorasmia::ArrayView2D<double> m_Elevations;
-        std::optional<SphericalCoords> m_SphericalCoords;
-        std::optional<PlanarCoords> m_PlanarCoords;
+        const Grid* grid_ = nullptr;
+        Chorasmia::ArrayView2D<double> elevations_;
+        std::optional<SphericalCoords> spherical_coords_;
+        std::optional<PlanarCoords> planar_coords_;
     };
 
-    std::pair<double, double> getMinMaxElevation(const GridView& grid);
+    std::pair<double, double> get_min_max_elevation(const GridView& grid);
 }

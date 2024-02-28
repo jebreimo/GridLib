@@ -27,7 +27,7 @@ namespace GridLib
     };
 
     DemReader::DemReader(std::istream& stream)
-        : m_Data(std::make_unique<Data>(stream))
+        : data_(std::make_unique<Data>(stream))
     {
         read_record_a();
         read_record_c();
@@ -41,12 +41,12 @@ namespace GridLib
 
     const RecordA& DemReader::record_a() const
     {
-        return m_Data->a;
+        return data_->a;
     }
 
     const std::optional<RecordC>& DemReader::record_c() const
     {
-        return m_Data->c;
+        return data_->c;
     }
 
     std::optional<RecordB> DemReader::next_record_b()
@@ -56,13 +56,13 @@ namespace GridLib
 
     void DemReader::read_record_a()
     {
-        if (!m_Data)
+        if (!data_)
             GRIDLIB_THROW("No input stream.");
 
 
         try
         {
-            m_Data->a = GridLib::read_record_a(m_Data->reader);
+            data_->a = GridLib::read_record_a(data_->reader);
         }
         catch (std::exception& ex)
         {
@@ -74,15 +74,15 @@ namespace GridLib
 
     std::optional<RecordB> DemReader::read_record_b()
     {
-        if (!m_Data)
+        if (!data_)
             GRIDLIB_THROW("No input stream.");
 
-        if (!m_Data->reader.fill_buffer(1024))
+        if (!data_->reader.fill_buffer(1024))
             return {};
 
-        if (m_Data->a.data_validation_flag.value_or(0) != 0
-            && m_Data->reader.fill_buffer(2048)
-            && m_Data->reader.remaining_buffer_size() == 1024)
+        if (data_->a.data_validation_flag.value_or(0) != 0
+            && data_->reader.fill_buffer(2048)
+            && data_->reader.remaining_buffer_size() == 1024)
         {
             // We've reached the final 1024 bytes of the file, which contains
             // record type c.
@@ -91,7 +91,7 @@ namespace GridLib
 
         try
         {
-            return GridLib::read_record_b(m_Data->reader);
+            return GridLib::read_record_b(data_->reader);
         }
         catch (std::exception& ex)
         {
@@ -102,14 +102,14 @@ namespace GridLib
 
     void DemReader::read_record_c()
     {
-        if (m_Data->a.data_validation_flag.value_or(0) == 0)
+        if (data_->a.data_validation_flag.value_or(0) == 0)
             return;
 
-        m_Data->reader.seek(-1024, std::ios_base::end);
+        data_->reader.seek(-1024, std::ios_base::end);
 
         try
         {
-            m_Data->c = GridLib::read_record_c(m_Data->reader);
+            data_->c = GridLib::read_record_c(data_->reader);
         }
         catch (std::exception& ex)
         {
@@ -123,6 +123,6 @@ namespace GridLib
 
     void DemReader::move_to_first_record_b()
     {
-        m_Data->reader.seek(1024, std::ios_base::beg);
+        data_->reader.seek(1024, std::ios_base::beg);
     }
 }

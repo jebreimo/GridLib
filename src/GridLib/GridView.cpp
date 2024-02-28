@@ -16,116 +16,116 @@ namespace GridLib
     GridView::GridView(const Grid& grid) noexcept
         : GridView(grid,
                    grid.elevations(),
-                   grid.sphericalCoords(),
-                   grid.planarCoords())
+                   grid.spherical_coords(),
+                   grid.planar_coords())
     {}
 
     GridView::GridView(const Grid& grid,
                        Chorasmia::ArrayView2D<double> elevations,
-                       std::optional<SphericalCoords> sphericalCoords,
-                       std::optional<PlanarCoords> planarCoords) noexcept
-        : m_Grid(&grid),
-          m_Elevations(elevations),
-          m_SphericalCoords(sphericalCoords),
-          m_PlanarCoords(planarCoords)
+                       std::optional<SphericalCoords> spherical_coords,
+                       std::optional<PlanarCoords> planar_coords) noexcept
+        : grid_(&grid),
+          elevations_(elevations),
+          spherical_coords_(spherical_coords),
+          planar_coords_(planar_coords)
     {}
 
-    size_t GridView::rowCount() const
+    size_t GridView::row_count() const
     {
-        return m_Elevations.rowCount();
+        return elevations_.row_count();
     }
 
-    size_t GridView::columnCount() const
+    size_t GridView::col_count() const
     {
-        return m_Elevations.columnCount();
+        return elevations_.col_count();
     }
 
     Chorasmia::ArrayView2D<double> GridView::elevations() const
     {
-        return m_Elevations;
+        return elevations_;
     }
 
-    std::optional<double> GridView::unknownElevation() const
+    std::optional<double> GridView::unknown_elevation() const
     {
-        assertGrid();
-        return m_Grid->unknownElevation();
+        assert_grid();
+        return grid_->unknown_elevation();
     }
 
-    const Axis& GridView::rowAxis() const
+    const Axis& GridView::row_axis() const
     {
-        assertGrid();
-        return m_Grid->rowAxis();
+        assert_grid();
+        return grid_->row_axis();
     }
 
-    const Axis& GridView::columnAxis() const
+    const Axis& GridView::col_axis() const
     {
-        assertGrid();
-        return m_Grid->columnAxis();
+        assert_grid();
+        return grid_->column_axis();
     }
 
-    const Axis& GridView::verticalAxis() const
+    const Axis& GridView::vertical_axis() const
     {
-        assertGrid();
-        return m_Grid->verticalAxis();
+        assert_grid();
+        return grid_->vertical_axis();
     }
 
-    const std::optional<SphericalCoords>& GridView::sphericalCoords() const
+    const std::optional<SphericalCoords>& GridView::spherical_coords() const
     {
-        return m_SphericalCoords;
+        return spherical_coords_;
     }
 
-    const std::optional<PlanarCoords>& GridView::planarCoords() const
+    const std::optional<PlanarCoords>& GridView::planar_coords() const
     {
-        return m_PlanarCoords;
+        return planar_coords_;
     }
 
-    const std::optional<ReferenceSystem>& GridView::referenceSystem() const
+    const std::optional<ReferenceSystem>& GridView::reference_system() const
     {
-        assertGrid();
-        return m_Grid->referenceSystem();
+        assert_grid();
+        return grid_->reference_system();
     }
 
-    const Grid* GridView::baseGrid() const
+    const Grid* GridView::base_grid() const
     {
-        return m_Grid;
+        return grid_;
     }
 
     GridView GridView::subgrid(size_t row, size_t column,
-                               size_t nrows, size_t ncolumns) const
+                               size_t n_rows, size_t n_cols) const
     {
-        assertGrid();
-        auto planarCoords = m_PlanarCoords;
-        if (planarCoords && (row != 0 || column != 0))
+        assert_grid();
+        auto planar_coords = planar_coords_;
+        if (planar_coords && (row != 0 || column != 0))
         {
-            auto offset = row * columnAxis().direction
-                          + column * rowAxis().direction;
-            planarCoords->easting += offset[0];
-            planarCoords->northing += offset[1];
+            auto offset = double(row) * col_axis().direction
+                          + double(column) * row_axis().direction;
+            planar_coords->easting += offset[0];
+            planar_coords->northing += offset[1];
         }
-        auto sphericalCoords = row == 0 && column == 0
-                               ? m_SphericalCoords
+        auto spherical_coords = row == 0 && column == 0
+                               ? spherical_coords_
                                : std::optional<SphericalCoords>();
-        return {*m_Grid,
-                m_Elevations.subarray(row, column, nrows, ncolumns),
-                sphericalCoords, planarCoords};
+        return {*grid_,
+                elevations_.subarray(row, column, n_rows, n_cols),
+                spherical_coords, planar_coords};
     }
 
-    void GridView::assertGrid() const
+    void GridView::assert_grid() const
     {
-        if (!m_Grid)
+        if (!grid_)
             GRIDLIB_THROW("grid is NULL");
     }
 
-    std::pair<double, double> getMinMaxElevation(const GridView& grid)
+    std::pair<double, double> get_min_max_elevation(const GridView& grid)
     {
         const auto elevations = grid.elevations();
-        const auto noValue = grid.unknownElevation();
+        const auto no_value = grid.unknown_elevation();
         auto min = DBL_MAX, max = DBL_TRUE_MIN;
         for (const auto row : elevations)
         {
             for (const auto value : row)
             {
-                if (noValue && value == *noValue)
+                if (no_value && value == *no_value)
                     continue;
                 if (value < min)
                     min = value;

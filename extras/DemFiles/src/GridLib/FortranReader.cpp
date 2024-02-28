@@ -31,9 +31,9 @@ namespace GridLib
 
     FortranReader::FortranReader() = default;
 
-    FortranReader::FortranReader(std::istream& stream, size_t bufferSize)
-        : m_Buffer(bufferSize),
-          m_Stream(&stream)
+    FortranReader::FortranReader(std::istream& stream, size_t buffer_size)
+        : buffer_(buffer_size),
+          stream_(&stream)
     {}
 
     std::optional<char> FortranReader::read_char()
@@ -44,16 +44,16 @@ namespace GridLib
         return str[0];
     }
 
-    std::string_view FortranReader::read_string(size_t size, bool trimSpaces)
+    std::string_view FortranReader::read_string(size_t size, bool trim_spaces)
     {
-        while (m_Str.size() < size && fill_buffer(size))
+        while (str_.size() < size && fill_buffer(size))
             continue;
-        if (size > m_Str.size())
+        if (size > str_.size())
             GRIDLIB_THROW("End of file reached.");
-        size = std::min(size, m_Str.size());
-        auto result = m_Str.substr(0, size);
-        m_Str = m_Str.substr(size);
-        return trimSpaces ? trim(result) : result;
+        size = std::min(size, str_.size());
+        auto result = str_.substr(0, size);
+        str_ = str_.substr(size);
+        return trim_spaces ? trim(result) : result;
     }
 
     std::optional<int8_t> FortranReader::read_int8(size_t size)
@@ -83,48 +83,49 @@ namespace GridLib
 
     bool FortranReader::fill_buffer(size_t size)
     {
-        if (!m_Stream || !*m_Stream)
+        if (!stream_ || !*stream_)
             return false;
-        if (m_Str.size() >= size)
+        if (str_.size() >= size)
             return true;
-        if (m_Str.data() != m_Buffer.data())
+        if (str_.data() != buffer_.data())
         {
-            std::copy(m_Str.begin(), m_Str.end(),
-                      m_Buffer.begin());
-            m_Str = {m_Buffer.data(), m_Str.size()};
+            std::copy(str_.begin(), str_.end(),
+                      buffer_.begin());
+            str_ = {buffer_.data(), str_.size()};
         }
-        if (m_Buffer.size() < size)
+        if (buffer_.size() < size)
         {
-            auto prevSize = m_Buffer.size();
-            m_Buffer.resize(size);
-            m_Str = {m_Buffer.data(), prevSize};
+            auto prevSize = buffer_.size();
+            buffer_.resize(size);
+            str_ = {buffer_.data(), prevSize};
         }
-        auto bytesToRead = m_Buffer.size() - m_Str.size();
-        m_Stream->read(m_Buffer.data() + m_Str.size(), bytesToRead);
-        auto bytesRead = size_t(m_Stream->gcount());
-        m_Buffer.resize(m_Str.size() + bytesRead);
-        m_Str = {m_Buffer.data(), m_Buffer.size()};
-        return bytesRead != 0;
+        auto bytes_to_read = buffer_.size() - str_.size();
+        stream_->read(buffer_.data() + str_.size(),
+                      std::streamsize(bytes_to_read));
+        auto bytes_read = size_t(stream_->gcount());
+        buffer_.resize(str_.size() + bytes_read);
+        str_ = {buffer_.data(), buffer_.size()};
+        return bytes_read != 0;
     }
 
     size_t FortranReader::remaining_buffer_size() const
     {
-        return m_Str.size();
+        return str_.size();
     }
 
     void FortranReader::skip(size_t size)
     {
-        if (size <= m_Str.size())
+        if (size <= str_.size())
         {
-            m_Str = m_Str.substr(size);
+            str_ = str_.substr(size);
             return;
         }
 
-        size -= m_Str.size();
-        m_Str = {};
-        auto start = std::streamoff(m_Stream->tellg());
-        m_Stream->seekg(size, std::ios::cur);
-        auto end = std::streamoff(m_Stream->tellg());
+        size -= str_.size();
+        str_ = {};
+        auto start = std::streamoff(stream_->tellg());
+        stream_->seekg(std::ios::off_type(size), std::ios::cur);
+        auto end = std::streamoff(stream_->tellg());
         if (size_t(end - start) != size)
             GRIDLIB_THROW("End of file reached.");
     }
@@ -133,20 +134,20 @@ namespace GridLib
     {
         if (dir == std::ios_base::cur)
         {
-            if (pos <= m_Str.size())
+            if (pos <= str_.size())
             {
-                m_Str = m_Str.substr(pos);
+                str_ = str_.substr(pos);
                 return true;
             }
-            pos -= m_Str.size();
+            pos -= std::streamoff(str_.size());
         }
-        m_Str = {};
-        return bool(m_Stream->seekg(pos));
+        str_ = {};
+        return bool(stream_->seekg(pos));
     }
 
     std::streamsize FortranReader::tell() const
     {
-        return std::streamsize(m_Stream->tellg()) - m_Str.size();
+        return std::streamsize(stream_->tellg()) - std::streamsize(str_.size());
     }
 
     template <typename T>

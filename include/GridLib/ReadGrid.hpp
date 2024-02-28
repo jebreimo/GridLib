@@ -10,9 +10,9 @@
 
 namespace GridLib
 {
-    Grid readJsonGrid(std::istream& stream);
+    Grid read_json_grid(std::istream& stream);
 
-    Grid readJsonGrid(const std::string& fileName);
+    Grid read_json_grid(const std::string& file_name);
 
     enum class GridFileType
     {
@@ -22,10 +22,10 @@ namespace GridLib
         AUTO_DETECT
     };
 
-    std::string toString(GridFileType type);
+    std::string to_string(GridFileType type);
 
-    Grid readGrid(std::istream& stream, GridFileType type);
+    Grid read_grid(std::istream& stream, GridFileType type);
 
-    Grid readGrid(const std::string& fileName,
-                  GridFileType type = GridFileType::AUTO_DETECT);
+    Grid read_grid(const std::string& file_name,
+                   GridFileType type = GridFileType::AUTO_DETECT);
 }

@@ -20,9 +20,9 @@ namespace GridLib
         ARC_SECONDS = 3
     };
 
-    std::string_view toString(Unit unit);
+    std::string_view to_string(Unit unit);
 
-    std::optional<Unit> parseUnit(std::string_view str);
+    std::optional<Unit> parse_unit(std::string_view str);
 
     struct Axis
     {
@@ -35,7 +35,7 @@ namespace GridLib
          * length of the vector should be 10, if it is 10 feet it should be
          * 10 * 0.3048 = 3.048.
          */
-        Xyz::Vector3d direction;
+        Xyz::Vector3D direction;
         Unit unit;
     };
 

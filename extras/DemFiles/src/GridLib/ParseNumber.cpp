@@ -18,7 +18,7 @@ namespace GridLib
     namespace
     {
         template <typename IntT>
-        IntT fromDigit(char c)
+        IntT from_digit(char c)
         {
             if ('0' <= c && c <= '9')
                 return IntT(c - '0');
@@ -30,7 +30,7 @@ namespace GridLib
         }
 
         template <typename T, T Base>
-        constexpr T maxPrecedingValueNegative()
+        constexpr T max_preceding_value_negative()
         {
             if constexpr (std::is_signed<T>::value)
             {
@@ -44,7 +44,7 @@ namespace GridLib
         }
 
         template <typename T, T Base>
-        constexpr T maxFinalDigitNegative()
+        constexpr T max_final_digit_negative()
         {
             if constexpr (std::is_signed<T>::value)
             {
@@ -58,7 +58,7 @@ namespace GridLib
         }
 
         template <typename T, T Base>
-        constexpr T maxPrecedingValuePositive()
+        constexpr T max_preceding_value_positive()
         {
             if constexpr (std::is_signed<T>::value)
             {
@@ -72,7 +72,7 @@ namespace GridLib
         }
 
         template <typename T, T Base>
-        constexpr T maxFinalDigitPositive()
+        constexpr T max_final_digit_positive()
         {
             if constexpr (std::is_signed<T>::value)
             {
@@ -86,20 +86,20 @@ namespace GridLib
         }
 
         template <typename IntT, IntT Base>
-        std::optional<IntT> parsePositiveIntegerImpl(std::string_view str)
+        std::optional<IntT> parse_positive_integer_impl(std::string_view str)
         {
             if (str.empty())
                 return {};
-            IntT value = fromDigit<IntT>(str[0]);
+            IntT value = from_digit<IntT>(str[0]);
             if (value >= Base)
                 return {};
             for (size_t i = 1; i < str.size(); ++i)
             {
-                auto digit = fromDigit<IntT>(str[i]);
+                auto digit = from_digit<IntT>(str[i]);
                 if (digit < Base
-                    && (value < maxPrecedingValuePositive<IntT, Base>()
-                        || (value == maxPrecedingValuePositive<IntT, Base>()
-                            && digit <= maxFinalDigitPositive<IntT, Base>())))
+                    && (value < max_preceding_value_positive<IntT, Base>()
+                        || (value == max_preceding_value_positive<IntT, Base>()
+                            && digit <= max_final_digit_positive<IntT, Base>())))
                 {
                     value *= Base;
                     value += digit;
@@ -114,22 +114,22 @@ namespace GridLib
         }
 
         template <typename IntT, IntT Base>
-        std::optional<IntT> parseNegativeIntegerImpl(std::string_view str)
+        std::optional<IntT> parse_negative_integer_impl(std::string_view str)
         {
             if constexpr (std::is_signed<IntT>::value)
             {
                 if (str.empty())
                     return {};
-                IntT value = fromDigit<IntT>(str[0]);
+                IntT value = from_digit<IntT>(str[0]);
                 if (value >= Base)
                     return {};
                 for (size_t i = 1; i < str.size(); ++i)
                 {
-                    auto digit = fromDigit<IntT>(str[i]);
+                    auto digit = from_digit<IntT>(str[i]);
                     if (digit < Base
-                        && (value < maxPrecedingValueNegative<IntT, Base>()
-                            || (value == maxPrecedingValueNegative<IntT, Base>()
-                                && digit <= maxFinalDigitNegative<IntT, Base>())))
+                        && (value < max_preceding_value_negative<IntT, Base>()
+                            || (value == max_preceding_value_negative<IntT, Base>()
+                                && digit <= max_final_digit_negative<IntT, Base>())))
                     {
                         value *= Base;
                         value += digit;
@@ -148,7 +148,7 @@ namespace GridLib
                     return {};
                 for (char c : str)
                 {
-                    auto digit = fromDigit<IntT>(c);
+                    auto digit = from_digit<IntT>(c);
                     if (digit > 0)
                         return {};
                 }
@@ -157,7 +157,7 @@ namespace GridLib
         }
 
         template <typename IntT>
-        std::optional<IntT> parseInteger(std::string_view str, bool detectBase)
+        std::optional<IntT> parse_integer(std::string_view str, bool detect_base)
         {
             static_assert(std::is_integral<IntT>());
 
@@ -178,28 +178,28 @@ namespace GridLib
             if (str.empty())
                 return {};
 
-            if (str[0] == '0' && str.size() >= 3 && detectBase)
+            if (str[0] == '0' && str.size() >= 3 && detect_base)
             {
                 auto str2 = str.substr(2);
                 switch (uint8_t(str[1]) | 0x20u)
                 {
                 case 'b':
-                    return positive ? parsePositiveIntegerImpl<IntT, 2>(str2)
-                                    : parseNegativeIntegerImpl<IntT, 2>(str2);
+                    return positive ? parse_positive_integer_impl<IntT, 2>(str2)
+                                    : parse_negative_integer_impl<IntT, 2>(str2);
                 case 'o':
-                    return positive ? parsePositiveIntegerImpl<IntT, 8>(str2)
-                                    : parseNegativeIntegerImpl<IntT, 8>(str2);
+                    return positive ? parse_positive_integer_impl<IntT, 8>(str2)
+                                    : parse_negative_integer_impl<IntT, 8>(str2);
                 case 'x':
-                    return positive ? parsePositiveIntegerImpl<IntT, 16>(str2)
-                                    : parseNegativeIntegerImpl<IntT, 16>(str2);
+                    return positive ? parse_positive_integer_impl<IntT, 16>(str2)
+                                    : parse_negative_integer_impl<IntT, 16>(str2);
                 default:
                     break;
                 }
             }
             if ('0' <= str[0] && str[0] <= '9')
             {
-                return positive ? parsePositiveIntegerImpl<IntT, 10>(str)
-                                : parseNegativeIntegerImpl<IntT, 10>(str);
+                return positive ? parse_positive_integer_impl<IntT, 10>(str)
+                                : parse_negative_integer_impl<IntT, 10>(str);
             }
             if (str == "false" || str == "null")
                 return IntT(0);
@@ -209,72 +209,72 @@ namespace GridLib
         }
 
         template <typename T>
-        bool parseImpl(std::string_view str, T& value, bool detectBase)
+        bool parse_impl(std::string_view str, T& value, bool detect_base)
         {
-            auto parsedValue = parseInteger<T>(str, detectBase);
-            if (parsedValue)
+            auto parsed_value = parse_integer<T>(str, detect_base);
+            if (parsed_value)
             {
-                value = *parsedValue;
+                value = *parsed_value;
                 return true;
             }
             return false;
         }
     }
 
-    bool parse(std::string_view str, char& value, bool detectBase)
+    bool parse(std::string_view str, char& value, bool detect_base)
     {
-        return parseImpl(str, value, detectBase);
+        return parse_impl(str, value, detect_base);
     }
 
-    bool parse(std::string_view str, int8_t& value, bool detectBase)
+    bool parse(std::string_view str, int8_t& value, bool detect_base)
     {
-        return parseImpl(str, value, detectBase);
+        return parse_impl(str, value, detect_base);
     }
 
-    bool parse(std::string_view str, int16_t& value, bool detectBase)
+    bool parse(std::string_view str, int16_t& value, bool detect_base)
     {
-        return parseImpl(str, value, detectBase);
+        return parse_impl(str, value, detect_base);
     }
 
-    bool parse(std::string_view str, int32_t& value, bool detectBase)
+    bool parse(std::string_view str, int32_t& value, bool detect_base)
     {
-        return parseImpl(str, value, detectBase);
+        return parse_impl(str, value, detect_base);
     }
 
-    bool parse(std::string_view str, int64_t& value, bool detectBase)
+    bool parse(std::string_view str, int64_t& value, bool detect_base)
     {
-        return parseImpl(str, value, detectBase);
+        return parse_impl(str, value, detect_base);
     }
 
-    bool parse(std::string_view str, uint8_t& value, bool detectBase)
+    bool parse(std::string_view str, uint8_t& value, bool detect_base)
     {
-        return parseImpl(str, value, detectBase);
+        return parse_impl(str, value, detect_base);
     }
 
-    bool parse(std::string_view str, uint16_t& value, bool detectBase)
+    bool parse(std::string_view str, uint16_t& value, bool detect_base)
     {
-        return parseImpl(str, value, detectBase);
+        return parse_impl(str, value, detect_base);
     }
 
-    bool parse(std::string_view str, uint32_t& value, bool detectBase)
+    bool parse(std::string_view str, uint32_t& value, bool detect_base)
     {
-        return parseImpl(str, value, detectBase);
+        return parse_impl(str, value, detect_base);
     }
 
-    bool parse(std::string_view str, uint64_t& value, bool detectBase)
+    bool parse(std::string_view str, uint64_t& value, bool detect_base)
     {
-        return parseImpl(str, value, detectBase);
+        return parse_impl(str, value, detect_base);
     }
 
     namespace
     {
-        int getDigit(char c)
+        int get_digit(char c)
         {
             return int(uint8_t(c) ^ 0x30u);
         }
 
         template <typename T>
-        std::optional<T> parseFloatingPoint(std::string_view str)
+        std::optional<T> parse_floating_point(std::string_view str)
         {
             if (str.empty())
                 return {};
@@ -295,7 +295,7 @@ namespace GridLib
             }
 
             // Get the integer value
-            auto value = T(getDigit(str[i]));
+            auto value = T(get_digit(str[i]));
             if (value > 9)
             {
                 if (str == "Infinity" || str == "null" || str == "+Infinity")
@@ -310,7 +310,7 @@ namespace GridLib
             bool underscore = false;
             for (++i; i < str.size(); ++i)
             {
-                auto digit = getDigit(str[i]);
+                auto digit = get_digit(str[i]);
                 if (digit <= 9)
                 {
                     value *= 10;
@@ -341,7 +341,7 @@ namespace GridLib
             {
                 for (++i; i < str.size(); ++i)
                 {
-                    auto digit = getDigit(str[i]);
+                    auto digit = get_digit(str[i]);
                     if (digit <= 9)
                     {
                         fraction *= 10;
@@ -371,10 +371,10 @@ namespace GridLib
                 if (++i == str.size())
                     return {};
 
-                bool negativeExponent = false;
+                bool negative_exponent = false;
                 if (str[i] == '-')
                 {
-                    negativeExponent = true;
+                    negative_exponent = true;
                     if (++i == str.size())
                         return {};
                 }
@@ -384,13 +384,13 @@ namespace GridLib
                         return {};
                 }
 
-                exponent += getDigit(str[i]);
+                exponent += get_digit(str[i]);
                 if (exponent > 9)
                     return {};
 
                 for (++i; i != str.size(); ++i)
                 {
-                    auto digit = getDigit(str[i]);
+                    auto digit = get_digit(str[i]);
                     if (digit <= 9)
                     {
                         exponent *= 10;
@@ -408,7 +408,7 @@ namespace GridLib
                     if (exponent > std::numeric_limits<T>::max_exponent10)
                         return {};
                 }
-                if (negativeExponent)
+                if (negative_exponent)
                     exponent = -exponent;
             }
 
@@ -425,11 +425,11 @@ namespace GridLib
         }
 
         template <typename T>
-        bool parseImpl(std::string_view str, T& value)
+        bool parse_impl(std::string_view str, T& value)
         {
-            if (auto parsedValue = parseFloatingPoint<T>(str))
+            if (auto parsed_value = parse_floating_point<T>(str))
             {
-                value = *parsedValue;
+                value = *parsed_value;
                 return true;
             }
             return false;
@@ -438,16 +438,16 @@ namespace GridLib
 
     bool parse(std::string_view str, float& value)
     {
-        return parseImpl(str, value);
+        return parse_impl(str, value);
     }
 
     bool parse(std::string_view str, double& value)
     {
-        return parseImpl(str, value);
+        return parse_impl(str, value);
     }
 
     bool parse(std::string_view str, long double& value)
     {
-        return parseImpl(str, value);
+        return parse_impl(str, value);
     }
 }

@@ -17,7 +17,7 @@ namespace GridLib
     constexpr float METERS_PER_FOOT = 0.3048;
     constexpr int16_t UNKNOWN = -32767;
 
-    Unit fromDemUnit(int16_t unit)
+    Unit from_dem_unit(int16_t unit)
     {
         switch (unit)
         {
@@ -32,89 +32,89 @@ namespace GridLib
         }
     }
 
-    Grid readDem(std::istream& stream,
-                 Unit desired_unit,
-                 const ProgressCallback& progress_callback)
+    Grid read_dem(std::istream& stream,
+                  GridLib::Unit desired_unit,
+                  const ProgressCallback& progress_callback)
     {
         Grid grid;
         DemReader reader(stream);
         auto& a = reader.record_a();
-        auto hUnit = fromDemUnit(a.horizontal_unit.value_or(0));
-        double cRes = a.x_resolution.value_or(1.0);
-        double rRes = a.y_resolution.value_or(1.0);
+        auto h_unit = from_dem_unit(a.horizontal_unit.value_or(0));
+        double c_res = a.x_resolution.value_or(1.0);
+        double r_res = a.y_resolution.value_or(1.0);
 
-        auto vUnit = fromDemUnit(a.vertical_unit.value_or(0));
-        double vRes = a.z_resolution.value_or(1.0);
+        auto v_unit = from_dem_unit(a.vertical_unit.value_or(0));
+        double v_res = a.z_resolution.value_or(1.0);
 
         if (a.longitude && a.latitude)
         {
-            grid.setSphericalCoords(
+            grid.set_spherical_coords(
                 SphericalCoords{to_degrees(*a.latitude),
-                                         to_degrees(*a.longitude)});
+                                to_degrees(*a.longitude)});
         }
         if (const auto& c = a.quadrangle_corners[0])
         {
-            grid.setPlanarCoords(
+            grid.set_planar_coords(
                 PlanarCoords{c->easting, c->northing,
-                                      a.ref_sys_zone.value_or(0)});
+                             a.ref_sys_zone.value_or(0)});
         }
         if (a.horizontal_datum)
         {
-            grid.setReferenceSystem(
+            grid.set_reference_system(
                 ReferenceSystem{*a.horizontal_datum,
-                                         a.vertical_datum.value_or(0)});
+                                a.vertical_datum.value_or(0)});
         }
         double factor = 1.0;
         if (desired_unit == Unit::METERS)
         {
-            if (vUnit == Unit::FEET)
+            if (v_unit == Unit::FEET)
             {
-                factor = vRes * METERS_PER_FOOT;
-                vRes = 1.0;
-                vUnit = Unit::METERS;
+                factor = v_res * METERS_PER_FOOT;
+                v_res = 1.0;
+                v_unit = Unit::METERS;
             }
             else
             {
-                factor = vRes;
-                vRes = 1.0;
+                factor = v_res;
+                v_res = 1.0;
             }
 
-            if (hUnit == Unit::FEET)
+            if (h_unit == Unit::FEET)
             {
-                rRes *= METERS_PER_FOOT;
-                cRes *= METERS_PER_FOOT;
-                hUnit = Unit::METERS;
+                r_res *= METERS_PER_FOOT;
+                c_res *= METERS_PER_FOOT;
+                h_unit = Unit::METERS;
             }
         }
         else if (desired_unit == Unit::FEET)
         {
-            if (vUnit == Unit::METERS)
+            if (v_unit == Unit::METERS)
             {
-                factor = vRes / METERS_PER_FOOT;
-                vRes = 1.0;
-                vUnit = Unit::FEET;
+                factor = v_res / METERS_PER_FOOT;
+                v_res = 1.0;
+                v_unit = Unit::FEET;
             }
             else
             {
-                factor = vRes;
-                vRes = 1.0;
+                factor = v_res;
+                v_res = 1.0;
             }
 
-            if (hUnit == Unit::METERS)
+            if (h_unit == Unit::METERS)
             {
-                rRes *= 1.0 / METERS_PER_FOOT;
-                cRes *= 1.0 / METERS_PER_FOOT;
-                hUnit = Unit::FEET;
+                r_res *= 1.0 / METERS_PER_FOOT;
+                c_res *= 1.0 / METERS_PER_FOOT;
+                h_unit = Unit::FEET;
             }
         }
 
         auto rot = a.rotation_angle.value_or(0);
-        auto rowAxis = rotate(Xyz::makeVector2(0.0, rRes), rot);
-        grid.setRowAxis({Xyz::makeVector3(rowAxis, 0.0), hUnit});
-        auto colAxis = rotate(Xyz::makeVector2(cRes, 0.0), rot);
-        grid.setColumnAxis({Xyz::makeVector3(colAxis, 0.0), hUnit});
-        grid.setVerticalAxis({{0, 0, vRes}, vUnit});
-        grid.setUnknownElevation(UNKNOWN * factor);
+        auto row_axis = rotate(Xyz::Vector2D(0.0, r_res), rot);
+        grid.set_row_axis({Xyz::make_vector3(row_axis, 0.0), h_unit});
+        auto col_axis = rotate(Xyz::Vector2D(c_res, 0.0), rot);
+        grid.set_column_axis({Xyz::make_vector3(col_axis, 0.0), h_unit});
+        grid.set_vertical_axis({{0, 0, v_res}, v_unit});
+        grid.set_unknown_elevation(UNKNOWN * factor);
 
         Chorasmia::MutableArrayView2D<double> values;
         auto rows = a.rows.value_or(1);
@@ -145,17 +145,17 @@ namespace GridLib
         return grid;
     }
 
-    GridLib::Grid readDem(const std::string& fileName,
-                          GridLib::Unit verticalUnit,
-                          const ProgressCallback& progressCallback)
+    GridLib::Grid read_dem(const std::string& file_name,
+                           GridLib::Unit vertical_unit,
+                           const ProgressCallback& progress_callback)
     {
-        std::ifstream file(fileName, std::ios::binary);
-        return readDem(file, verticalUnit, progressCallback);
+        std::ifstream file(file_name, std::ios::binary);
+        return read_dem(file, vertical_unit, progress_callback);
     }
 
-    bool isDem(const std::string& fileName)
+    bool is_dem(const std::string& file_name)
     {
-        auto ext = std::filesystem::path(fileName).extension().string();
+        auto ext = std::filesystem::path(file_name).extension().string();
         const char SUFFIX[] = {'.', 'D', 'E', 'M'};
         return std::equal(ext.begin(), ext.end(),
                           std::begin(SUFFIX), std::end(SUFFIX),

@@ -16,47 +16,47 @@ namespace GridLib
 {
     struct ElevationGradient
     {
-        explicit ElevationGradient(Chorasmia::IntervalMap<double, uint32_t> colorMap)
-            : m_ColorMap(std::move(colorMap))
+        explicit ElevationGradient(Chorasmia::IntervalMap<double, uint32_t> color_map)
+            : color_map_(std::move(color_map))
         {}
 
         uint32_t operator()(double elevation) const
         {
-            if (auto it = m_ColorMap.find(elevation); it != m_ColorMap.end())
+            if (auto it = color_map_.find(elevation); it != color_map_.end())
                 return it->second;
             return 0;
         }
 
-        Chorasmia::IntervalMap<double, uint32_t> m_ColorMap;
+        Chorasmia::IntervalMap<double, uint32_t> color_map_;
     };
 
-    Chorasmia::IntervalMap<double, uint32_t> makeMapGradient(
-        double seaLevelMin,
-        double seaLevelMax,
-        double groundLevel1Max,
-        double groundLevel2Max,
-        double groundLevel3Max,
-        double groundLevel4Max,
-        double groundLevel5Max);
+    Chorasmia::IntervalMap<double, uint32_t> make_map_gradient(
+        double sea_level_min,
+        double sea_level_max,
+        double ground_level_1_max,
+        double ground_level_2_max,
+        double ground_level_3_max,
+        double ground_level_4_max,
+        double ground_level_5_max);
 
-    Chorasmia::IntervalMap<double, uint32_t> makeDefaultGradient2500();
+    Chorasmia::IntervalMap<double, uint32_t> make_default_gradient_2500();
 
-    Chorasmia::IntervalMap<double, uint32_t> makeDefaultGradient9000();
+    Chorasmia::IntervalMap<double, uint32_t> make_default_gradient_9000();
 
     template <typename ColorFunc>
     Chorasmia::Array2D<uint32_t>
-    rasterizeRgba(const Chorasmia::ArrayView2D<double>& grid,
-                  ColorFunc colorFunc,
-                  Chorasmia::Index2DMode mode)
+    rasterize_rgba(const Chorasmia::ArrayView2D<double>& grid,
+                   ColorFunc color_func,
+                   Chorasmia::Index2DMode mode)
     {
         Chorasmia::Index2DMap mapping(grid.dimensions(), mode);
-        auto [rows, cols] = mapping.getToSize();
+        auto [rows, cols] = mapping.get_to_size();
         Chorasmia::Array2D<uint32_t> result(rows, cols);
-        auto* outIt = result.data();
+        auto* out_it = result.data();
         for (size_t i = 0; i < rows; ++i)
         {
             for (size_t j = 0; j < cols; ++j)
-                *outIt++ = colorFunc(grid(mapping.getFromIndices(i, j)));
+                *out_it++ = color_func(grid(mapping.get_from_indices(i, j)));
         }
 
         return result;
@@ -64,12 +64,12 @@ namespace GridLib
 
     template <typename ColorFunc>
     Chorasmia::Array2D<uint32_t>
-    rasterizeRgba(const GridView& grid, ColorFunc colorFunc,
-                  Chorasmia::Index2DMode mode = Chorasmia::Index2DMode::ROWS)
+    rasterize_rgba(const GridView& grid, ColorFunc color_func,
+                   Chorasmia::Index2DMode mode = Chorasmia::Index2DMode::ROWS)
     {
-        return rasterizeRgba(grid.elevations(),
-                             std::forward<ColorFunc>(colorFunc),
-                             mode);
+        return rasterize_rgba(grid.elevations(),
+                              std::forward<ColorFunc>(color_func),
+                              mode);
     }
 
     /**
@@ -77,5 +77,5 @@ namespace GridLib
      *  origin in its top left corner.
      */
     Chorasmia::Index2DMode
-    getIndexModeForTopLeftOrigin(const GridView& grid);
+    get_index_mode_for_top_left_origin(const GridView& grid);
 }

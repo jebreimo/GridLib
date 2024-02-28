@@ -15,14 +15,14 @@ namespace GridLib
     using ProgressCallback = std::function<bool (size_t, size_t)>;
 
     GridLib::Grid
-    readDem(std::istream& stream,
-            GridLib::Unit vertical_unit,
-            const ProgressCallback& progress_callback = {});
+    read_dem(std::istream& stream,
+             GridLib::Unit vertical_unit,
+             const ProgressCallback& progress_callback = {});
 
     GridLib::Grid
-    readDem(const std::string& fileName,
-            GridLib::Unit verticalUnit,
-            const ProgressCallback& progressCallback = {});
+    read_dem(const std::string& file_name,
+             GridLib::Unit vertical_unit,
+             const ProgressCallback& progress_callback = {});
 
-    bool isDem(const std::string& fileName);
+    bool is_dem(const std::string& file_name);
 }

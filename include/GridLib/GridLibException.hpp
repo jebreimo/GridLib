@@ -13,9 +13,7 @@ namespace GridLib
     class GridLibException : public std::runtime_error
     {
     public:
-        explicit GridLibException(const std::string& message) noexcept
-            : std::runtime_error(message)
-        {}
+        using std::runtime_error::runtime_error;
     };
 }
 

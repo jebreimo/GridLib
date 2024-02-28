@@ -12,13 +12,13 @@
 
 using Catch::Matchers::WithinAbs;
 
-TEST_CASE("Test getValue")
+TEST_CASE("Test get_value")
 {
     Chorasmia::Array2D<double> grid({1, 2, 3,
                                      4, 5, 6,
                                      7, 8, 9},
                                      3, 3);
-    auto value = GridLib::getValue(grid.view(), 0.5, 0.5);
+    auto value = GridLib::get_value(grid.view(), 0.5, 0.5);
     REQUIRE_THAT(value, WithinAbs(3, 1e-12));
 }
 
@@ -28,7 +28,7 @@ TEST_CASE("Something")
                                      4, 5, 6,
                                      7, 8, 9},
                                     3, 3);
-    auto contour = GridLib::makeProfile(grid.view(), {0.5, 0.5}, {1.5, 1.5}, 2);
+    auto contour = GridLib::make_profile(grid.view(), {0.5, 0.5}, {1.5, 1.5}, 2);
     REQUIRE(contour.size() == 3);
     REQUIRE_THAT(contour[0][2], WithinAbs(3, 1e-12));
     REQUIRE_THAT(contour[1][2], WithinAbs(5, 1e-12));

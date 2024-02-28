@@ -12,7 +12,7 @@ namespace GridLib
     #define TO_STRING(name) \
         case Unit::name: return #name
 
-    std::string_view toString(Unit unit)
+    std::string_view to_string(Unit unit)
     {
         switch (unit)
         {
@@ -28,7 +28,7 @@ namespace GridLib
         if (str == #name) \
             return Unit::name
 
-    std::optional<Unit> parseUnit(std::string_view str)
+    std::optional<Unit> parse_unit(std::string_view str)
     {
         CHECK_STRING(str, METERS);
         CHECK_STRING(str, FEET);

@@ -26,10 +26,10 @@ namespace GridLib
         void clear();
 
         [[nodiscard]]
-        size_t rowCount() const;
+        size_t row_count() const;
 
         [[nodiscard]]
-        size_t columnCount() const;
+        size_t col_count() const;
 
         void resize(size_t rows, size_t columns);
 
@@ -39,56 +39,56 @@ namespace GridLib
         Chorasmia::MutableArrayView2D<double> elevations();
 
         [[nodiscard]]
-        std::optional<double> unknownElevation() const;
+        std::optional<double> unknown_elevation() const;
 
-        Grid& setUnknownElevation(std::optional<double> value);
-
-        [[nodiscard]]
-        const Axis& rowAxis() const;
-
-        Grid& setRowAxis(const Axis& axis);
+        Grid& set_unknown_elevation(std::optional<double> value);
 
         [[nodiscard]]
-        const Axis& columnAxis() const;
+        const Axis& row_axis() const;
 
-        Grid& setColumnAxis(const Axis& axis);
-
-        [[nodiscard]]
-        const Axis& verticalAxis() const;
-
-        Grid& setVerticalAxis(const Axis& axis);
+        Grid& set_row_axis(const Axis& axis);
 
         [[nodiscard]]
-        const std::optional<SphericalCoords>& sphericalCoords() const;
+        const Axis& column_axis() const;
 
-        Grid& setSphericalCoords(const std::optional<SphericalCoords>& coords);
-
-        [[nodiscard]]
-        const std::optional<PlanarCoords>& planarCoords() const;
-
-        Grid& setPlanarCoords(const std::optional<PlanarCoords>& coords);
+        Grid& set_column_axis(const Axis& axis);
 
         [[nodiscard]]
-        const std::optional<ReferenceSystem>& referenceSystem() const;
+        const Axis& vertical_axis() const;
 
-        Grid& setReferenceSystem(std::optional<ReferenceSystem> system);
+        Grid& set_vertical_axis(const Axis& axis);
+
+        [[nodiscard]]
+        const std::optional<SphericalCoords>& spherical_coords() const;
+
+        Grid& set_spherical_coords(const std::optional<SphericalCoords>& coords);
+
+        [[nodiscard]]
+        const std::optional<PlanarCoords>& planar_coords() const;
+
+        Grid& set_planar_coords(const std::optional<PlanarCoords>& coords);
+
+        [[nodiscard]]
+        const std::optional<ReferenceSystem>& reference_system() const;
+
+        Grid& set_reference_system(std::optional<ReferenceSystem> system);
 
         [[nodiscard]]
         GridView subgrid(size_t row, size_t column,
-                         size_t nrows = SIZE_MAX,
-                         size_t ncolumns = SIZE_MAX) const;
+                         size_t n_rows = SIZE_MAX,
+                         size_t n_cols = SIZE_MAX) const;
 
         [[nodiscard]]
         Chorasmia::Array2D<double> release();
     private:
-        Chorasmia::Array2D<double> m_Grid;
-        std::optional<double> m_UnknownElevation;
-        Axis m_RowAxis;
-        Axis m_ColumnAxis;
-        Axis m_VerticalAxis;
-        std::optional<SphericalCoords> m_SphericalCoords;
-        std::optional<PlanarCoords> m_PlanarCoords;
-        std::optional<ReferenceSystem> m_ReferenceSystem;
+        Chorasmia::Array2D<double> grid_;
+        std::optional<double> unknown_elevation_;
+        Axis row_axis_;
+        Axis column_axis_;
+        Axis vertical_axis_;
+        std::optional<SphericalCoords> spherical_coords_;
+        std::optional<PlanarCoords> planar_coords_;
+        std::optional<ReferenceSystem> reference_system_;
     };
 
     bool operator==(const Grid& a, const Grid& b);

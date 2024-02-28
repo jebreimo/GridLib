@@ -18,128 +18,128 @@ namespace GridLib
     {}
 
     Grid::Grid(Chorasmia::Array2D<double> values)
-        : m_Grid(std::move(values)),
-          m_RowAxis{{1, 0, 0}, Unit::METERS},
-          m_ColumnAxis{{0, -1, 0}, Unit::METERS},
-          m_VerticalAxis{{0, 0, 1}, Unit::METERS}
+        : grid_(std::move(values)),
+          row_axis_{{1, 0, 0}, Unit::METERS},
+          column_axis_{{0, -1, 0}, Unit::METERS},
+          vertical_axis_{{0, 0, 1}, Unit::METERS}
     {}
 
     void Grid::clear()
     {
-        m_Grid.fill(0);
+        grid_.fill(0);
     }
 
-    size_t Grid::rowCount() const
+    size_t Grid::row_count() const
     {
-        return m_Grid.rowCount();
+        return grid_.row_count();
     }
 
-    size_t Grid::columnCount() const
+    size_t Grid::col_count() const
     {
-        return m_Grid.columnCount();
+        return grid_.col_count();
     }
 
     void Grid::resize(size_t rows, size_t columns)
     {
-        m_Grid.resize(rows, columns);
+        grid_.resize(rows, columns);
     }
 
     Chorasmia::ArrayView2D<double> Grid::elevations() const
     {
-        return m_Grid.view();
+        return grid_.view();
     }
 
     Chorasmia::MutableArrayView2D<double> Grid::elevations()
     {
-        return {m_Grid.data(), m_Grid.rowCount(), m_Grid.columnCount()};
+        return {grid_.data(), grid_.row_count(), grid_.col_count()};
     }
 
-    std::optional<double> Grid::unknownElevation() const
+    std::optional<double> Grid::unknown_elevation() const
     {
-        return m_UnknownElevation;
+        return unknown_elevation_;
     }
 
-    Grid& Grid::setUnknownElevation(std::optional<double> elevation)
+    Grid& Grid::set_unknown_elevation(std::optional<double> value)
     {
-        m_UnknownElevation = elevation;
+        unknown_elevation_ = value;
         return *this;
     }
 
-    const Axis& Grid::rowAxis() const
+    const Axis& Grid::row_axis() const
     {
-        return m_RowAxis;
+        return row_axis_;
     }
 
-    Grid& Grid::setRowAxis(const Axis& axis)
+    Grid& Grid::set_row_axis(const Axis& axis)
     {
-        m_RowAxis = axis;
+        row_axis_ = axis;
         return *this;
     }
 
-    const Axis& Grid::columnAxis() const
+    const Axis& Grid::column_axis() const
     {
-        return m_ColumnAxis;
+        return column_axis_;
     }
 
-    Grid& Grid::setColumnAxis(const Axis& axis)
+    Grid& Grid::set_column_axis(const Axis& axis)
     {
-        m_ColumnAxis = axis;
+        column_axis_ = axis;
         return *this;
     }
 
-    const Axis& Grid::verticalAxis() const
+    const Axis& Grid::vertical_axis() const
     {
-        return m_VerticalAxis;
+        return vertical_axis_;
     }
 
-    Grid& Grid::setVerticalAxis(const Axis& axis)
+    Grid& Grid::set_vertical_axis(const Axis& axis)
     {
-        m_VerticalAxis = axis;
+        vertical_axis_ = axis;
         return *this;
     }
 
-    const std::optional<SphericalCoords>& Grid::sphericalCoords() const
+    const std::optional<SphericalCoords>& Grid::spherical_coords() const
     {
-        return m_SphericalCoords;
+        return spherical_coords_;
     }
 
-    Grid& Grid::setSphericalCoords(const std::optional<SphericalCoords>& coords)
+    Grid& Grid::set_spherical_coords(const std::optional<SphericalCoords>& coords)
     {
-        m_SphericalCoords = coords;
+        spherical_coords_ = coords;
         return *this;
     }
 
-    const std::optional<PlanarCoords>& Grid::planarCoords() const
+    const std::optional<PlanarCoords>& Grid::planar_coords() const
     {
-        return m_PlanarCoords;
+        return planar_coords_;
     }
 
-    Grid& Grid::setPlanarCoords(const std::optional<PlanarCoords>& coords)
+    Grid& Grid::set_planar_coords(const std::optional<PlanarCoords>& coords)
     {
-        m_PlanarCoords = coords;
+        planar_coords_ = coords;
         return *this;
     }
 
-    const std::optional<ReferenceSystem>& Grid::referenceSystem() const
+    const std::optional<ReferenceSystem>& Grid::reference_system() const
     {
-        return m_ReferenceSystem;
+        return reference_system_;
     }
 
-    Grid& Grid::setReferenceSystem(std::optional<ReferenceSystem> system)
+    Grid& Grid::set_reference_system(std::optional<ReferenceSystem> system)
     {
-        m_ReferenceSystem = system;
+        reference_system_ = system;
         return *this;
     }
 
     GridView Grid::subgrid(size_t row, size_t column,
-                           size_t nrows, size_t ncolumns) const
+                           size_t n_rows, size_t n_cols) const
     {
-        return GridView(*this).subgrid(row, column, nrows, ncolumns);
+        return GridView(*this).subgrid(row, column, n_rows, n_cols);
     }
 
     Chorasmia::Array2D<double> Grid::release()
     {
-        return std::move(m_Grid);
+        return std::move(grid_);
     }
 
     bool operator==(const Grid& a, const Grid& b)
@@ -147,13 +147,13 @@ namespace GridLib
         if (&a == &b)
             return true;
         return a.elevations() == b.elevations()
-               && a.unknownElevation() == b.unknownElevation()
-               && a.rowAxis() == b.rowAxis()
-               && a.columnAxis() == b.columnAxis()
-               && a.verticalAxis() == b.verticalAxis()
-               && a.sphericalCoords() == b.sphericalCoords()
-               && a.planarCoords() == b.planarCoords()
-               && a.referenceSystem() == b.referenceSystem();
+               && a.unknown_elevation() == b.unknown_elevation()
+               && a.row_axis() == b.row_axis()
+               && a.column_axis() == b.column_axis()
+               && a.vertical_axis() == b.vertical_axis()
+               && a.spherical_coords() == b.spherical_coords()
+               && a.planar_coords() == b.planar_coords()
+               && a.reference_system() == b.reference_system();
     }
 
     bool operator!=(const Grid& a, const Grid& b)

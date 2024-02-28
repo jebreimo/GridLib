@@ -45,6 +45,6 @@ namespace GridLib
         void move_to_first_record_b();
 
         struct Data;
-        std::unique_ptr<Data> m_Data;
+        std::unique_ptr<Data> data_;
     };
 }

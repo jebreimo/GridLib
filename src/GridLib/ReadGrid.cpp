@@ -18,7 +18,7 @@
 namespace GridLib
 {
     template <typename T, size_t N>
-    Xyz::Vector<T, N> readVector(Yson::Reader& reader)
+    Xyz::Vector<T, N> read_vector(Yson::Reader& reader)
     {
         Xyz::Vector<T, N> result;
         reader.enter();
@@ -33,7 +33,7 @@ namespace GridLib
         return result;
     }
 
-    Axis readAxis(Yson::Reader& reader)
+    Axis read_axis(Yson::Reader& reader)
     {
         using Yson::read;
         Axis axis;
@@ -41,18 +41,18 @@ namespace GridLib
         {
             if (key == "unit")
             {
-                axis.unit = parseUnit(read<std::string>(reader))
+                axis.unit = parse_unit(read<std::string>(reader))
                     .value_or(Unit::UNDEFINED);
             }
             else if (key == "direction")
             {
-                axis.direction = readVector<double, 3>(reader);
+                axis.direction = read_vector<double, 3>(reader);
             }
         }
         return axis;
     }
 
-    PlanarCoords readPlanarCoords(Yson::Reader& reader)
+    PlanarCoords read_planar_coords(Yson::Reader& reader)
     {
         using Yson::read;
         PlanarCoords coords;
@@ -68,7 +68,7 @@ namespace GridLib
         return coords;
     }
 
-    std::optional<SphericalCoords> readSphericalCoords(Yson::Reader& reader)
+    std::optional<SphericalCoords> read_spherical_coords(Yson::Reader& reader)
     {
         using Yson::read;
         SphericalCoords coords;
@@ -82,7 +82,7 @@ namespace GridLib
         return coords;
     }
 
-    ReferenceSystem readReferenceSystem(Yson::Reader& reader)
+    ReferenceSystem read_reference_system(Yson::Reader& reader)
     {
         using Yson::read;
         ReferenceSystem system;
@@ -96,46 +96,46 @@ namespace GridLib
         return system;
     }
 
-    void readMetadata(Yson::Reader& reader, Grid& grid)
+    void read_metadata(Yson::Reader& reader, Grid& grid)
     {
         using Yson::read;
-        size_t rowCount = 0;
-        size_t columnCount = 0;
+        size_t row_count = 0;
+        size_t column_count = 0;
         for (const auto& key : Yson::keys(reader))
         {
             if (key == "row_count")
-                rowCount = read<uint32_t>(reader);
+                row_count = read<uint32_t>(reader);
             else if (key == "column_count")
-                columnCount = read<uint32_t>(reader);
+                column_count = read<uint32_t>(reader);
             else if (key == "row_axis")
-                grid.setRowAxis(readAxis(reader));
+                grid.set_row_axis(read_axis(reader));
             else if (key == "column_axis")
-                grid.setColumnAxis(readAxis(reader));
+                grid.set_column_axis(read_axis(reader));
             else if (key == "vertical_axis")
-                grid.setVerticalAxis(readAxis(reader));
+                grid.set_vertical_axis(read_axis(reader));
             else if (key == "planar_coords")
-                grid.setPlanarCoords(readPlanarCoords(reader));
+                grid.set_planar_coords(read_planar_coords(reader));
             else if (key == "spherical_coords")
-                grid.setSphericalCoords(readSphericalCoords(reader));
+                grid.set_spherical_coords(read_spherical_coords(reader));
             else if (key == "reference_system")
-                grid.setReferenceSystem(readReferenceSystem(reader));
+                grid.set_reference_system(read_reference_system(reader));
         }
-        grid.resize(rowCount, columnCount);
+        grid.resize(row_count, column_count);
     }
 
-    void readElevations(Yson::Reader& reader, Grid& grid)
+    void read_elevations(Yson::Reader& reader, Grid& grid)
     {
         using Yson::read;
         auto array = grid.elevations().array();
         size_t index = 0;
-        for (Yson::ArrayIterator rowIt(reader); rowIt.next();)
+        for (Yson::ArrayIterator row_it(reader); row_it.next();)
         {
-            for (Yson::ArrayIterator colIt(reader); colIt.next();)
+            for (Yson::ArrayIterator col_it(reader); col_it.next();)
             {
                 if (reader.readNull())
                 {
-                    if (!grid.unknownElevation())
-                        grid.setUnknownElevation(DBL_TRUE_MIN);
+                    if (!grid.unknown_elevation())
+                        grid.set_unknown_elevation(DBL_TRUE_MIN);
                     array[index++] = DBL_TRUE_MIN;
                 }
                 else
@@ -146,33 +146,33 @@ namespace GridLib
         }
     }
 
-    Grid readGrid(Yson::Reader& reader)
+    Grid read_grid(Yson::Reader& reader)
     {
         Grid grid;
         for (const auto& key : Yson::keys(reader))
         {
             if (key == "metadata")
-                readMetadata(reader, grid);
+                read_metadata(reader, grid);
             else if (key == "elevations")
-                readElevations(reader, grid);
+                read_elevations(reader, grid);
         }
         return grid;
     }
 
-    Grid readJsonGrid(std::istream& stream)
+    Grid read_json_grid(std::istream& stream)
     {
-        return readGrid(*Yson::makeReader(stream));
+        return read_grid(*Yson::makeReader(stream));
     }
 
-    Grid readJsonGrid(const std::string& fileName)
+    Grid read_json_grid(const std::string& file_name)
     {
-        return readGrid(*Yson::makeReader(fileName));
+        return read_grid(*Yson::makeReader(file_name));
     }
 
     #define CASE_ENUM(type, value) \
         case type::value: return #value;
 
-    std::string toString(GridFileType type)
+    std::string to_string(GridFileType type)
     {
         switch (type)
         {
@@ -186,26 +186,26 @@ namespace GridLib
         }
     }
 
-    Grid readGrid(std::istream& stream, GridFileType type)
+    Grid read_grid(std::istream& stream, GridFileType type)
     {
         switch (type)
         {
         case GridFileType::GRIDLIB_JSON:
-            return readJsonGrid(stream);
+            return read_json_grid(stream);
 #ifdef GRIDLIB_DEM_SUPPORT
         case GridFileType::DEM:
-            return readDem(stream, Unit::UNDEFINED);
+            return read_dem(stream, Unit::UNDEFINED);
 #endif
         default:
-            GRIDLIB_THROW("Can not read stream of type " + toString(type));
+            GRIDLIB_THROW("Can not read stream of type " + to_string(type));
         }
         return {};
     }
 
-    GridFileType detectFileType(const std::string& fileName)
+    GridFileType detect_file_type(const std::string& fileName)
     {
 #ifdef GRIDLIB_DEM_SUPPORT
-        if (isDem(fileName))
+        if (is_dem(fileName))
             return GridFileType::DEM;
 #endif
         if (Yson::makeReader(fileName))
@@ -213,21 +213,21 @@ namespace GridLib
         return GridFileType::UNKNOWN;
     }
 
-    Grid readGrid(const std::string& fileName, GridFileType type)
+    Grid read_grid(const std::string& file_name, GridFileType type)
     {
         if (type == GridFileType::AUTO_DETECT)
-            type = detectFileType(fileName);
+            type = detect_file_type(file_name);
 
         switch (type)
         {
         case GridFileType::GRIDLIB_JSON:
-            return readJsonGrid(fileName);
+            return read_json_grid(file_name);
 #ifdef GRIDLIB_DEM_SUPPORT
         case GridFileType::DEM:
-            return readDem(fileName, Unit::METERS);
+            return read_dem(file_name, Unit::METERS);
 #endif
         default:
-            GRIDLIB_THROW("Unsupported file type: " + fileName);
+            GRIDLIB_THROW("Unsupported file type: " + file_name);
         }
     }
 }

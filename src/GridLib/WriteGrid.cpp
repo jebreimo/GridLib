@@ -18,7 +18,7 @@ namespace GridLib
         {
             using namespace Yson;
             writer.beginObject();
-            writer.key("unit").value(std::string(toString(axis.unit)));
+            writer.key("unit").value(std::string(to_string(axis.unit)));
             writer.key("direction")
                 .beginArray(JsonParameters(JsonFormatting::FLAT))
                 .value(axis.direction[0])
@@ -31,16 +31,16 @@ namespace GridLib
         void writeMetadata(Yson::Writer& writer, const GridView& grid)
         {
             writer.beginObject();
-            writer.key("row_count").value(uint64_t(grid.rowCount()));
-            writer.key("column_count").value(uint64_t(grid.columnCount()));
+            writer.key("row_count").value(uint64_t(grid.row_count()));
+            writer.key("column_count").value(uint64_t(grid.col_count()));
             writer.key("row_axis");
-            writeAxis(writer, grid.rowAxis());
+            writeAxis(writer, grid.row_axis());
             writer.key("column_axis");
-            writeAxis(writer, grid.columnAxis());
+            writeAxis(writer, grid.col_axis());
             writer.key("vertical_axis");
-            writeAxis(writer, grid.verticalAxis());
+            writeAxis(writer, grid.vertical_axis());
 
-            if (const auto& coords = grid.planarCoords())
+            if (const auto& coords = grid.planar_coords())
             {
                 writer.key("planar_coords")
                     .beginObject()
@@ -50,7 +50,7 @@ namespace GridLib
                     .endObject();
             }
 
-            if (const auto& coords = grid.sphericalCoords())
+            if (const auto& coords = grid.spherical_coords())
             {
                 writer.key("spherical_coords")
                     .beginObject()
@@ -59,7 +59,7 @@ namespace GridLib
                     .endObject();
             }
 
-            if (const auto& refSys = grid.referenceSystem())
+            if (const auto& refSys = grid.reference_system())
             {
                 writer.key("reference_system")
                     .beginObject()
@@ -94,22 +94,22 @@ namespace GridLib
         }
     }
 
-    void writeJsonGrid(std::ostream& stream, const GridView& grid)
+    void write_json_grid(std::ostream& stream, const GridView& grid)
     {
         Yson::JsonWriter writer(stream, Yson::JsonFormatting::FORMAT);
         writer.beginObject();
         writer.key("metadata");
         writeMetadata(writer, grid);
         writer.key("elevations");
-        writeElevations(writer, grid.elevations(), grid.unknownElevation());
+        writeElevations(writer, grid.elevations(), grid.unknown_elevation());
         writer.endObject();
     }
 
-    void writeJsonGrid(const std::string& fileName, const GridView& grid)
+    void write_json_grid(const std::string& file_name, const GridView& grid)
     {
-        std::ofstream file(fileName);
+        std::ofstream file(file_name);
         if (!file)
-            GRIDLIB_THROW("Can not create file: " + fileName);
-        writeJsonGrid(file, grid);
+            GRIDLIB_THROW("Can not create file: " + file_name);
+        write_json_grid(file, grid);
     }
 }
