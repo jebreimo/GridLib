@@ -7,8 +7,9 @@
 //****************************************************************************
 #pragma once
 #include <iosfwd>
-#include <vector>
+#include <memory>
 #include <optional>
+#include <vector>
 #include "RecordA.hpp"
 #include "RecordC.hpp"
 #include "RecordB.hpp"
@@ -18,7 +19,7 @@ namespace GridLib
     class DemReader
     {
     public:
-        DemReader(std::istream& stream);
+        explicit DemReader(std::istream& stream);
 
         DemReader(DemReader&& rhs) noexcept;
 
