@@ -36,10 +36,11 @@ namespace GridLib
                                 int32_t(to_color.a - from_color.a)};
             for (int32_t i = 0; i < int32_t(steps); ++i)
             {
-                Color c{.a = uint8_t(base[3] + (delta[3] * i) / int32_t(steps - 1)),
-                    .b = uint8_t(base[2] + (delta[2] * i) / int32_t(steps - 1)),
+                Color c{
+                    .r = uint8_t(base[0] + (delta[0] * i) / int32_t(steps - 1)),
                     .g = uint8_t(base[1] + (delta[1] * i) / int32_t(steps - 1)),
-                    .r = uint8_t(base[0] + (delta[0] * i) / int32_t(steps - 1))};
+                    .b = uint8_t(base[2] + (delta[2] * i) / int32_t(steps - 1)),
+                    .a = uint8_t(base[3] + (delta[3] * i) / int32_t(steps - 1))};
                 map.insert(from_height + (to_height - from_height) * i / steps,
                            from_height + (to_height - from_height) * (i + 1) / steps,
                            c.rgba);
@@ -159,6 +160,8 @@ namespace GridLib
                     return Chorasmia::Index2DMode::REVERSED_ROWS_REVERSED_ORDER;
                 else
                     return Chorasmia::Index2DMode::REVERSED_ROWS;
+            default:
+                GRIDLIB_THROW("Invalid source coordinate axes.");
             }
         }
 

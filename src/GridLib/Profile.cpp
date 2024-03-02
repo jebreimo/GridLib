@@ -64,7 +64,8 @@ namespace GridLib
         for (size_t i = 0; i <= steps; ++i)
         {
             auto pos = from + double(i) * step;
-            if (0 <= pos[0] <= grid.row_count() && 0 <= pos[1] <= grid.col_count())
+            if (0 <= pos[0] && size_t(pos[0]) + 1 <= grid.row_count()
+                && 0 <= pos[1] && size_t(pos[1]) + 1 <= grid.col_count())
             {
                 result.push_back(Xyz::make_vector3(pos, get_value(grid, pos[0], pos[1])));
             }
