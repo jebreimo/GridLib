@@ -12,8 +12,7 @@
 
 namespace GridLib
 {
-    double get_value(Chorasmia::ArrayView2D<double> grid,
-                     double x, double y);
+    double get_value(const GridView& grid, const Xyz::Vector2D& pos);
 
     std::vector<Xyz::Vector3D>
     make_profile(Chorasmia::ArrayView2D<double> grid,

@@ -5,6 +5,7 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
+#include <GridLib/Grid.hpp>
 #include <GridLib/Profile.hpp>
 #include <Chorasmia/Array2D.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -14,11 +15,11 @@ using Catch::Matchers::WithinAbs;
 
 TEST_CASE("Test get_value")
 {
-    Chorasmia::Array2D<double> grid({1, 2, 3,
-                                     4, 5, 6,
-                                     7, 8, 9},
-                                     3, 3);
-    auto value = GridLib::get_value(grid.view(), 0.5, 0.5);
+    GridLib::Grid grid({{1, 2, 3,
+                         4, 5, 6,
+                         7, 8, 9},
+                        3, 3});
+    auto value = GridLib::get_value(grid, {0.5, 0.5});
     REQUIRE_THAT(value, WithinAbs(3, 1e-12));
 }
 

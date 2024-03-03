@@ -37,7 +37,7 @@ endif ()
 include(FetchContent)
 FetchContent_Declare(chorasmia
     GIT_REPOSITORY "https://github.com/jebreimo/Chorasmia.git"
-    GIT_TAG v0.2.0)
+    GIT_TAG master)
 FetchContent_Declare(xyz
     GIT_REPOSITORY "https://github.com/jebreimo/Xyz.git"
     GIT_TAG v0.3.1)
