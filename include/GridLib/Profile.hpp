@@ -7,6 +7,7 @@
 //****************************************************************************
 #pragma once
 #include <vector>
+#include <Xyz/Matrix.hpp>
 #include <Xyz/Vector.hpp>
 #include "GridView.hpp"
 
@@ -14,15 +15,24 @@ namespace GridLib
 {
     double get_value(const GridView& grid, const Xyz::Vector2D& pos);
 
-    std::vector<Xyz::Vector3D>
+    [[nodiscard]] std::vector<Xyz::Vector3D>
     make_profile(Chorasmia::ArrayView2D<double> grid,
                  const Xyz::Vector2D& from,
                  const Xyz::Vector2D& to,
                  size_t steps);
 
-    std::vector<Xyz::Vector3D>
-    make_profile(const GridView& grid,
-                 const Xyz::Vector2D& from,
-                 const Xyz::Vector2D& to,
-                 size_t steps);
+    class ProfileMaker
+    {
+    public:
+        explicit ProfileMaker(const GridView& grid);
+
+        [[nodiscard]] std::vector<Xyz::Vector3D>
+        make_profile(const Xyz::Vector2D& from,
+                     const Xyz::Vector2D& to,
+                     size_t steps) const;
+    private:
+        const GridView& grid_;
+        const Xyz::Matrix4D transform_;
+        const Xyz::Matrix4D inverse_transform_;
+    };
 }

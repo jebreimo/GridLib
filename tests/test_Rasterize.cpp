@@ -23,25 +23,25 @@ TEST_CASE("Test get_index_mode_for_top_left_origin")
         return grid;
     };
 
-    REQUIRE(get_index_mode_for_top_left_origin(grid({1, 0}, {0, -1}))
+    REQUIRE(get_index_mode_for_top_left_origin(grid({1, 0}, {0, -1}).view())
             == Chorasmia::Index2DMode::ROWS);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({1, 0}, {0, 1}))
+    REQUIRE(get_index_mode_for_top_left_origin(grid({1, 0}, {0, 1}).view())
             == Chorasmia::Index2DMode::ROWS_REVERSED_ORDER);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({-1, 0}, {0, -1}))
+    REQUIRE(get_index_mode_for_top_left_origin(grid({-1, 0}, {0, -1}).view())
             == Chorasmia::Index2DMode::REVERSED_ROWS);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({-1, 0}, {0, 1}))
+    REQUIRE(get_index_mode_for_top_left_origin(grid({-1, 0}, {0, 1}).view())
             == Chorasmia::Index2DMode::REVERSED_ROWS_REVERSED_ORDER);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({0, -1}, {1, 0}))
+    REQUIRE(get_index_mode_for_top_left_origin(grid({0, -1}, {1, 0}).view())
             == Chorasmia::Index2DMode::COLUMNS);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({0, 1}, {1, 0}))
+    REQUIRE(get_index_mode_for_top_left_origin(grid({0, 1}, {1, 0}).view())
             == Chorasmia::Index2DMode::COLUMNS_REVERSED_ORDER);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({0, -1}, {-1, 0}))
+    REQUIRE(get_index_mode_for_top_left_origin(grid({0, -1}, {-1, 0}).view())
             == Chorasmia::Index2DMode::REVERSED_COLUMNS);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({0, 1}, {-1, 0}))
+    REQUIRE(get_index_mode_for_top_left_origin(grid({0, 1}, {-1, 0}).view())
             == Chorasmia::Index2DMode::REVERSED_COLUMNS_REVERSED_ORDER);
 
-    REQUIRE(get_index_mode_for_top_left_origin(grid({1, 0.99}, {0.99, -1}))
+    REQUIRE(get_index_mode_for_top_left_origin(grid({1, 0.99}, {0.99, -1}).view())
             == Chorasmia::Index2DMode::ROWS);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({1, 1.01}, {1.01, -1}))
+    REQUIRE(get_index_mode_for_top_left_origin(grid({1, 1.01}, {1.01, -1}).view())
             == Chorasmia::Index2DMode::COLUMNS_REVERSED_ORDER);
 }

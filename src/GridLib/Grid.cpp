@@ -29,6 +29,11 @@ namespace GridLib
         grid_.fill(0);
     }
 
+    GridView Grid::view() const
+    {
+        return GridView(*this);
+    }
+
     size_t Grid::row_count() const
     {
         return grid_.row_count();

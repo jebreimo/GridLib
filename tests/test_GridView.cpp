@@ -14,7 +14,7 @@ TEST_CASE("test get_min_max_elevation")
     Chorasmia::Array2D<double> values({-999, -1, 4, 3, 1, -4}, 2, 3);
     GridLib::Grid grid(std::move(values));
     grid.set_unknown_elevation(-999);
-    auto [min, max] = GridLib::get_min_max_elevation(grid);
+    auto [min, max] = GridLib::get_min_max_elevation(grid.view());
     REQUIRE(min == -4);
     REQUIRE(max == 4);
 }

@@ -24,7 +24,7 @@ TEST_CASE("Test write_json_grid and read_grid")
     grid.set_column_axis(GridLib::Axis{{10, 0, 0}, GridLib::Unit::METERS});
     grid.set_vertical_axis(GridLib::Axis{{0, 0, 1}, GridLib::Unit::METERS});
     std::stringstream ss;
-    GridLib::write_json_grid(ss, grid);
+    GridLib::write_json_grid(ss, grid.view());
     auto in_grid = GridLib::read_json_grid(ss);
     REQUIRE(grid == in_grid);
 }

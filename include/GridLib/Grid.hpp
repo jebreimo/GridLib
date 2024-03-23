@@ -26,6 +26,9 @@ namespace GridLib
         void clear();
 
         [[nodiscard]]
+        GridView view() const;
+
+        [[nodiscard]]
         size_t row_count() const;
 
         [[nodiscard]]

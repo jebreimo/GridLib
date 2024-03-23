@@ -19,7 +19,7 @@ namespace GridLib
     public:
         GridView() noexcept;
 
-        GridView(const Grid& grid) noexcept;
+        explicit GridView(const Grid& grid) noexcept;
 
         GridView(const Grid& grid,
                  Chorasmia::ArrayView2D<double> elevations,
@@ -71,5 +71,6 @@ namespace GridLib
         std::optional<PlanarCoords> planar_coords_;
     };
 
+    [[nodiscard]]
     std::pair<double, double> get_min_max_elevation(const GridView& grid);
 }
