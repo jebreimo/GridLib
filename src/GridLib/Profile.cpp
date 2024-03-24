@@ -111,23 +111,9 @@ namespace GridLib
         return result;
     }
 
-    std::vector<Xyz::Vector3D>
-    make_profile(const GridView& grid,
-                 const Xyz::Vector2D& from,
-                 const Xyz::Vector2D& to,
-                 size_t steps)
-    {
-        auto transform = get_transform(grid);
-
-        auto profile = make_profile(grid.elevations(), from, to, steps);
-        for (auto& point : profile)
-            point = transform_point(transform, point);
-        return profile;
-    }
-
     ProfileMaker::ProfileMaker(const GridView& grid)
         : grid_(grid),
-          transform_(get_transform(grid)),
+          transform_(get_transform(grid_)),
           inverse_transform_(invert(transform_))
     {}
 

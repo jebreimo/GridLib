@@ -31,7 +31,7 @@ namespace GridLib
                      const Xyz::Vector2D& to,
                      size_t steps) const;
     private:
-        const GridView& grid_;
+        GridView grid_;
         const Xyz::Matrix4D transform_;
         const Xyz::Matrix4D inverse_transform_;
     };
