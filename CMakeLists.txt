@@ -58,10 +58,12 @@ endfunction()
 set(GridLib_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (GridLib_DEM_SUPPORT)
-    add_subdirectory(extras/DemFiles)
+    add_subdirectory(src/DemFiles)
 endif ()
 
 include(GNUInstallDirs)
+
+configure_file(src/GridLib/GridLibVersion.hpp.in GridLibVersion.hpp @ONLY)
 
 add_library(GridLib
     include/GridLib/Grid.hpp
@@ -79,18 +81,14 @@ add_library(GridLib
     src/GridLib/WriteGrid.cpp
     src/GridLib/Rasterize.cpp
     include/GridLib/Rasterize.hpp
-    )
+)
 
 target_include_directories(GridLib
     PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    )
-
-target_compile_definitions(GridLib
-    PUBLIC
-        $<$<BOOL:GridLib_DEM_SUPPORT>:GRIDLIB_DEM_SUPPORT>
-    )
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+)
 
 target_link_libraries(GridLib
     PUBLIC
@@ -99,7 +97,7 @@ target_link_libraries(GridLib
         $<$<BOOL:GridLib_DEM_SUPPORT>:GridLib_ReadDem>
     PRIVATE
         Yson::Yson
-    )
+)
 
 GridLib_enable_all_warnings(GridLib)
 
@@ -112,7 +110,8 @@ endif ()
 
 export(TARGETS GridLib
     NAMESPACE GridLib::
-    FILE GridLibConfig.cmake)
+    FILE GridLibConfig.cmake
+)
 
 if (GridLib_INSTALL)
     install(TARGETS GridLib
@@ -120,7 +119,7 @@ if (GridLib_INSTALL)
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        )
+    )
 
     install(EXPORT GridLibConfig
         FILE
@@ -129,13 +128,13 @@ if (GridLib_INSTALL)
             GridLib::
         DESTINATION
             ${CMAKE_INSTALL_LIBDIR}/cmake/GridLib
-        )
+    )
 
     install(
         DIRECTORY
-        include/GridLib
+            include/GridLib
         DESTINATION
-        ${CMAKE_INSTALL_INCLUDEDIR}
+            ${CMAKE_INSTALL_INCLUDEDIR}
     )
 
     #    install(
@@ -149,9 +148,9 @@ if (GridLib_INSTALL)
 
     write_basic_package_version_file(GridLibConfigVersion.cmake
         COMPATIBILITY SameMajorVersion
-        )
+    )
 
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/GridLibConfigVersion.cmake
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/GridLib
-        )
+    )
 endif ()

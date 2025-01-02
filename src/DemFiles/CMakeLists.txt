@@ -29,7 +29,7 @@ target_include_directories(GridLib_ReadDem
     PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/extras/DemFiles/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/DemFiles/include>
     PRIVATE
         ${GridLib_SOURCE_DIR}/include
     )
@@ -46,7 +46,7 @@ if (GridLib_INSTALL)
 
     install(
         DIRECTORY
-            include/GridLib
+        include/GridLib
         DESTINATION
             ${CMAKE_INSTALL_INCLUDEDIR}
     )

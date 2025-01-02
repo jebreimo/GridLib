@@ -1,0 +1,45 @@
+//****************************************************************************
+// Copyright © 2025 Jan Erik Breimo. All rights reserved.
+// Created by Jan Erik Breimo on 2025-01-02.
+//
+// This file is distributed under the BSD License.
+// License text is included with the source distribution.
+//****************************************************************************
+#pragma once
+
+/**
+ * @file
+ * @brief Defines the current GridLib version.
+ */
+
+/**
+ * @brief String representation of the complete version number.
+ */
+constexpr char GRIDLIB_VERSION[] = "@GridLib_VERSION@";
+
+/**
+ * @brief Incremented if a new version is significantly incompatible
+ *      with the previous version.
+ */
+constexpr unsigned GRIDLIB_VERSION_MAJOR = @GridLib_VERSION_MAJOR@;
+
+/**
+ * @brief Incremented when GridLib's interface is modified without introducing
+ *      incompatibilities with previous versions.
+ */
+constexpr unsigned GRIDLIB_VERSION_MINOR = @GridLib_VERSION_MINOR@;
+
+/**
+ * @brief Incremented when GridLib's internals are modified without modifying
+ *      its interface.
+ */
+constexpr unsigned GRIDLIB_VERSION_PATCH = @GridLib_VERSION_PATCH@;
+
+/**
+ * @brief Support for DEM files is enabled if this is defined.
+ *
+ * This definition is controlled by CMake. Run CMake with
+ * -DGridLib_DEM_SUPPORT=ON to enable it, and
+ * -DGridLib_DEM_SUPPORT=OFF to disable it.
+*/
+#cmakedefine GridLib_DEM_SUPPORT

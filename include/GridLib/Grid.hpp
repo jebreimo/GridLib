@@ -7,7 +7,6 @@
 //****************************************************************************
 #pragma once
 #include <optional>
-#include <variant>
 #include <Chorasmia/Array2D.hpp>
 #include "GridMemberTypes.hpp"
 #include "GridView.hpp"

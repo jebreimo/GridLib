@@ -10,8 +10,9 @@
 #include <map>
 #include <Yson/ReaderIterators.hpp>
 #include "GridLib/GridLibException.hpp"
+#include "GridLibVersion.hpp"
 
-#ifdef GRIDLIB_DEM_SUPPORT
+#ifdef GridLib_DEM_SUPPORT
     #include "GridLib/ReadDem.hpp"
 #endif
 
@@ -192,7 +193,7 @@ namespace GridLib
         {
         case GridFileType::GRIDLIB_JSON:
             return read_json_grid(stream);
-#ifdef GRIDLIB_DEM_SUPPORT
+#ifdef GridLib_DEM_SUPPORT
         case GridFileType::DEM:
             return read_dem(stream, Unit::UNDEFINED);
 #endif
@@ -204,7 +205,7 @@ namespace GridLib
 
     GridFileType detect_file_type(const std::string& fileName)
     {
-#ifdef GRIDLIB_DEM_SUPPORT
+#ifdef GridLib_DEM_SUPPORT
         if (is_dem(fileName))
             return GridFileType::DEM;
 #endif
@@ -222,7 +223,7 @@ namespace GridLib
         {
         case GridFileType::GRIDLIB_JSON:
             return read_json_grid(file_name);
-#ifdef GRIDLIB_DEM_SUPPORT
+#ifdef GridLib_DEM_SUPPORT
         case GridFileType::DEM:
             return read_dem(file_name, Unit::METERS);
 #endif
