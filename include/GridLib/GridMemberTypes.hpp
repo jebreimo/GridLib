@@ -36,7 +36,7 @@ namespace GridLib
          * 10 * 0.3048 = 3.048.
          */
         Xyz::Vector3D direction;
-        Unit unit;
+        Unit unit = Unit::UNDEFINED;
     };
 
     constexpr bool operator==(const Axis& a, const Axis& b)

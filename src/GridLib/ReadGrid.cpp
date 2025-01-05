@@ -200,7 +200,6 @@ namespace GridLib
         default:
             GRIDLIB_THROW("Can not read stream of type " + to_string(type));
         }
-        return {};
     }
 
     GridFileType detect_file_type(const std::string& fileName)

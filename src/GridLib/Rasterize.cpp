@@ -188,9 +188,9 @@ namespace GridLib
     {
         auto rv = grid.row_axis().direction;
         auto cv = grid.col_axis().direction;
-        auto rDir = get_cardinal_direction(Xyz::Vector2D(rv[0], rv[1]));
-        auto cDir = get_cardinal_direction(Xyz::Vector2D(cv[0], cv[1]));
-        return get_index_2d_mode(rDir, cDir,
+        auto r_dir = get_cardinal_direction(Xyz::Vector2D(rv[0], rv[1]));
+        auto c_dir = get_cardinal_direction(Xyz::Vector2D(cv[0], cv[1]));
+        return get_index_2d_mode(r_dir, c_dir,
                                  CardinalDirection::EAST,
                                  CardinalDirection::SOUTH);
     }
