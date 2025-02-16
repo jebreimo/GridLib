@@ -41,21 +41,21 @@ if (GridLib_INSTALL)
 endif ()
 FetchContent_Declare(chorasmia
     GIT_REPOSITORY "https://github.com/jebreimo/Chorasmia.git"
-    GIT_TAG master)
+    GIT_TAG v0.2.1)
 
 if (GridLib_INSTALL)
     set(XYZ_INSTALL ON)
 endif ()
 FetchContent_Declare(xyz
     GIT_REPOSITORY "https://github.com/jebreimo/Xyz.git"
-    GIT_TAG v0.3.2)
+    GIT_TAG v0.4.1)
 
 if (GridLib_INSTALL)
     set(YSON_INSTALL ON)
 endif ()
 FetchContent_Declare(yson
     GIT_REPOSITORY "https://github.com/jebreimo/Yson.git"
-    GIT_TAG v1.4.16)
+    GIT_TAG v1.4.18)
 
 FetchContent_MakeAvailable(chorasmia xyz yson)
 
