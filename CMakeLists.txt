@@ -22,6 +22,9 @@ endif ()
 # Test option
 option(GridLib_BUILD_TEST "Build tests" ${GridLib_MASTER_PROJECT})
 
+# Test option
+option(GridLib_BUILD_EXTRAS "Build extras" ${GridLib_MASTER_PROJECT})
+
 # Install option
 option(GridLib_INSTALL "Generate the install target" ${GridLib_MASTER_PROJECT})
 
@@ -119,6 +122,10 @@ target_link_libraries(GridLib
 GridLib_enable_all_warnings(GridLib)
 
 add_library(GridLib::GridLib ALIAS GridLib)
+
+if (GridLib_BUILD_EXTRAS)
+    add_subdirectory(extras)
+endif ()
 
 if (GridLib_BUILD_TEST)
     enable_testing()
