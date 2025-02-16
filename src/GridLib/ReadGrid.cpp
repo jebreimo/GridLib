@@ -89,9 +89,9 @@ namespace GridLib
         ReferenceSystem system;
         for (const auto& key : Yson::keys(reader))
         {
-            if (key == "horizontal_system")
-                system.horizontal = read<int>(reader);
-            else if (key == "vertical_system")
+            if (key == "projected")
+                system.projected = read<int>(reader);
+            else if (key == "vertical")
                 system.vertical = read<int>(reader);
         }
         return system;

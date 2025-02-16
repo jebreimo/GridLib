@@ -72,13 +72,13 @@ namespace GridLib
 
     struct ReferenceSystem
     {
-        int horizontal = 0;
+        int projected = 0;
         int vertical = 0;
     };
 
     constexpr bool operator==(const ReferenceSystem& a, const ReferenceSystem& b)
     {
-        return a.horizontal == b.horizontal && a.vertical == b.vertical;
+        return a.projected == b.projected && a.vertical == b.vertical;
     }
 
     enum class RotationDir

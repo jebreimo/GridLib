@@ -63,9 +63,9 @@ namespace GridLib
             {
                 writer.key("reference_system")
                     .beginObject()
-                    .key("horizontal_system").value(refSys->horizontal);
+                    .key("projected").value(refSys->projected);
                 if (refSys->vertical)
-                    writer.key("vertical_system").value(refSys->vertical);
+                    writer.key("vertical").value(refSys->vertical);
                 writer.endObject();
             }
 
