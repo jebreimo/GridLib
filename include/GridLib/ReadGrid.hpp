@@ -17,8 +17,9 @@ namespace GridLib
     enum class GridFileType
     {
         UNKNOWN,
-        GRIDLIB_JSON,
         DEM,
+        GEOTIFF,
+        GRIDLIB_JSON,
         AUTO_DETECT
     };
 

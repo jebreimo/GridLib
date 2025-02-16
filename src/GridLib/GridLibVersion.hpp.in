@@ -43,3 +43,12 @@ constexpr unsigned GRIDLIB_VERSION_PATCH = @GridLib_VERSION_PATCH@;
  * -DGridLib_DEM_SUPPORT=OFF to disable it.
 */
 #cmakedefine GridLib_DEM_SUPPORT
+
+/**
+ * @brief Support for GeoTIFF files is enabled if this is defined.
+ *
+ * This definition is controlled by CMake. Run CMake with
+ * -DGridLib_GEOTIFF_SUPPORT=ON to enable it, and
+ * -DGridLib_GEOTIFF_SUPPORT=OFF to disable it.
+*/
+#cmakedefine GridLib_GEOTIFF_SUPPORT

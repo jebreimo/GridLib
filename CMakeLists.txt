@@ -28,6 +28,9 @@ option(GridLib_INSTALL "Generate the install target" ${GridLib_MASTER_PROJECT})
 # DEM file option
 option(GridLib_DEM_SUPPORT "Enable support for DEM files" ON)
 
+# GeoTIFF file option
+option(GridLib_GEOTIFF_SUPPORT "Enable support for GeoTIFF files" ON)
+
 include(FetchContent)
 
 if (GridLib_INSTALL)
@@ -66,6 +69,10 @@ if (GridLib_DEM_SUPPORT)
     add_subdirectory(src/DemFiles)
 endif ()
 
+if (GridLib_GEOTIFF_SUPPORT)
+    add_subdirectory(src/GeoTiff)
+endif ()
+
 include(GNUInstallDirs)
 
 configure_file(src/GridLib/GridLibVersion.hpp.in GridLibVersion.hpp @ONLY)
@@ -86,6 +93,10 @@ add_library(GridLib
     src/GridLib/Rasterize.cpp
     src/GridLib/ReadGrid.cpp
     src/GridLib/WriteGrid.cpp
+    src/GridLib/Utilities/Utm.cpp
+    src/GridLib/Utilities/CoordinateSystem.cpp
+    src/GridLib/Utilities/CoordinateSystem.hpp
+    src/GridLib/Utilities/Utm.hpp
 )
 
 target_include_directories(GridLib
@@ -100,6 +111,7 @@ target_link_libraries(GridLib
         Chorasmia::Chorasmia
         Xyz::Xyz
         $<$<BOOL:GridLib_DEM_SUPPORT>:GridLib_ReadDem>
+        $<$<BOOL:GridLib_GEOTIFF_SUPPORT>:GridLib_GeoTiff>
     PRIVATE
         Yson::Yson
 )

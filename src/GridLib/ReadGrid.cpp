@@ -16,6 +16,10 @@
     #include "GridLib/ReadDem.hpp"
 #endif
 
+#ifdef GridLib_GEOTIFF_SUPPORT
+    #include "GridLib/ReadGeoTiff.hpp"
+#endif
+
 namespace GridLib
 {
     template <typename T, size_t N>
@@ -208,6 +212,10 @@ namespace GridLib
         if (is_dem(fileName))
             return GridFileType::DEM;
 #endif
+#ifdef GridLib_GEOTIFF_SUPPORT
+        if (is_geotiff(fileName))
+            return GridFileType::GEOTIFF;
+#endif
         if (Yson::makeReader(fileName))
             return GridFileType::GRIDLIB_JSON;
         return GridFileType::UNKNOWN;
@@ -225,6 +233,10 @@ namespace GridLib
 #ifdef GridLib_DEM_SUPPORT
         case GridFileType::DEM:
             return read_dem(file_name, Unit::METERS);
+#endif
+#ifdef GridLib_GEOTIFF_SUPPORT
+        case GridFileType::GEOTIFF:
+            return read_geotiff(file_name);
 #endif
         default:
             GRIDLIB_THROW("Unsupported file type: " + file_name);
