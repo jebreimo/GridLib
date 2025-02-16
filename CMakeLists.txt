@@ -28,22 +28,29 @@ option(GridLib_INSTALL "Generate the install target" ${GridLib_MASTER_PROJECT})
 # DEM file option
 option(GridLib_DEM_SUPPORT "Enable support for DEM files" ON)
 
+include(FetchContent)
+
 if (GridLib_INSTALL)
     set(CHORASMIA_INSTALL ON)
-    set(YSON_INSTALL ON)
-    set(XYZ_INSTALL ON)
 endif ()
-
-include(FetchContent)
 FetchContent_Declare(chorasmia
     GIT_REPOSITORY "https://github.com/jebreimo/Chorasmia.git"
     GIT_TAG master)
+
+if (GridLib_INSTALL)
+    set(XYZ_INSTALL ON)
+endif ()
 FetchContent_Declare(xyz
     GIT_REPOSITORY "https://github.com/jebreimo/Xyz.git"
     GIT_TAG v0.3.2)
+
+if (GridLib_INSTALL)
+    set(YSON_INSTALL ON)
+endif ()
 FetchContent_Declare(yson
     GIT_REPOSITORY "https://github.com/jebreimo/Yson.git"
     GIT_TAG v1.4.16)
+
 FetchContent_MakeAvailable(chorasmia xyz yson)
 
 function(GridLib_enable_all_warnings target)
@@ -54,8 +61,6 @@ function(GridLib_enable_all_warnings target)
             $<$<CXX_COMPILER_ID:AppleClang>:-Wall>
             $<$<CXX_COMPILER_ID:MSVC>:/W4>)
 endfunction()
-
-set(GridLib_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (GridLib_DEM_SUPPORT)
     add_subdirectory(src/DemFiles)
@@ -71,16 +76,16 @@ add_library(GridLib
     include/GridLib/GridMemberTypes.hpp
     include/GridLib/GridView.hpp
     include/GridLib/Profile.hpp
+    include/GridLib/Rasterize.hpp
     include/GridLib/ReadGrid.hpp
     include/GridLib/WriteGrid.hpp
     src/GridLib/Grid.cpp
     src/GridLib/GridMemberTypes.cpp
     src/GridLib/GridView.cpp
     src/GridLib/Profile.cpp
+    src/GridLib/Rasterize.cpp
     src/GridLib/ReadGrid.cpp
     src/GridLib/WriteGrid.cpp
-    src/GridLib/Rasterize.cpp
-    include/GridLib/Rasterize.hpp
 )
 
 target_include_directories(GridLib
@@ -121,28 +126,24 @@ if (GridLib_INSTALL)
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
 
-    install(EXPORT GridLibConfig
-        FILE
-            GridLibConfig.cmake
-        NAMESPACE
-            GridLib::
-        DESTINATION
-            ${CMAKE_INSTALL_LIBDIR}/cmake/GridLib
+    install(
+        EXPORT GridLibConfig
+        FILE GridLibConfig.cmake
+        NAMESPACE GridLib::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/GridLib
     )
 
     install(
-        DIRECTORY
-            include/GridLib
-        DESTINATION
-            ${CMAKE_INSTALL_INCLUDEDIR}
+        DIRECTORY include/GridLib
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
 
-    #    install(
-    #        FILES
-    #            ${CMAKE_CURRENT_BINARY_DIR}/GridLibVersion.hpp
-    #        DESTINATION
-    #            ${CMAKE_INSTALL_INCLUDEDIR}/GridLib
-    #    )
+    install(
+        FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/GridLibVersion.hpp
+        DESTINATION
+            ${CMAKE_INSTALL_INCLUDEDIR}/GridLib
+    )
 
     include(CMakePackageConfigHelpers)
 
@@ -150,7 +151,10 @@ if (GridLib_INSTALL)
         COMPATIBILITY SameMajorVersion
     )
 
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/GridLibConfigVersion.cmake
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/GridLib
+    install(
+        FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/GridLibConfigVersion.cmake
+        DESTINATION
+            ${CMAKE_INSTALL_LIBDIR}/cmake/GridLib
     )
 endif ()

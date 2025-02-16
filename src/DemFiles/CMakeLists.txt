@@ -5,7 +5,7 @@
 # This file is distributed under the BSD License.
 # License text is included with the source distribution.
 # ===========================================================================
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.30)
 
 add_library(GridLib_ReadDem OBJECT
     include/GridLib/ReadDem.hpp
@@ -31,7 +31,7 @@ target_include_directories(GridLib_ReadDem
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/DemFiles/include>
     PRIVATE
-        ${GridLib_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/include
     )
 
 target_link_libraries(GridLib_ReadDem
