@@ -29,9 +29,9 @@ target_include_directories(GridLib_GeoTiff
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/GeoTiff/include>
+        $<BUILD_INTERFACE:${GridLib_SOURCE_DIR}/include>
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/include
-        ${CMAKE_SOURCE_DIR}/src
+        $<BUILD_INTERFACE:${GridLib_SOURCE_DIR}/src>
 )
 
 target_link_libraries(GridLib_GeoTiff

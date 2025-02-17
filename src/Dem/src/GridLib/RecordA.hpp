@@ -11,7 +11,6 @@
 #include <iosfwd>
 #include <optional>
 #include <string>
-#include <GridLib/GridMemberTypes.hpp>
 
 namespace GridLib
 {

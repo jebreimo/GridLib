@@ -69,7 +69,7 @@ function(GridLib_enable_all_warnings target)
 endfunction()
 
 if (GridLib_DEM_SUPPORT)
-    add_subdirectory(src/DemFiles)
+    add_subdirectory(src/Dem)
 endif ()
 
 if (GridLib_GEOTIFF_SUPPORT)
@@ -113,7 +113,7 @@ target_link_libraries(GridLib
     PUBLIC
         Chorasmia::Chorasmia
         Xyz::Xyz
-        $<$<BOOL:GridLib_DEM_SUPPORT>:GridLib_ReadDem>
+        $<$<BOOL:GridLib_DEM_SUPPORT>:GridLib_Dem>
         $<$<BOOL:GridLib_GEOTIFF_SUPPORT>:GridLib_GeoTiff>
     PRIVATE
         Yson::Yson

@@ -7,7 +7,7 @@
 # ===========================================================================
 cmake_minimum_required(VERSION 3.30)
 
-add_library(GridLib_ReadDem OBJECT
+add_library(GridLib_Dem OBJECT
     include/GridLib/ReadDem.hpp
     src/GridLib/DemReader.cpp
     src/GridLib/DemReader.hpp
@@ -25,22 +25,22 @@ add_library(GridLib_ReadDem OBJECT
     src/GridLib/RecordC.hpp
     )
 
-target_include_directories(GridLib_ReadDem
+target_include_directories(GridLib_Dem
     PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/DemFiles/include>
+        $<BUILD_INTERFACE:${GridLib_SOURCE_DIR}/include>
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/include
     )
 
-target_link_libraries(GridLib_ReadDem
+target_link_libraries(GridLib_Dem
     Chorasmia::Chorasmia
     Xyz::Xyz
     )
 
 if (GridLib_INSTALL)
-    install(TARGETS GridLib_ReadDem
+    install(TARGETS GridLib_Dem
         EXPORT GridLibConfig
         )
 
