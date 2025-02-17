@@ -113,8 +113,8 @@ target_link_libraries(GridLib
     PUBLIC
         Chorasmia::Chorasmia
         Xyz::Xyz
-        $<$<BOOL:GridLib_DEM_SUPPORT>:GridLib_Dem>
-        $<$<BOOL:GridLib_GEOTIFF_SUPPORT>:GridLib_GeoTiff>
+        $<$<BOOL:${GridLib_DEM_SUPPORT}>:GridLib_Dem>
+        $<$<BOOL:${GridLib_GEOTIFF_SUPPORT}>:GridLib_GeoTiff>
     PRIVATE
         Yson::Yson
 )
