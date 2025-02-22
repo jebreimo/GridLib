@@ -201,6 +201,10 @@ namespace GridLib
         case GridFileType::DEM:
             return read_dem(stream, Unit::UNDEFINED);
 #endif
+#ifdef GridLib_GEOTIFF_SUPPORT
+        case GridFileType::GEOTIFF:
+            return read_geotiff(stream);
+#endif
         default:
             GRIDLIB_THROW("Can not read stream of type " + to_string(type));
         }

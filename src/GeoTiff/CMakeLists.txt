@@ -9,16 +9,6 @@ cmake_minimum_required(VERSION 3.30)
 
 include(FetchContent)
 
-set(YIMAGE_USE_LIBTIFF ON)
-if (GridLib_INSTALL)
-    set(YIMAGE_INSTALL ON)
-endif ()
-FetchContent_Declare(yimage
-    GIT_REPOSITORY "https://github.com/jebreimo/Yimage.git"
-    GIT_TAG v0.2.1)
-
-FetchContent_MakeAvailable(yimage)
-
 add_library(GridLib_GeoTiff OBJECT
     include/GridLib/ReadGeoTiff.hpp
     src/GridLib/ReadGeoTiff.cpp

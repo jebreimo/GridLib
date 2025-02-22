@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.17)
-project(GridLib VERSION 0.2.0)
+project(GridLib VERSION 0.2.1)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -50,6 +50,16 @@ FetchContent_Declare(xyz
     GIT_REPOSITORY "https://github.com/jebreimo/Xyz.git"
     GIT_TAG v0.4.1)
 
+if (GridLib_GEOTIFF_SUPPORT)
+    set(YIMAGE_TIFF ON)
+endif ()
+if (GridLib_INSTALL)
+    set(YIMAGE_INSTALL ON)
+endif ()
+FetchContent_Declare(yimage
+    GIT_REPOSITORY "https://github.com/jebreimo/Yimage.git"
+    GIT_TAG v0.2.2)
+
 if (GridLib_INSTALL)
     set(YSON_INSTALL ON)
 endif ()
@@ -57,7 +67,7 @@ FetchContent_Declare(yson
     GIT_REPOSITORY "https://github.com/jebreimo/Yson.git"
     GIT_TAG v1.4.18)
 
-FetchContent_MakeAvailable(chorasmia xyz yson)
+FetchContent_MakeAvailable(chorasmia xyz yimage yson)
 
 function(GridLib_enable_all_warnings target)
     target_compile_options(${target}
@@ -113,6 +123,7 @@ target_link_libraries(GridLib
     PUBLIC
         Chorasmia::Chorasmia
         Xyz::Xyz
+        Yimage::Yimage
         $<$<BOOL:${GridLib_DEM_SUPPORT}>:GridLib_Dem>
         $<$<BOOL:${GridLib_GEOTIFF_SUPPORT}>:GridLib_GeoTiff>
     PRIVATE
