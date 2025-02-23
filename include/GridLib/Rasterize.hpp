@@ -7,9 +7,10 @@
 //****************************************************************************
 #pragma once
 #include <cfloat>
-#include <Chorasmia/Array2D.hpp>
+#include <concepts>
 #include <Chorasmia/Index2DMap.hpp>
 #include <Chorasmia/IntervalMap.hpp>
+#include <Yimage/Image.hpp>
 #include "Grid.hpp"
 
 namespace GridLib
@@ -43,27 +44,39 @@ namespace GridLib
 
     Chorasmia::IntervalMap<double, uint32_t> make_default_gradient_9000();
 
-    template <typename ColorFunc>
-    Chorasmia::Array2D<uint32_t>
+    template <typename T>
+    concept ColorFunc = requires(T func, double value)
+    {
+        { func(value) } -> std::same_as<uint32_t>;
+    };
+
+    template <ColorFunc ColorFunc>
+    Yimage::Image
     rasterize_rgba(const Chorasmia::ArrayView2D<double>& grid,
                    ColorFunc color_func,
                    Chorasmia::Index2DMode mode)
     {
         Chorasmia::Index2DMap mapping(grid.dimensions(), mode);
         auto [rows, cols] = mapping.get_to_size();
-        Chorasmia::Array2D<uint32_t> result(rows, cols);
+        Yimage::Image result(Yimage::PixelType::RGBA_8, cols, rows);
         auto* out_it = result.data();
         for (size_t i = 0; i < rows; ++i)
         {
             for (size_t j = 0; j < cols; ++j)
-                *out_it++ = color_func(grid(mapping.get_from_indices(i, j)));
+            {
+                auto rgba = color_func(grid(mapping.get_from_indices(i, j)));
+                *out_it++ = rgba & 0xFF;
+                *out_it++ = (rgba >> 8) & 0xFF;
+                *out_it++ = (rgba >> 16) & 0xFF;
+                *out_it++ = (rgba >> 24) & 0xFF;
+            }
         }
 
         return result;
     }
 
-    template <typename ColorFunc>
-    Chorasmia::Array2D<uint32_t>
+    template <ColorFunc ColorFunc>
+    Yimage::Image
     rasterize_rgba(const GridView& grid, ColorFunc color_func,
                    Chorasmia::Index2DMode mode = Chorasmia::Index2DMode::ROWS)
     {

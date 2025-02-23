@@ -6,3 +6,4 @@
 # License text is included with the source distribution.
 # ===========================================================================
 add_subdirectory(grid2json)
+add_subdirectory(grid2png)
