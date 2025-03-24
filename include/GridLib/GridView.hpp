@@ -8,6 +8,8 @@
 #pragma once
 #include <optional>
 #include <Chorasmia/ArrayView2D.hpp>
+#include <Xyz/Rectangle.hpp>
+
 #include "GridMemberTypes.hpp"
 
 namespace GridLib
@@ -73,4 +75,10 @@ namespace GridLib
 
     [[nodiscard]]
     std::pair<double, double> get_min_max_elevation(const GridView& grid);
+
+    [[nodiscard]]
+    bool is_planar(const GridView& grid);
+
+    [[nodiscard]]
+    Xyz::RectangleD get_bounding_rect(const GridView& grid);
 }

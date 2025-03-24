@@ -24,6 +24,8 @@ namespace GridLib
 
         void clear();
 
+        bool empty() const;
+
         [[nodiscard]]
         GridView view() const;
 

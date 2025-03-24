@@ -11,7 +11,6 @@
 #include <fstream>
 #include "DemReader.hpp"
 
-
 namespace GridLib
 {
     constexpr float METERS_PER_FOOT = 0.3048;
@@ -33,7 +32,7 @@ namespace GridLib
     }
 
     Grid read_dem(std::istream& stream,
-                  GridLib::Unit desired_unit,
+                  Unit vertical_unit,
                   const ProgressCallback& progress_callback)
     {
         Grid grid;
@@ -49,23 +48,29 @@ namespace GridLib
         if (a.longitude && a.latitude)
         {
             grid.set_spherical_coords(
-                SphericalCoords{to_degrees(*a.latitude),
-                                to_degrees(*a.longitude)});
+                SphericalCoords{
+                    to_degrees(*a.latitude),
+                    to_degrees(*a.longitude)
+                });
         }
         if (const auto& c = a.quadrangle_corners[0])
         {
             grid.set_planar_coords(
-                PlanarCoords{c->easting, c->northing,
-                             a.ref_sys_zone.value_or(0)});
+                PlanarCoords{
+                    c->easting, c->northing, 0.0,
+                    a.ref_sys_zone.value_or(0)
+                });
         }
         if (a.horizontal_datum)
         {
             grid.set_reference_system(
-                ReferenceSystem{*a.horizontal_datum,
-                                a.vertical_datum.value_or(0)});
+                ReferenceSystem{
+                    *a.horizontal_datum,
+                    a.vertical_datum.value_or(0)
+                });
         }
         double factor = 1.0;
-        if (desired_unit == Unit::METERS)
+        if (vertical_unit == Unit::METERS)
         {
             if (v_unit == Unit::FEET)
             {
@@ -86,7 +91,7 @@ namespace GridLib
                 h_unit = Unit::METERS;
             }
         }
-        else if (desired_unit == Unit::FEET)
+        else if (vertical_unit == Unit::FEET)
         {
             if (v_unit == Unit::METERS)
             {
@@ -145,9 +150,9 @@ namespace GridLib
         return grid;
     }
 
-    GridLib::Grid read_dem(const std::string& file_name,
-                           GridLib::Unit vertical_unit,
-                           const ProgressCallback& progress_callback)
+    Grid read_dem(const std::string& file_name,
+                  Unit vertical_unit,
+                  const ProgressCallback& progress_callback)
     {
         std::ifstream file(file_name, std::ios::binary);
         return read_dem(file, vertical_unit, progress_callback);
@@ -156,9 +161,9 @@ namespace GridLib
     bool is_dem(const std::string& file_name)
     {
         auto ext = std::filesystem::path(file_name).extension().string();
-        const char SUFFIX[] = {'.', 'D', 'E', 'M'};
+        constexpr char SUFFIX[] = {'.', 'D', 'E', 'M'};
         return std::equal(ext.begin(), ext.end(),
                           std::begin(SUFFIX), std::end(SUFFIX),
-                          [](auto a, auto b){return toupper(a) == b;});
+                          [](auto a, auto b) { return toupper(a) == b; });
     }
 }

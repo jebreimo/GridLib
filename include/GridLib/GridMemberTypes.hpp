@@ -24,6 +24,8 @@ namespace GridLib
 
     std::optional<Unit> parse_unit(std::string_view str);
 
+    double to_meters(Unit unit);
+
     struct Axis
     {
         /**
@@ -60,6 +62,7 @@ namespace GridLib
     {
         double easting = 0;
         double northing = 0;
+        double elevation = 0;
         int zone = 0;
     };
 
@@ -67,6 +70,7 @@ namespace GridLib
     {
         return a.easting == b.easting
                && a.northing == b.northing
+               && a.elevation == b.elevation
                && a.zone == b.zone;
     }
 

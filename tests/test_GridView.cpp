@@ -18,3 +18,16 @@ TEST_CASE("test get_min_max_elevation")
     REQUIRE(min == -4);
     REQUIRE(max == 4);
 }
+
+TEST_CASE("test get_bounding_rect")
+{
+    Chorasmia::Array2D<double> values({-999, -1, 4, 3, 1, -4}, 2, 3);
+    GridLib::Grid grid(std::move(values));
+    grid.set_planar_coords(GridLib::PlanarCoords{500000, 6000000});
+    grid.set_row_axis({{10, 0, 0}, GridLib::Unit::METERS});
+    grid.set_column_axis({{0, -10, 0}, GridLib::Unit::METERS});
+    grid.set_unknown_elevation(-999);
+    auto rect = get_bounding_rect(grid.view());
+    REQUIRE(rect.origin == Xyz::Vector2D(500000, 6000000));
+    REQUIRE(rect.size == Xyz::Vector2D(30, -20));
+}

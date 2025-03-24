@@ -67,6 +67,8 @@ namespace GridLib
                 coords.northing = read<double>(reader);
             else if (key == "easting")
                 coords.easting = read<double>(reader);
+            else if (key == "elevation")
+                coords.elevation = read<double>(reader);
             else if (key == "zone")
                 coords.zone = read<int>(reader);
         }

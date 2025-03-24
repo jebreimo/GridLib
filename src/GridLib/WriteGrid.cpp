@@ -17,6 +17,7 @@ namespace GridLib
         writer.beginObject()
             .key("northing").value(coords.northing)
             .key("easting").value(coords.easting)
+            .key("elevation").value(coords.elevation)
             .key("zone").value(coords.zone)
             .endObject();
     }

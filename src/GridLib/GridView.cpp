@@ -18,7 +18,8 @@ namespace GridLib
                    grid.elevations(),
                    grid.spherical_coords(),
                    grid.planar_coords())
-    {}
+    {
+    }
 
     GridView::GridView(const Grid& grid,
                        Chorasmia::ArrayView2D<double> elevations,
@@ -28,7 +29,8 @@ namespace GridLib
           elevations_(elevations),
           spherical_coords_(spherical_coords),
           planar_coords_(planar_coords)
-    {}
+    {
+    }
 
     size_t GridView::row_count() const
     {
@@ -103,11 +105,13 @@ namespace GridLib
             planar_coords->northing += offset[1];
         }
         auto spherical_coords = row == 0 && column == 0
-                               ? spherical_coords_
-                               : std::optional<SphericalCoords>();
-        return {*grid_,
-                elevations_.subarray(row, column, n_rows, n_cols),
-                spherical_coords, planar_coords};
+                                    ? spherical_coords_
+                                    : std::optional<SphericalCoords>();
+        return {
+            *grid_,
+            elevations_.subarray(row, column, n_rows, n_cols),
+            spherical_coords, planar_coords
+        };
     }
 
     void GridView::assert_grid() const
@@ -138,5 +142,46 @@ namespace GridLib
             return {};
 
         return {min, max};
+    }
+
+    bool is_planar(const GridView& grid)
+    {
+        const auto row_vec = grid.col_axis().direction;
+        const auto col_vec = grid.row_axis().direction;
+
+        constexpr Xyz::Vector3D up(0, 0, 1);
+        return dot(row_vec, up) <= Xyz::Constants<double>::DEFAULT_MARGIN
+               && dot(col_vec, up) <= Xyz::Constants<double>::DEFAULT_MARGIN;
+    }
+
+    namespace
+    {
+        double get_max_abs(double a, double b)
+        {
+            return std::abs(a) < std::abs(b) ? b : a;
+        }
+    }
+
+    Xyz::RectangleD get_bounding_rect(const GridView& grid)
+    {
+        auto pos = grid.planar_coords();
+        auto origin = pos
+                          ? Xyz::Vector3D(pos->easting, pos->northing, pos->elevation)
+                          : Xyz::Vector3D();
+        auto [rows, cols] = grid.elevations().dimensions();
+        auto row_vec = double(cols) * grid.row_axis().direction;
+        auto col_vec = double(rows) * grid.col_axis().direction;
+
+        if (!is_planar(grid))
+        {
+            GRIDLIB_THROW("Can not calculate bounding rectangle for non-planar grid.");
+        }
+
+        auto row_sign = get_max_abs(row_vec[0], row_vec[1]) > 0 ? 1 : -1;
+        auto col_sign = get_max_abs(col_vec[0], col_vec[1]) > 0 ? 1 : -1;
+
+        auto x_len = row_sign * get_length(row_vec);
+        auto y_len = col_sign * get_length(col_vec);
+        return {{origin[0], origin[1]}, {x_len, y_len}};
     }
 }

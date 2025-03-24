@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 
     try
     {
-        write_json_grid(std::cout, GridLib::read_grid(argv[1]).view());
+        write_json(std::cout, GridLib::read_grid(argv[1]).view());
     }
     catch (std::exception& ex)
     {

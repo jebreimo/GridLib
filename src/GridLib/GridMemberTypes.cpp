@@ -36,4 +36,18 @@ namespace GridLib
         CHECK_STRING(str, UNDEFINED);
         return {};
     }
+
+    double to_meters(Unit unit)
+    {
+        switch (unit)
+        {
+        case Unit::FEET:
+            return 12 * 0.0254;
+        case Unit::ARC_SECONDS:
+            return 30.87; // At equator
+        case Unit::METERS:
+        case Unit::UNDEFINED:
+            return 1;
+        }
+    }
 }
