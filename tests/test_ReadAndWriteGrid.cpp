@@ -19,12 +19,13 @@ TEST_CASE("Test write_json_grid and read_grid")
     auto array = grid.elevations().array();
     std::iota(array.begin(), array.end(), 0.0);
     grid.set_reference_system(GridLib::ReferenceSystem{3000, 1000});
-    grid.set_planar_coords(GridLib::PlanarCoords{5000, 7000, 30});
+    grid.set_planar_coords(GridLib::PlanarCoords{5000, 7000, 0, 30});
     grid.set_row_axis(GridLib::Axis{{0, -10, 0}, GridLib::Unit::METERS});
     grid.set_column_axis(GridLib::Axis{{10, 0, 0}, GridLib::Unit::METERS});
     grid.set_vertical_axis(GridLib::Axis{{0, 0, 1}, GridLib::Unit::METERS});
     std::stringstream ss;
-    GridLib::write_json_grid(ss, grid.view());
+    GridLib::write_json(ss, grid.view());
+    ss.seekg(0);
     auto in_grid = GridLib::read_json_grid(ss);
     REQUIRE(grid == in_grid);
 }

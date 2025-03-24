@@ -8,9 +8,18 @@
 #pragma once
 #include "GridView.hpp"
 
+namespace Yson
+{
+    class Writer;
+}
+
 namespace GridLib
 {
-    void write_json_grid(std::ostream& stream, const GridView& grid);
+    void write_json(std::ostream& stream, const GridView& grid);
 
-    void write_json_grid(const std::string& file_name, const GridView& grid);
+    void write_json(const std::string& file_name, const GridView& grid);
+
+    void write_json(Yson::Writer& writer, const GridView& grid);
+
+    void write_json(Yson::Writer& writer, const PlanarCoords& coords);
 }
