@@ -47,6 +47,7 @@ namespace GridLib
             return 30.87; // At equator
         case Unit::METERS:
         case Unit::UNDEFINED:
+        default:
             return 1;
         }
     }

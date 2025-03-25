@@ -17,7 +17,7 @@ namespace GridLib
         if (25828 <= epsg && epsg <= 25838)
         {
             auto zone = epsg - 25828 + 28;
-            return PlanarCoords{x, y, .zone=zone};
+            return PlanarCoords{x, y, 0, zone};
         }
         return {};
     }
