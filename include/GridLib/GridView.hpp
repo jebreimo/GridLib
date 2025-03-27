@@ -24,7 +24,7 @@ namespace GridLib
         explicit GridView(const Grid& grid) noexcept;
 
         GridView(const Grid& grid,
-                 Chorasmia::ArrayView2D<double> elevations,
+                 Chorasmia::ArrayView2D<float> elevations,
                  std::optional<SphericalCoords> spherical_coords,
                  std::optional<PlanarCoords> planar_coords) noexcept;
 
@@ -35,10 +35,10 @@ namespace GridLib
         size_t col_count() const;
 
         [[nodiscard]]
-        Chorasmia::ArrayView2D<double> elevations() const;
+        Chorasmia::ArrayView2D<float> elevations() const;
 
         [[nodiscard]]
-        std::optional<double> unknown_elevation() const;
+        std::optional<float> unknown_elevation() const;
 
         [[nodiscard]]
         const Axis& row_axis() const;
@@ -68,13 +68,13 @@ namespace GridLib
         void assert_grid() const;
 
         const Grid* grid_ = nullptr;
-        Chorasmia::ArrayView2D<double> elevations_;
+        Chorasmia::ArrayView2D<float> elevations_;
         std::optional<SphericalCoords> spherical_coords_;
         std::optional<PlanarCoords> planar_coords_;
     };
 
     [[nodiscard]]
-    std::pair<double, double> get_min_max_elevation(const GridView& grid);
+    std::pair<float, float> get_min_max_elevation(const GridView& grid);
 
     [[nodiscard]]
     bool is_planar(const GridView& grid);

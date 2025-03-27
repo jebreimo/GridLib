@@ -142,12 +142,12 @@ namespace GridLib
                 if (reader.readNull())
                 {
                     if (!grid.unknown_elevation())
-                        grid.set_unknown_elevation(DBL_TRUE_MIN);
-                    array[index++] = DBL_TRUE_MIN;
+                        grid.set_unknown_elevation(FLT_TRUE_MIN);
+                    array[index++] = FLT_TRUE_MIN;
                 }
                 else
                 {
-                    array[index++] = read<double>(reader);
+                    array[index++] = read<float>(reader);
                 }
             }
         }

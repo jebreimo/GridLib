@@ -20,10 +20,11 @@ namespace GridLib
 
         Grid(size_t rows, size_t columns);
 
-        explicit Grid(Chorasmia::Array2D<double> values);
+        explicit Grid(Chorasmia::Array2D<float> values);
 
         void clear();
 
+        [[nodiscard]]
         bool empty() const;
 
         [[nodiscard]]
@@ -38,14 +39,14 @@ namespace GridLib
         void resize(size_t rows, size_t columns);
 
         [[nodiscard]]
-        Chorasmia::ArrayView2D<double> elevations() const;
+        Chorasmia::ArrayView2D<float> elevations() const;
 
-        Chorasmia::MutableArrayView2D<double> elevations();
+        Chorasmia::MutableArrayView2D<float> elevations();
 
         [[nodiscard]]
-        std::optional<double> unknown_elevation() const;
+        std::optional<float> unknown_elevation() const;
 
-        Grid& set_unknown_elevation(std::optional<double> value);
+        Grid& set_unknown_elevation(std::optional<float> value);
 
         [[nodiscard]]
         const Axis& row_axis() const;
@@ -83,10 +84,10 @@ namespace GridLib
                          size_t n_cols = SIZE_MAX) const;
 
         [[nodiscard]]
-        Chorasmia::Array2D<double> release();
+        Chorasmia::Array2D<float> release();
     private:
-        Chorasmia::Array2D<double> grid_;
-        std::optional<double> unknown_elevation_;
+        Chorasmia::Array2D<float> grid_;
+        std::optional<float> unknown_elevation_;
         Axis row_axis_;
         Axis column_axis_;
         Axis vertical_axis_;

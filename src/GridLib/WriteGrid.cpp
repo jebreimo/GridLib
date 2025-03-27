@@ -93,8 +93,8 @@ namespace GridLib
     }
 
     void write_json(Yson::Writer& writer,
-                    const Chorasmia::ArrayView2D<double>& values,
-                    std::optional<double> null_value)
+                    const Chorasmia::ArrayView2D<float>& values,
+                    std::optional<float> null_value)
     {
         writer.beginArray();
         for (const auto& row : values)

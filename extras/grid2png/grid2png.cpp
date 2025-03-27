@@ -16,7 +16,7 @@
 #include <Yimage/Png/WritePng.hpp>
 
 void make_png(const std::string& filename,
-              const Chorasmia::ArrayView2D<double>& grid,
+              const Chorasmia::ArrayView2D<float>& grid,
               Chorasmia::Index2DMode index_mode)
 {
     std::cout << filename << "\n";

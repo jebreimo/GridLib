@@ -24,8 +24,8 @@ namespace GridLib
             uint32_t rgba;
         };
 
-        void add_range(Chorasmia::IntervalMap<double, uint32_t>& map,
-                       double from_height, double to_height,
+        void add_range(Chorasmia::IntervalMap<float, uint32_t>& map,
+                       float from_height, float to_height,
                        Color from_color, Color to_color,
                        unsigned steps)
         {
@@ -48,16 +48,16 @@ namespace GridLib
         }
     }
 
-    Chorasmia::IntervalMap<double, uint32_t> make_map_gradient(
-        double sea_level_min,
-        double sea_level_max,
-        double ground_level_1_max,
-        double ground_level_2_max,
-        double ground_level_3_max,
-        double ground_level_4_max,
-        double ground_level_5_max)
+    Chorasmia::IntervalMap<float, uint32_t> make_map_gradient(
+        float sea_level_min,
+        float sea_level_max,
+        float ground_level_1_max,
+        float ground_level_2_max,
+        float ground_level_3_max,
+        float ground_level_4_max,
+        float ground_level_5_max)
     {
-        Chorasmia::IntervalMap<double, uint32_t> map(0xFFFF8E5Au);
+        Chorasmia::IntervalMap<float, uint32_t> map(0xFFFF8E5Au);
         map.insert(sea_level_max, 0xFFFCF2E9u);
         add_range(map, sea_level_min, sea_level_max, Color{.rgba = 0xFFFF8E5Au},
                   Color{.rgba = 0xFFFAEAD1u}, 10);
@@ -73,17 +73,17 @@ namespace GridLib
                   Color{.rgba = 0xFFFCF2E9u}, 10);
 
         // Extend the sea a little bit:
-        map.insert(sea_level_max, sea_level_max + 0.25, 0xFFFAEAD1u);
+        map.insert(sea_level_max, sea_level_max + 0.25f, 0xFFFAEAD1u);
 
         return map;
     }
 
-    Chorasmia::IntervalMap<double, uint32_t> make_default_gradient_2500()
+    Chorasmia::IntervalMap<float, uint32_t> make_default_gradient_2500()
     {
         return make_map_gradient(2500, 0, 500, 1000, 1500, 2000, 2500);
     }
 
-    Chorasmia::IntervalMap<double, uint32_t> make_default_gradient_9000()
+    Chorasmia::IntervalMap<float, uint32_t> make_default_gradient_9000()
     {
         return make_map_gradient(2500, 0, 1000, 2000, 3000, 5000, 9000);
     }

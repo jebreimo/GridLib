@@ -15,7 +15,7 @@ namespace GridLib
         constexpr double pi = 3.14159265358979323846264338328;
         constexpr double f =  1 / 298.257222101;
         constexpr double k0 = 0.9996;
-        constexpr double a  = 6378137;
+        constexpr double a  = 6'378'137;
         constexpr double ecc_squared = 2.0 * f - f * f;
         constexpr double ecc_prime_squared = ecc_squared / (1 - ecc_squared);
         double e[4] = {(1. - std::sqrt(1. - ecc_squared)) / (1.0 + std::sqrt(1.0 - ecc_squared))};
@@ -36,7 +36,7 @@ namespace GridLib
         double c[2] = {ecc_prime_squared * std::cos(phi1_rad) * std::cos(phi1_rad)};
         compute_powers(c);
 
-        constexpr double false_east = 500000; // remove 500,000 meter offset for longitude
+        constexpr double false_east = 500'000; // remove 500,000 meter offset for longitude
         double d[6] = {(easting - false_east) / (n1 * k0)};
         compute_powers(d);
 

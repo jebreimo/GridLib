@@ -10,14 +10,14 @@
 namespace GridLib
 {
     Grid::Grid()
-        : Grid(Chorasmia::Array2D<double>())
+        : Grid(Chorasmia::Array2D<float>())
     {}
 
     Grid::Grid(size_t rows, size_t columns)
-        : Grid(Chorasmia::Array2D<double>(rows, columns))
+        : Grid(Chorasmia::Array2D<float>(rows, columns))
     {}
 
-    Grid::Grid(Chorasmia::Array2D<double> values)
+    Grid::Grid(Chorasmia::Array2D<float> values)
         : grid_(std::move(values)),
           row_axis_{{1, 0, 0}, Unit::METERS},
           column_axis_{{0, -1, 0}, Unit::METERS},
@@ -54,22 +54,22 @@ namespace GridLib
         grid_.resize(rows, columns);
     }
 
-    Chorasmia::ArrayView2D<double> Grid::elevations() const
+    Chorasmia::ArrayView2D<float> Grid::elevations() const
     {
         return grid_.view();
     }
 
-    Chorasmia::MutableArrayView2D<double> Grid::elevations()
+    Chorasmia::MutableArrayView2D<float> Grid::elevations()
     {
         return {grid_.data(), grid_.row_count(), grid_.col_count()};
     }
 
-    std::optional<double> Grid::unknown_elevation() const
+    std::optional<float> Grid::unknown_elevation() const
     {
         return unknown_elevation_;
     }
 
-    Grid& Grid::set_unknown_elevation(std::optional<double> value)
+    Grid& Grid::set_unknown_elevation(std::optional<float> value)
     {
         unknown_elevation_ = value;
         return *this;
@@ -147,7 +147,7 @@ namespace GridLib
         return GridView(*this).subgrid(row, column, n_rows, n_cols);
     }
 
-    Chorasmia::Array2D<double> Grid::release()
+    Chorasmia::Array2D<float> Grid::release()
     {
         return std::move(grid_);
     }

@@ -22,7 +22,7 @@ namespace GridLib
     }
 
     GridView::GridView(const Grid& grid,
-                       Chorasmia::ArrayView2D<double> elevations,
+                       Chorasmia::ArrayView2D<float> elevations,
                        std::optional<SphericalCoords> spherical_coords,
                        std::optional<PlanarCoords> planar_coords) noexcept
         : grid_(&grid),
@@ -42,12 +42,12 @@ namespace GridLib
         return elevations_.col_count();
     }
 
-    Chorasmia::ArrayView2D<double> GridView::elevations() const
+    Chorasmia::ArrayView2D<float> GridView::elevations() const
     {
         return elevations_;
     }
 
-    std::optional<double> GridView::unknown_elevation() const
+    std::optional<float> GridView::unknown_elevation() const
     {
         assert_grid();
         return grid_->unknown_elevation();
@@ -120,7 +120,7 @@ namespace GridLib
             GRIDLIB_THROW("grid is NULL");
     }
 
-    std::pair<double, double> get_min_max_elevation(const GridView& grid)
+    std::pair<float, float> get_min_max_elevation(const GridView& grid)
     {
         const auto elevations = grid.elevations();
         const auto no_value = grid.unknown_elevation();

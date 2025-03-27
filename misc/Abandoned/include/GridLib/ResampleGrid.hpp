@@ -11,15 +11,15 @@
 
 namespace GridLib
 {
-    Chorasmia::Array2D<double>
-    resample(const Chorasmia::ArrayView2D<double>& grid,
+    Chorasmia::Array2D<float>
+    resample(const Chorasmia::ArrayView2D<float>& grid,
              size_t rows, size_t columns);
 
-    Chorasmia::Array2D<double>
-    resampleNearestNeighbor(const Chorasmia::ArrayView2D<double>& grid,
+    Chorasmia::Array2D<float>
+    resampleNearestNeighbor(const Chorasmia::ArrayView2D<float>& grid,
                             size_t rows, size_t columns);
 
-    Chorasmia::Array2D<double>
-    resampleJeb(const Chorasmia::ArrayView2D<double>& grid,
+    Chorasmia::Array2D<float>
+    resampleJeb(const Chorasmia::ArrayView2D<float>& grid,
                             size_t rows, size_t columns);
 }

@@ -43,7 +43,7 @@ namespace GridLib
         double r_res = a.y_resolution.value_or(1.0);
 
         auto v_unit = from_dem_unit(a.vertical_unit.value_or(0));
-        double v_res = a.z_resolution.value_or(1.0);
+        float v_res = a.z_resolution.value_or(1.0);
 
         if (a.longitude && a.latitude)
         {
@@ -121,7 +121,7 @@ namespace GridLib
         grid.set_vertical_axis({{0, 0, v_res}, v_unit});
         grid.set_unknown_elevation(UNKNOWN * factor);
 
-        Chorasmia::MutableArrayView2D<double> values;
+        Chorasmia::MutableArrayView2D<float> values;
         auto rows = a.rows.value_or(1);
         auto cols = a.columns.value_or(1);
         while (auto b = reader.next_record_b())

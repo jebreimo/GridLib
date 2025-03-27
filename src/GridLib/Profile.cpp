@@ -16,7 +16,7 @@ namespace GridLib
     namespace
     {
         [[nodiscard]]
-        Xyz::RectangleD to_rectangle(const Chorasmia::ArrayView2D<double>& grid)
+        Xyz::RectangleD to_rectangle(const Chorasmia::ArrayView2D<float>& grid)
         {
             auto width = double(grid.row_count() - 1);
             auto height = double(grid.col_count() - 1);
@@ -24,7 +24,7 @@ namespace GridLib
         }
 
         [[nodiscard]]
-        Xyz::Vector3D get_point(const Chorasmia::ArrayView2D<double>& grid,
+        Xyz::Vector3D get_point(const Chorasmia::ArrayView2D<float>& grid,
                                 const Xyz::Vector2D& pos)
         {
             auto z = Chorasmia::interpolate_value(grid, pos[0], pos[1]);
@@ -72,13 +72,13 @@ namespace GridLib
         }
     }
 
-    double get_value(const GridView& grid, const Xyz::Vector2D& pos)
+    float get_value(const GridView& grid, const Xyz::Vector2D& pos)
     {
         return interpolate_value(grid.elevations(), pos[0], pos[1]);
     }
 
     std::vector<Xyz::Vector3D>
-    make_profile(Chorasmia::ArrayView2D<double> grid,
+    make_profile(Chorasmia::ArrayView2D<float> grid,
                  const Xyz::Vector2D& from,
                  const Xyz::Vector2D& to,
                  size_t steps)

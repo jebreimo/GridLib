@@ -17,42 +17,42 @@ namespace GridLib
 {
     struct ElevationGradient
     {
-        explicit ElevationGradient(Chorasmia::IntervalMap<double, uint32_t> color_map)
+        explicit ElevationGradient(Chorasmia::IntervalMap<float, uint32_t> color_map)
             : color_map_(std::move(color_map))
         {}
 
-        uint32_t operator()(double elevation) const
+        uint32_t operator()(float elevation) const
         {
             if (auto it = color_map_.find(elevation); it != color_map_.end())
                 return it->second;
             return 0;
         }
 
-        Chorasmia::IntervalMap<double, uint32_t> color_map_;
+        Chorasmia::IntervalMap<float, uint32_t> color_map_;
     };
 
-    Chorasmia::IntervalMap<double, uint32_t> make_map_gradient(
-        double sea_level_min,
-        double sea_level_max,
-        double ground_level_1_max,
-        double ground_level_2_max,
-        double ground_level_3_max,
-        double ground_level_4_max,
-        double ground_level_5_max);
+    Chorasmia::IntervalMap<float, uint32_t> make_map_gradient(
+        float sea_level_min,
+        float sea_level_max,
+        float ground_level_1_max,
+        float ground_level_2_max,
+        float ground_level_3_max,
+        float ground_level_4_max,
+        float ground_level_5_max);
 
-    Chorasmia::IntervalMap<double, uint32_t> make_default_gradient_2500();
+    Chorasmia::IntervalMap<float, uint32_t> make_default_gradient_2500();
 
-    Chorasmia::IntervalMap<double, uint32_t> make_default_gradient_9000();
+    Chorasmia::IntervalMap<float, uint32_t> make_default_gradient_9000();
 
     template <typename T>
-    concept ColorFunc = requires(T func, double value)
+    concept ColorFunc = requires(T func, float value)
     {
         { func(value) } -> std::same_as<uint32_t>;
     };
 
     template <ColorFunc ColorFunc>
     Yimage::Image
-    rasterize_rgba(const Chorasmia::ArrayView2D<double>& grid,
+    rasterize_rgba(const Chorasmia::ArrayView2D<float>& grid,
                    ColorFunc color_func,
                    Chorasmia::Index2DMode mode)
     {
