@@ -219,7 +219,7 @@ namespace GridLib
             return GridFileType::DEM;
 #endif
 #ifdef GridLib_GEOTIFF_SUPPORT
-        if (is_geotiff(fileName))
+        if (is_tiff(fileName))
             return GridFileType::GEOTIFF;
 #endif
         if (Yson::makeReader(fileName))
@@ -238,7 +238,7 @@ namespace GridLib
             return read_json_grid(file_name);
 #ifdef GridLib_DEM_SUPPORT
         case GridFileType::DEM:
-            return read_dem(file_name, Unit::METERS);
+            return read_dem(file_name, Unit::METER);
 #endif
 #ifdef GridLib_GEOTIFF_SUPPORT
         case GridFileType::GEOTIFF:

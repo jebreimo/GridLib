@@ -15,9 +15,10 @@ namespace GridLib
     enum class Unit
     {
         UNDEFINED = 0,
-        FEET = 1,
-        METERS = 2,
-        ARC_SECONDS = 3
+        METER = 1,
+        FOOT = 2,
+        US_SURVEY_FOOT = 3,
+        ARC_SECONDS = 4
     };
 
     std::string_view to_string(Unit unit);
@@ -78,11 +79,14 @@ namespace GridLib
     {
         int projected = 0;
         int vertical = 0;
+        int geographic = 0;
     };
 
     constexpr bool operator==(const ReferenceSystem& a, const ReferenceSystem& b)
     {
-        return a.projected == b.projected && a.vertical == b.vertical;
+        return a.projected == b.projected
+               && a.vertical == b.vertical
+               && a.geographic == b.geographic;
     }
 
     enum class RotationDir

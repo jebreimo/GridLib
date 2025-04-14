@@ -19,9 +19,9 @@ namespace GridLib
 
     Grid::Grid(Chorasmia::Array2D<float> values)
         : grid_(std::move(values)),
-          row_axis_{{1, 0, 0}, Unit::METERS},
-          column_axis_{{0, -1, 0}, Unit::METERS},
-          vertical_axis_{{0, 0, 1}, Unit::METERS}
+          row_axis_{{1, 0, 0}, Unit::UNDEFINED},
+          column_axis_{{0, -1, 0}, Unit::UNDEFINED},
+          vertical_axis_{{0, 0, 1}, Unit::UNDEFINED}
     {}
 
     void Grid::clear()

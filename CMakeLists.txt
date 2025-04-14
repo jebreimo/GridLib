@@ -58,7 +58,7 @@ if (GridLib_INSTALL)
 endif ()
 FetchContent_Declare(yimage
     GIT_REPOSITORY "https://github.com/jebreimo/Yimage.git"
-    GIT_TAG v0.2.2)
+    GIT_TAG v0.2.4)
 
 if (GridLib_INSTALL)
     set(YSON_INSTALL ON)

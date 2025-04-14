@@ -15,4 +15,6 @@ namespace GridLib
 
     std::optional<SphericalCoords>
     get_spherical_coords(double x, double y, int epsg);
+
+    Unit epsg_to_unit(int epsg);
 }

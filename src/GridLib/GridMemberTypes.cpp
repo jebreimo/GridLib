@@ -16,8 +16,9 @@ namespace GridLib
     {
         switch (unit)
         {
-        TO_STRING(FEET);
-        TO_STRING(METERS);
+        TO_STRING(METER);
+        TO_STRING(FOOT);
+        TO_STRING(US_SURVEY_FOOT);
         TO_STRING(ARC_SECONDS);
         default:
             return "UNDEFINED";
@@ -30,8 +31,8 @@ namespace GridLib
 
     std::optional<Unit> parse_unit(std::string_view str)
     {
-        CHECK_STRING(str, METERS);
-        CHECK_STRING(str, FEET);
+        CHECK_STRING(str, METER);
+        CHECK_STRING(str, FOOT);
         CHECK_STRING(str, ARC_SECONDS);
         CHECK_STRING(str, UNDEFINED);
         return {};
@@ -41,14 +42,16 @@ namespace GridLib
     {
         switch (unit)
         {
-        case Unit::FEET:
-            return 12 * 0.0254;
-        case Unit::ARC_SECONDS:
-            return 30.87; // At equator
-        case Unit::METERS:
         case Unit::UNDEFINED:
+        case Unit::METER:
         default:
             return 1;
+        case Unit::FOOT:
+            return 12 * 0.0254;
+        case Unit::US_SURVEY_FOOT:
+            return 1200.0 / 3937.0;
+        case Unit::ARC_SECONDS:
+            return 30.87; // At equator
         }
     }
 }

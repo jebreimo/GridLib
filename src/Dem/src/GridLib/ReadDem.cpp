@@ -21,9 +21,9 @@ namespace GridLib
         switch (unit)
         {
         case 1:
-            return Unit::FEET;
+            return Unit::FOOT;
         case 2:
-            return Unit::METERS;
+            return Unit::METER;
         case 3:
             return Unit::ARC_SECONDS;
         default:
@@ -70,13 +70,13 @@ namespace GridLib
                 });
         }
         double factor = 1.0;
-        if (vertical_unit == Unit::METERS)
+        if (vertical_unit == Unit::METER)
         {
-            if (v_unit == Unit::FEET)
+            if (v_unit == Unit::FOOT)
             {
                 factor = v_res * METERS_PER_FOOT;
                 v_res = 1.0;
-                v_unit = Unit::METERS;
+                v_unit = Unit::METER;
             }
             else
             {
@@ -84,20 +84,20 @@ namespace GridLib
                 v_res = 1.0;
             }
 
-            if (h_unit == Unit::FEET)
+            if (h_unit == Unit::FOOT)
             {
                 r_res *= METERS_PER_FOOT;
                 c_res *= METERS_PER_FOOT;
-                h_unit = Unit::METERS;
+                h_unit = Unit::METER;
             }
         }
-        else if (vertical_unit == Unit::FEET)
+        else if (vertical_unit == Unit::FOOT)
         {
-            if (v_unit == Unit::METERS)
+            if (v_unit == Unit::METER)
             {
                 factor = v_res / METERS_PER_FOOT;
                 v_res = 1.0;
-                v_unit = Unit::FEET;
+                v_unit = Unit::FOOT;
             }
             else
             {
@@ -105,11 +105,11 @@ namespace GridLib
                 v_res = 1.0;
             }
 
-            if (h_unit == Unit::METERS)
+            if (h_unit == Unit::METER)
             {
                 r_res *= 1.0 / METERS_PER_FOOT;
                 c_res *= 1.0 / METERS_PER_FOOT;
-                h_unit = Unit::FEET;
+                h_unit = Unit::FOOT;
             }
         }
 

@@ -17,9 +17,9 @@ TEST_CASE("Test get_index_mode_for_top_left_origin")
     {
         GridLib::Grid grid(1, 1);
         grid.set_row_axis({GridLib::Axis{Xyz::make_vector3(r, 0.0),
-                                         GridLib::Unit::METERS}})
+                                         GridLib::Unit::METER}})
             .set_column_axis({GridLib::Axis{Xyz::make_vector3(c, 0.0),
-                                            GridLib::Unit::METERS}});
+                                            GridLib::Unit::METER}});
         return grid;
     };
 

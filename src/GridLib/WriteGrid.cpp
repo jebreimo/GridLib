@@ -30,12 +30,14 @@ namespace GridLib
             .endObject();
     }
 
-    void write_json(Yson::Writer& writer, const ReferenceSystem& refSys)
+    void write_json(Yson::Writer& writer, const ReferenceSystem& ref_sys)
     {
         writer.beginObject()
-            .key("projected").value(refSys.projected);
-        if (refSys.vertical)
-            writer.key("vertical").value(refSys.vertical);
+            .key("projected").value(ref_sys.projected);
+        if (ref_sys.vertical)
+            writer.key("vertical").value(ref_sys.vertical);
+        if (ref_sys.geographic)
+            writer.key("geographic").value(ref_sys.geographic);
         writer.endObject();
     }
 
@@ -128,6 +130,7 @@ namespace GridLib
     void write_json(std::ostream& stream, const GridView& grid)
     {
         Yson::JsonWriter writer(stream, Yson::JsonFormatting::FORMAT);
+        writer.setNonFiniteFloatsEnabled(true);
         write_json(writer, grid);
     }
 

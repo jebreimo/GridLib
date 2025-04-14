@@ -7,6 +7,7 @@
 //****************************************************************************
 #include "GridLib/ReadGeoTiff.hpp"
 
+#include <Yimage/ReadImage.hpp>
 #include <Yimage/Tiff/GeoTiffMetadata.hpp>
 #include <Yimage/Tiff/ReadTiff.hpp>
 #include "GridLib/Utilities/CoordinateSystem.hpp"
@@ -20,9 +21,9 @@ namespace GridLib
         return {};
     }
 
-    Grid read_geotiff(const std::string& file_name)
+    Grid read_geotiff(const std::filesystem::path& path)
     {
-        auto img = Yimage::read_tiff(file_name);
+        auto img = Yimage::read_tiff(path);
         auto metadata = dynamic_cast<Yimage::GeoTiffMetadata*>(img.metadata());
         if (!metadata || img.pixel_type() != Yimage::PixelType::MONO_FLOAT_32)
             return {};
@@ -38,32 +39,31 @@ namespace GridLib
             std::copy(elevations.begin(), elevations.end(), dst.begin());
         }
 
-        auto epsg = metadata->projected_crs;
-        if (epsg)
-        {
-            result.set_reference_system(ReferenceSystem{epsg, 0});
-            auto x = metadata->model_tie_point[3];
-            auto y = metadata->model_tie_point[4];
-            if (x != 0 || y != 0)
-            {
-                result.set_planar_coords(get_planar_coords(x, y, epsg));
-                result.set_spherical_coords(get_spherical_coords(x, y, epsg));
-            }
-        }
+        result.set_reference_system(ReferenceSystem{
+            metadata->projected_crs,
+            metadata->vertical_crs,
+            metadata->geodetic_crs
+        });
 
+        auto x = metadata->model_tie_point[3];
+        auto y = metadata->model_tie_point[4];
+        result.set_planar_coords(get_planar_coords(x, y, metadata->projected_crs));
+        result.set_spherical_coords(get_spherical_coords(x, y, metadata->projected_crs));
+
+        auto lin_unit = epsg_to_unit(metadata->projected_linear_units);
         if (auto xs = metadata->model_pixel_scale[0]; xs != 0)
-            result.set_row_axis({{xs, 0.0, 0.0}, Unit::METERS});
+            result.set_row_axis({{xs, 0.0, 0.0}, lin_unit});
         if (auto ys = metadata->model_pixel_scale[1]; ys != 0)
-            result.set_column_axis({{0.0, -ys, 0.0}, Unit::METERS});
+            result.set_column_axis({{0.0, -ys, 0.0}, lin_unit});
+        auto ver_unit = epsg_to_unit(metadata->vertical_units);
         if (auto zs = metadata->model_pixel_scale[2]; zs != 0)
-            result.set_vertical_axis({{0.0, 0.0, zs}, Unit::METERS});
+            result.set_vertical_axis({{0.0, 0.0, zs}, ver_unit});
 
         return result;
     }
 
-    bool is_geotiff(const std::string& file_name)
+    bool is_tiff(const std::filesystem::path& path)
     {
-        auto metadata = Yimage::read_tiff_metadata(file_name);
-        return dynamic_cast<Yimage::GeoTiffMetadata*>(metadata.get()) != nullptr;
+        return Yimage::get_image_format(path) == Yimage::ImageFormat::TIFF;
     }
 }
