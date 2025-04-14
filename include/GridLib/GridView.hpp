@@ -81,4 +81,6 @@ namespace GridLib
 
     [[nodiscard]]
     Xyz::RectangleD get_bounding_rect(const GridView& grid);
+
+    float get_elevation(const GridView& grid, Xyz::Vector2F grid_pos);
 }

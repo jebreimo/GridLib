@@ -5,6 +5,7 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
+#include <Xyz/Interpolation.hpp>
 #include "GridLib/GridView.hpp"
 #include "GridLib/Grid.hpp"
 #include "GridLib/GridLibException.hpp"
@@ -183,5 +184,89 @@ namespace GridLib
         auto x_len = row_sign * get_length(row_vec);
         auto y_len = col_sign * get_length(col_vec);
         return {{origin[0], origin[1]}, {x_len, y_len}};
+    }
+
+    namespace
+    {
+        Xyz::Vector<size_t, 2> get_cell(const GridView& grid,
+                                        const Xyz::Vector2F& grid_pos)
+        {
+            if (grid_pos[0] < 0 || float(grid.row_count() - 1) < grid_pos[0])
+                GRIDLIB_THROW("Row index out of bounds.");
+            if (grid_pos[1] < 0 || float(grid.col_count() - 1) < grid_pos[1])
+                GRIDLIB_THROW("Column index out of bounds.");
+            auto c = Xyz::vector_cast<size_t>(floor(grid_pos));
+            return get_clamped(c, {0, 0}, {grid.row_count() - 2, grid.col_count() - 2});
+        }
+
+        Xyz::Vector4F get_grid_cell_values(const GridView& grid,
+                                           const Xyz::Vector<size_t, 2>& cell)
+        {
+            auto elevations = grid.elevations();
+            return {
+                elevations(cell[0], cell[1]),
+                elevations(cell[0], cell[1] + 1),
+                elevations(cell[0] + 1, cell[1]),
+                elevations(cell[0] + 1, cell[1] + 1)
+            };
+        }
+
+        bool has_unknown_elevation(const GridView& grid,
+                                   const Xyz::Vector4F& values)
+        {
+            if (!grid.unknown_elevation())
+                return false;
+            const auto unknown = *grid.unknown_elevation();
+            return values[0] == unknown || values[1] == unknown
+                   || values[2] == unknown || values[3] == unknown;
+        }
+
+        float get_edge_elevation(const GridView& grid,
+                                 Xyz::Vector2F& grid_pos,
+                                 const Xyz::Vector<size_t, 2>& cell,
+                                 const Xyz::Vector4F& values)
+        {
+            float ri;
+            const auto rf = std::modf(grid_pos[0], &ri);
+            float ci;
+            const auto cf = std::modf(grid_pos[1], &ci);
+
+            const auto r = size_t(ri) - cell[0];
+            const auto c = size_t(ci) - cell[1];
+
+            if (rf == 0 && cf == 0)
+                return values[r * 2 + c];
+
+            const auto unknown = *grid.unknown_elevation();
+            if (rf == 0)
+            {
+                if (values[r * 2] != unknown && values[r * 2 + 1] != unknown)
+                    return std::lerp(values[r * 2], values[r * 2 + 1], cf);
+            }
+            else if (cf == 0)
+            {
+                if (values[c] != unknown && values[2 + c] != unknown)
+                    return std::lerp(values[c], values[2 + c], rf);
+            }
+
+            return unknown;
+        }
+    }
+
+    float get_elevation(const GridView& grid, Xyz::Vector2F grid_pos)
+    {
+        auto cell = get_cell(grid, grid_pos);
+        const auto cell_values = get_grid_cell_values(grid, cell);
+        if (has_unknown_elevation(grid, cell_values))
+            return get_edge_elevation(grid, grid_pos, cell, cell_values);
+
+        // Xyz::bilinear assumes column-major order, so we need to swap the
+        // coordinates.
+        std::swap(grid_pos[0], grid_pos[1]);
+        std::swap(cell[0], cell[1]);
+
+        const auto p1 = Xyz::vector_cast<float>(cell);
+        const auto p2 = p1 + Xyz::Vector2F(1, 1);
+        return bilinear(cell_values, p1, p2, grid_pos);
     }
 }
