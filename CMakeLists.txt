@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.17)
-project(GridLib VERSION 0.5.0)
+project(GridLib VERSION 0.5.1)
 
 set(CMAKE_CXX_STANDARD 20)
 
