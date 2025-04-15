@@ -13,16 +13,6 @@
 
 using Catch::Matchers::WithinAbs;
 
-TEST_CASE("Test get_value")
-{
-    GridLib::Grid grid({{1, 2, 3,
-                         4, 5, 6,
-                         7, 8, 9},
-                        3, 3});
-    auto value = GridLib::get_value(grid.view(), {0.5, 0.5});
-    REQUIRE_THAT(value, WithinAbs(3, 1e-12));
-}
-
 TEST_CASE("Profile without clipping")
 {
     Chorasmia::Array2D<float> grid({1, 2, 3,

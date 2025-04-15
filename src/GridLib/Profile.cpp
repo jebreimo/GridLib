@@ -27,8 +27,8 @@ namespace GridLib
         Xyz::Vector3D get_point(const Chorasmia::ArrayView2D<float>& grid,
                                 const Xyz::Vector2D& pos)
         {
-            auto z = Chorasmia::interpolate_value(grid, pos[0], pos[1]);
-            return Xyz::make_vector3(pos, z);
+            auto z = interpolate_value(grid, pos[0], pos[1]);
+            return make_vector3(pos, z);
         }
 
         [[nodiscard]]
@@ -62,15 +62,10 @@ namespace GridLib
         Xyz::Vector3D transform_point(const Xyz::Matrix4D& transform,
                                       const Xyz::Vector3D& point)
         {
-            auto v4 = Xyz::make_vector4(point, 1.0);
+            const auto v4 = make_vector4(point, 1.0);
             auto result = transform * v4;
             return {result[0], result[1], result[2]};
         }
-    }
-
-    float get_value(const GridView& grid, const Xyz::Vector2D& pos)
-    {
-        return interpolate_value(grid.elevations(), pos[0], pos[1]);
     }
 
     std::vector<Xyz::Vector3D>
@@ -80,11 +75,11 @@ namespace GridLib
                  size_t steps)
     {
         Xyz::LineSegment<double, 2> line(from, to);
-        auto clip = Xyz::get_clipping_positions(to_rectangle(grid), line);
+        const auto clip = get_clipping_positions(to_rectangle(grid), line);
         if (!clip)
             return {};
 
-        line = Xyz::make_line_segment(line, clip->first, clip->second);
+        line = make_line_segment(line, clip->first, clip->second);
 
         const auto step_size = (to - from) / double(steps);
         const auto first = std::ceil(clip->first * double(steps));

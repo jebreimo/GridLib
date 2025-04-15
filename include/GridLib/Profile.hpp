@@ -13,8 +13,6 @@
 
 namespace GridLib
 {
-    float get_value(const GridView& grid, const Xyz::Vector2D& pos);
-
     [[nodiscard]] std::vector<Xyz::Vector3D>
     make_profile(Chorasmia::ArrayView2D<float> grid,
                  const Xyz::Vector2D& from,

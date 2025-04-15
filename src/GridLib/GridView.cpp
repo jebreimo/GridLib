@@ -109,7 +109,7 @@ namespace GridLib
     {
         const auto elevations = grid.elevations();
         const auto no_value = grid.unknown_elevation();
-        auto min = DBL_MAX, max = DBL_TRUE_MIN;
+        auto min = FLT_MAX, max = FLT_TRUE_MIN;
         for (const auto row : elevations)
         {
             for (const auto value : row)
@@ -210,8 +210,8 @@ namespace GridLib
             double ci;
             const auto cf = std::modf(grid_pos[1], &ci);
 
-            const auto r = size_t(ri) - cell[0];
-            const auto c = size_t(ci) - cell[1];
+            const auto r = unsigned(ri) - unsigned(cell[0]);
+            const auto c = unsigned(ci) - unsigned(cell[1]);
 
             if (rf == 0 && cf == 0)
                 return values[r * 2 + c];
