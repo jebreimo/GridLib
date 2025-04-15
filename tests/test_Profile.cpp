@@ -15,10 +15,13 @@ using Catch::Matchers::WithinAbs;
 
 TEST_CASE("Profile without clipping")
 {
-    Chorasmia::Array2D<float> grid({1, 2, 3,
-                                    4, 5, 6,
-                                    7, 8, 9},
-                                   3, 3);
+    Chorasmia::Array2D<float> values({
+                                         1, 2, 3,
+                                         4, 5, 6,
+                                         7, 8, 9
+                                     },
+                                     3, 3);
+    GridLib::Grid grid(std::move(values));
     auto contour = GridLib::make_profile(grid.view(), {0.5, 0.5}, {1.5, 1.5}, 2);
     REQUIRE(contour.size() == 3);
     REQUIRE_THAT(contour[0][2], WithinAbs(3, 1e-12));
@@ -28,10 +31,13 @@ TEST_CASE("Profile without clipping")
 
 TEST_CASE("Profile with clipping")
 {
-    Chorasmia::Array2D<float> grid({1, 2, 3,
-                                    4, 5, 6,
-                                    7, 8, 9},
+    Chorasmia::Array2D<float> values({
+                                       1, 2, 3,
+                                       4, 5, 6,
+                                       7, 8, 9
+                                   },
                                    3, 3);
+    GridLib::Grid grid(std::move(values));
     auto contour = GridLib::make_profile(grid.view(), {4.5, 3}, {-2.5, -0.5}, 7);
     REQUIRE(contour.size() == 4);
     REQUIRE_THAT(contour[0][2], WithinAbs(8.75, 1e-12));
@@ -42,9 +48,11 @@ TEST_CASE("Profile with clipping")
 
 TEST_CASE("Profile with transformation")
 {
-    Chorasmia::Array2D<float> array({1, 2, 3,
-                                     4, 5, 6,
-                                     7, 8, 9},
+    Chorasmia::Array2D<float> array({
+                                        1, 2, 3,
+                                        4, 5, 6,
+                                        7, 8, 9
+                                    },
                                     3, 3);
     GridLib::Grid grid(array);
     grid.set_coordinates({{500.0, 1000.0, 0}});

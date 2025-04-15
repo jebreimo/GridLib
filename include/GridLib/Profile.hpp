@@ -14,7 +14,7 @@
 namespace GridLib
 {
     [[nodiscard]] std::vector<Xyz::Vector3D>
-    make_profile(Chorasmia::ArrayView2D<float> grid,
+    make_profile(const GridView& grid,
                  const Xyz::Vector2D& from,
                  const Xyz::Vector2D& to,
                  size_t steps);
