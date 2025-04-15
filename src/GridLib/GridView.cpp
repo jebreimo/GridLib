@@ -269,4 +269,19 @@ namespace GridLib
         const auto p2 = p1 + Xyz::Vector2F(1, 1);
         return bilinear(cell_values, p1, p2, grid_pos);
     }
+
+    Xyz::Vector2F model_pos_to_grid_pos(const GridView& grid,
+                                        const Xyz::Vector3D& model_pos)
+    {
+        const Xyz::Vector3D origin(grid.planar_coords()->easting,
+                             grid.planar_coords()->northing,
+                             grid.planar_coords()->elevation);
+        const auto row = grid.row_axis().direction;
+        const auto col = grid.col_axis().direction;
+        const auto offset = model_pos - origin;
+        return {
+            float(dot(offset, col) / dot(col, col)),
+            float(dot(offset, row) / dot(row, row))
+        };
+    }
 }

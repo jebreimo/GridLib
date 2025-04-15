@@ -82,5 +82,26 @@ namespace GridLib
     [[nodiscard]]
     Xyz::RectangleD get_bounding_rect(const GridView& grid);
 
+    /**
+     * @brief Get the elevation at a given grid position.
+     *
+     * @param grid The grid to get the elevation from.
+     * @param grid_pos The position, in row-major order, in the grid to get
+     *      the elevation from.
+     * @return The elevation at the given position.
+     */
+    [[nodiscard]]
     float get_elevation(const GridView& grid, Xyz::Vector2F grid_pos);
+
+    /**
+     * @brief Get the grid position at a given model position.
+     *
+     * @param grid The grid to get the position for.
+     * @param model_pos The position in model coordinates. The order of the
+     *      coordinates are easting, northing, elevation.
+     * @return The elevation at the given position.
+     */
+    [[nodiscard]]
+    Xyz::Vector2F model_pos_to_grid_pos(const GridView& grid,
+                                         const Xyz::Vector3D& model_pos);
 }
