@@ -18,14 +18,8 @@ namespace GridLib
         return 0;
     }
 
-    std::optional<PlanarCoords>
-    get_planar_coords(double x, double y, int epsg)
-    {
-        return PlanarCoords{x, y, 0, get_crs_zone(epsg)};
-    }
-
-    std::optional<SphericalCoords>
-    get_spherical_coords(double x, double y, int epsg)
+    std::optional<Xyz::Vector2D>
+    get_geographic_coords(double x, double y, int epsg)
     {
         if (25828 <= epsg && epsg <= 25838)
         {
@@ -35,7 +29,7 @@ namespace GridLib
         return {};
     }
 
-    Unit epsg_to_unit(int epsg)
+    Unit epsg_unit_to_unit(int epsg)
     {
         switch (epsg)
         {
@@ -48,5 +42,34 @@ namespace GridLib
         default:
             return Unit::UNDEFINED;
         }
+    }
+
+    Unit epsg_crs_to_horizontal_unit(int epsg)
+    {
+        if (25828 <= epsg && epsg <= 25838)
+        {
+            return Unit::METER;
+        }
+        switch (epsg)
+        {
+        case 4258:
+            return Unit::DEGREE;
+        default:
+            break;
+        }
+        return {};
+    }
+
+    Unit epsg_crs_to_vertical_unit(int epsg)
+    {
+        switch (epsg)
+        {
+        case 4937:
+        case 5941:
+            return Unit::METER;
+        default:
+            break;
+        }
+        return {};
     }
 }

@@ -6,9 +6,9 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include "GridLib/GridMemberTypes.hpp"
+#include <Xyz/Vector.hpp>
 
 namespace GridLib
 {
-    SphericalCoords utm_to_geo(double easting, double northing, int utm_zone);
+    Xyz::Vector2D utm_to_geo(double easting, double northing, int utm_zone);
 }

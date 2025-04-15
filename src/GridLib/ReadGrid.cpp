@@ -57,48 +57,95 @@ namespace GridLib
         return axis;
     }
 
-    PlanarCoords read_planar_coords(Yson::Reader& reader)
+    Xyz::Vector3D read_model_coords(Yson::Reader& reader)
     {
         using Yson::read;
-        PlanarCoords coords;
-        for (const auto& key : Yson::keys(reader))
+        Xyz::Vector3D coords;
+        for (const auto& key : keys(reader))
+        {
+            if (key == "x")
+                coords[0] = read<double>(reader);
+            else if (key == "y")
+                coords[1] = read<double>(reader);
+            else if (key == "z")
+                coords[2] = read<double>(reader);
+        }
+        return coords;
+    }
+
+    Xyz::Vector2D read_grid_coords(Yson::Reader& reader)
+    {
+        using Yson::read;
+        Xyz::Vector2D coords;
+        for (const auto& key : keys(reader))
+        {
+            if (key == "row")
+                coords[0] = read<double>(reader);
+            else if (key == "column")
+                coords[1] = read<double>(reader);
+        }
+        return coords;
+    }
+
+    Xyz::Vector2D read_planar_coords(Yson::Reader& reader)
+    {
+        using Yson::read;
+        Xyz::Vector2D coords;
+        for (const auto& key : keys(reader))
         {
             if (key == "northing")
-                coords.northing = read<double>(reader);
+                coords[0] = read<double>(reader);
             else if (key == "easting")
-                coords.easting = read<double>(reader);
-            else if (key == "elevation")
-                coords.elevation = read<double>(reader);
-            else if (key == "zone")
-                coords.zone = read<int>(reader);
+                coords[1] = read<double>(reader);
         }
         return coords;
     }
 
-    std::optional<SphericalCoords> read_spherical_coords(Yson::Reader& reader)
+    Xyz::Vector2D read_spherical_coords(Yson::Reader& reader)
     {
         using Yson::read;
-        SphericalCoords coords;
-        for (const auto& key : Yson::keys(reader))
+        Xyz::Vector2D coords;
+        for (const auto& key : keys(reader))
         {
             if (key == "latitude")
-                coords.latitude = read<double>(reader);
+                coords[0] = read<double>(reader);
             else if (key == "longitude")
-                coords.longitude = read<double>(reader);
+                coords[1] = read<double>(reader);
         }
         return coords;
     }
 
-    ReferenceSystem read_reference_system(Yson::Reader& reader)
+    Coordinates read_coords(Yson::Reader& reader)
+    {
+        Coordinates coords;
+        for (const auto& key : keys(reader))
+        {
+            if (key == "model")
+                coords.model = read_model_coords(reader);
+            else if (key == "grid")
+                coords.grid = read_grid_coords(reader);
+            else if (key == "planar")
+                coords.planar = read_planar_coords(reader);
+            else if (key == "geographic")
+                coords.geographic = read_spherical_coords(reader);
+        }
+        return coords;
+    }
+
+    CoordinateReferenceSystem read_reference_system(Yson::Reader& reader)
     {
         using Yson::read;
-        ReferenceSystem system;
-        for (const auto& key : Yson::keys(reader))
+        CoordinateReferenceSystem system;
+        for (const auto& key : keys(reader))
         {
             if (key == "projected")
                 system.projected = read<int>(reader);
             else if (key == "vertical")
                 system.vertical = read<int>(reader);
+            else if (key == "geographic")
+                system.geographic = read<int>(reader);
+            else if (key == "zone")
+                system.zone = read<int>(reader);
         }
         return system;
     }
@@ -108,7 +155,7 @@ namespace GridLib
         using Yson::read;
         size_t row_count = 0;
         size_t column_count = 0;
-        for (const auto& key : Yson::keys(reader))
+        for (const auto& key : keys(reader))
         {
             if (key == "row_count")
                 row_count = read<uint32_t>(reader);
@@ -120,10 +167,8 @@ namespace GridLib
                 grid.set_column_axis(read_axis(reader));
             else if (key == "vertical_axis")
                 grid.set_vertical_axis(read_axis(reader));
-            else if (key == "planar_coords")
-                grid.set_planar_coords(read_planar_coords(reader));
-            else if (key == "spherical_coords")
-                grid.set_spherical_coords(read_spherical_coords(reader));
+            else if (key == "coordinates")
+                grid.set_coordinates(read_coords(reader));
             else if (key == "reference_system")
                 grid.set_reference_system(read_reference_system(reader));
         }
@@ -156,7 +201,7 @@ namespace GridLib
     Grid read_grid(Yson::Reader& reader)
     {
         Grid grid;
-        for (const auto& key : Yson::keys(reader))
+        for (const auto& key : keys(reader))
         {
             if (key == "metadata")
                 read_metadata(reader, grid);

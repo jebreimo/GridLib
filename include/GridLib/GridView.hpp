@@ -24,9 +24,8 @@ namespace GridLib
         explicit GridView(const Grid& grid) noexcept;
 
         GridView(const Grid& grid,
-                 Chorasmia::ArrayView2D<float> elevations,
-                 std::optional<SphericalCoords> spherical_coords,
-                 std::optional<PlanarCoords> planar_coords) noexcept;
+                 const Chorasmia::ArrayView2D<float>& elevations,
+                 const Coordinates& coords = {}) noexcept;
 
         [[nodiscard]]
         size_t row_count() const;
@@ -50,13 +49,10 @@ namespace GridLib
         const Axis& vertical_axis() const;
 
         [[nodiscard]]
-        const std::optional<SphericalCoords>& spherical_coords() const;
+        const Coordinates& coordinates() const;
 
         [[nodiscard]]
-        const std::optional<PlanarCoords>& planar_coords() const;
-
-        [[nodiscard]]
-        const std::optional<ReferenceSystem>& reference_system() const;
+        const CoordinateReferenceSystem& reference_system() const;
 
         [[nodiscard]]
         const Grid* base_grid() const;
@@ -64,13 +60,13 @@ namespace GridLib
         [[nodiscard]]
         GridView subgrid(size_t row, size_t column,
                          size_t n_rows, size_t n_cols) const;
+
     private:
         void assert_grid() const;
 
         const Grid* grid_ = nullptr;
         Chorasmia::ArrayView2D<float> elevations_;
-        std::optional<SphericalCoords> spherical_coords_;
-        std::optional<PlanarCoords> planar_coords_;
+        Coordinates coordinates_;
     };
 
     [[nodiscard]]
@@ -91,7 +87,7 @@ namespace GridLib
      * @return The elevation at the given position.
      */
     [[nodiscard]]
-    float get_elevation(const GridView& grid, Xyz::Vector2F grid_pos);
+    float get_elevation(const GridView& grid, Xyz::Vector2D grid_pos);
 
     /**
      * @brief Get the grid position at a given model position.
@@ -102,6 +98,10 @@ namespace GridLib
      * @return The elevation at the given position.
      */
     [[nodiscard]]
-    Xyz::Vector2F model_pos_to_grid_pos(const GridView& grid,
-                                         const Xyz::Vector3D& model_pos);
+    Xyz::Vector2D model_pos_to_grid_pos(const GridView& grid,
+                                        const Xyz::Vector3D& model_pos);
+
+    [[nodiscard]]
+    Xyz::Vector3D grid_pos_to_model_pos(const GridView& grid,
+                                        const Xyz::Vector2D& grid_pos);
 }

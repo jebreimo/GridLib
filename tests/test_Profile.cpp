@@ -57,7 +57,7 @@ TEST_CASE("Profile with transformation")
                                      7, 8, 9},
                                     3, 3);
     GridLib::Grid grid(array);
-    grid.set_planar_coords(GridLib::PlanarCoords{500.0, 1000.0});
+    grid.set_coordinates({{500.0, 1000.0, 0}});
     grid.set_row_axis({{10, 0, 0}, GridLib::Unit::METER});
     grid.set_column_axis({{0, -10, 0}, GridLib::Unit::METER});
     grid.set_vertical_axis({{0, 0, 10}, GridLib::Unit::METER});

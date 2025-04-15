@@ -17,7 +17,7 @@ namespace GridLib
             arr[i] = arr[i - 1] * arr[0];
     }
 
-    SphericalCoords utm_to_geo(double easting, double northing, int utm_zone)
+    Xyz::Vector2D utm_to_geo(double easting, double northing, int utm_zone)
     {
         constexpr double pi = 3.14159265358979323846264338328;
         constexpr double f =  1 / 298.257222101;

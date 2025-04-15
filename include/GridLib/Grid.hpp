@@ -64,19 +64,14 @@ namespace GridLib
         Grid& set_vertical_axis(const Axis& axis);
 
         [[nodiscard]]
-        const std::optional<SphericalCoords>& spherical_coords() const;
+        const Coordinates& coordinates() const;
 
-        Grid& set_spherical_coords(const std::optional<SphericalCoords>& coords);
-
-        [[nodiscard]]
-        const std::optional<PlanarCoords>& planar_coords() const;
-
-        Grid& set_planar_coords(const std::optional<PlanarCoords>& coords);
+        Grid& set_coordinates(const Coordinates& coords);
 
         [[nodiscard]]
-        const std::optional<ReferenceSystem>& reference_system() const;
+        const CoordinateReferenceSystem& reference_system() const;
 
-        Grid& set_reference_system(std::optional<ReferenceSystem> system);
+        Grid& set_reference_system(const CoordinateReferenceSystem& system);
 
         [[nodiscard]]
         GridView subgrid(size_t row, size_t column,
@@ -91,9 +86,8 @@ namespace GridLib
         Axis row_axis_;
         Axis column_axis_;
         Axis vertical_axis_;
-        std::optional<SphericalCoords> spherical_coords_;
-        std::optional<PlanarCoords> planar_coords_;
-        std::optional<ReferenceSystem> reference_system_;
+        Coordinates coordinates_;
+        CoordinateReferenceSystem reference_system_;
     };
 
     bool operator==(const Grid& a, const Grid& b);

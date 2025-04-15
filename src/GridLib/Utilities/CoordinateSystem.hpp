@@ -10,11 +10,12 @@
 
 namespace GridLib
 {
-    std::optional<PlanarCoords>
-    get_planar_coords(double x, double y, int epsg);
+    std::optional<Xyz::Vector2D>
+    get_geographic_coords(double x, double y, int epsg);
 
-    std::optional<SphericalCoords>
-    get_spherical_coords(double x, double y, int epsg);
+    Unit epsg_unit_to_unit(int epsg);
 
-    Unit epsg_to_unit(int epsg);
+    Unit epsg_crs_to_horizontal_unit(int epsg);
+
+    Unit epsg_crs_to_vertical_unit(int epsg);
 }

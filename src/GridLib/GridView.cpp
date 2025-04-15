@@ -17,19 +17,16 @@ namespace GridLib
     GridView::GridView(const Grid& grid) noexcept
         : GridView(grid,
                    grid.elevations(),
-                   grid.spherical_coords(),
-                   grid.planar_coords())
+                   grid.coordinates())
     {
     }
 
     GridView::GridView(const Grid& grid,
-                       Chorasmia::ArrayView2D<float> elevations,
-                       std::optional<SphericalCoords> spherical_coords,
-                       std::optional<PlanarCoords> planar_coords) noexcept
+                       const Chorasmia::ArrayView2D<float>& elevations,
+                       const Coordinates& coords) noexcept
         : grid_(&grid),
           elevations_(elevations),
-          spherical_coords_(spherical_coords),
-          planar_coords_(planar_coords)
+          coordinates_(coords)
     {
     }
 
@@ -72,17 +69,12 @@ namespace GridLib
         return grid_->vertical_axis();
     }
 
-    const std::optional<SphericalCoords>& GridView::spherical_coords() const
+    const Coordinates& GridView::coordinates() const
     {
-        return spherical_coords_;
+        return coordinates_;
     }
 
-    const std::optional<PlanarCoords>& GridView::planar_coords() const
-    {
-        return planar_coords_;
-    }
-
-    const std::optional<ReferenceSystem>& GridView::reference_system() const
+    const CoordinateReferenceSystem& GridView::reference_system() const
     {
         assert_grid();
         return grid_->reference_system();
@@ -97,21 +89,13 @@ namespace GridLib
                                size_t n_rows, size_t n_cols) const
     {
         assert_grid();
-        auto planar_coords = planar_coords_;
-        if (planar_coords && (row != 0 || column != 0))
-        {
-            auto offset = double(row) * col_axis().direction
-                          + double(column) * row_axis().direction;
-            planar_coords->easting += offset[0];
-            planar_coords->northing += offset[1];
-        }
-        auto spherical_coords = row == 0 && column == 0
-                                    ? spherical_coords_
-                                    : std::optional<SphericalCoords>();
+        auto coords = coordinates();
+        if (row != 0 || column != 0)
+            coords.grid -= {float(row), float(column)};
         return {
             *grid_,
             elevations_.subarray(row, column, n_rows, n_cols),
-            spherical_coords, planar_coords
+            coords
         };
     }
 
@@ -165,18 +149,13 @@ namespace GridLib
 
     Xyz::RectangleD get_bounding_rect(const GridView& grid)
     {
-        auto pos = grid.planar_coords();
-        auto origin = pos
-                          ? Xyz::Vector3D(pos->easting, pos->northing, pos->elevation)
-                          : Xyz::Vector3D();
-        auto [rows, cols] = grid.elevations().dimensions();
-        auto row_vec = double(cols) * grid.row_axis().direction;
-        auto col_vec = double(rows) * grid.col_axis().direction;
-
         if (!is_planar(grid))
-        {
             GRIDLIB_THROW("Can not calculate bounding rectangle for non-planar grid.");
-        }
+
+        auto origin = grid_pos_to_model_pos(grid, {0, 0});
+        auto [rows, cols] = grid.elevations().dimensions();
+        auto row_vec = double(cols - 1) * grid.row_axis().direction;
+        auto col_vec = double(rows - 1) * grid.col_axis().direction;
 
         auto row_sign = get_max_abs(row_vec[0], row_vec[1]) > 0 ? 1 : -1;
         auto col_sign = get_max_abs(col_vec[0], col_vec[1]) > 0 ? 1 : -1;
@@ -189,13 +168,13 @@ namespace GridLib
     namespace
     {
         Xyz::Vector<size_t, 2> get_cell(const GridView& grid,
-                                        const Xyz::Vector2F& grid_pos)
+                                        const Xyz::Vector2D& grid_pos)
         {
-            if (grid_pos[0] < 0 || float(grid.row_count() - 1) < grid_pos[0])
+            if (grid_pos[0] < 0 || double(grid.row_count() - 1) < grid_pos[0])
                 GRIDLIB_THROW("Row index out of bounds.");
-            if (grid_pos[1] < 0 || float(grid.col_count() - 1) < grid_pos[1])
+            if (grid_pos[1] < 0 || double(grid.col_count() - 1) < grid_pos[1])
                 GRIDLIB_THROW("Column index out of bounds.");
-            auto c = Xyz::vector_cast<size_t>(floor(grid_pos));
+            const auto c = Xyz::vector_cast<size_t>(floor(grid_pos));
             return get_clamped(c, {0, 0}, {grid.row_count() - 2, grid.col_count() - 2});
         }
 
@@ -222,13 +201,13 @@ namespace GridLib
         }
 
         float get_edge_elevation(const GridView& grid,
-                                 Xyz::Vector2F& grid_pos,
+                                 Xyz::Vector2D& grid_pos,
                                  const Xyz::Vector<size_t, 2>& cell,
                                  const Xyz::Vector4F& values)
         {
-            float ri;
+            double ri;
             const auto rf = std::modf(grid_pos[0], &ri);
-            float ci;
+            double ci;
             const auto cf = std::modf(grid_pos[1], &ci);
 
             const auto r = size_t(ri) - cell[0];
@@ -241,19 +220,19 @@ namespace GridLib
             if (rf == 0)
             {
                 if (values[r * 2] != unknown && values[r * 2 + 1] != unknown)
-                    return std::lerp(values[r * 2], values[r * 2 + 1], cf);
+                    return std::lerp(values[r * 2], values[r * 2 + 1], float(cf));
             }
             else if (cf == 0)
             {
                 if (values[c] != unknown && values[2 + c] != unknown)
-                    return std::lerp(values[c], values[2 + c], rf);
+                    return std::lerp(values[c], values[2 + c], float(rf));
             }
 
             return unknown;
         }
     }
 
-    float get_elevation(const GridView& grid, Xyz::Vector2F grid_pos)
+    float get_elevation(const GridView& grid, Xyz::Vector2D grid_pos)
     {
         auto cell = get_cell(grid, grid_pos);
         const auto cell_values = get_grid_cell_values(grid, cell);
@@ -267,21 +246,27 @@ namespace GridLib
 
         const auto p1 = Xyz::vector_cast<float>(cell);
         const auto p2 = p1 + Xyz::Vector2F(1, 1);
-        return bilinear(cell_values, p1, p2, grid_pos);
+        return bilinear(cell_values, p1, p2, Xyz::vector_cast<float>(grid_pos));
     }
 
-    Xyz::Vector2F model_pos_to_grid_pos(const GridView& grid,
+    Xyz::Vector2D model_pos_to_grid_pos(const GridView& grid,
                                         const Xyz::Vector3D& model_pos)
     {
-        const Xyz::Vector3D origin(grid.planar_coords()->easting,
-                             grid.planar_coords()->northing,
-                             grid.planar_coords()->elevation);
         const auto row = grid.row_axis().direction;
         const auto col = grid.col_axis().direction;
-        const auto offset = model_pos - origin;
-        return {
-            float(dot(offset, col) / dot(col, col)),
-            float(dot(offset, row) / dot(row, row))
-        };
+        const auto offset = model_pos - grid.coordinates().model;
+        return grid.coordinates().grid + Xyz::Vector2D(
+                   dot(offset, col) / dot(col, col),
+                   dot(offset, row) / dot(row, row)
+               );
+    }
+
+    Xyz::Vector3D
+    grid_pos_to_model_pos(const GridView& grid, const Xyz::Vector2D& grid_pos)
+    {
+        const auto offset = grid_pos - grid.coordinates().grid;
+        return grid.coordinates().model
+               + offset[0] * grid.col_axis().direction
+               + offset[1] * grid.row_axis().direction;
     }
 }

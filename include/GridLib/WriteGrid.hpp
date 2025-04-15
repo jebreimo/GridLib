@@ -21,5 +21,5 @@ namespace GridLib
 
     void write_json(Yson::Writer& writer, const GridView& grid);
 
-    void write_json(Yson::Writer& writer, const PlanarCoords& coords);
+    void write_json(Yson::Writer& writer, const Coordinates& coords);
 }

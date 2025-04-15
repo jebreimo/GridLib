@@ -25,7 +25,7 @@ namespace GridLib
         case 2:
             return Unit::METER;
         case 3:
-            return Unit::ARC_SECONDS;
+            return Unit::ARC_SECOND;
         default:
             return Unit::UNDEFINED;
         }
@@ -45,28 +45,24 @@ namespace GridLib
         auto v_unit = from_dem_unit(a.vertical_unit.value_or(0));
         float v_res = a.z_resolution.value_or(1.0);
 
+        Coordinates coords;
         if (a.longitude && a.latitude)
         {
-            grid.set_spherical_coords(
-                SphericalCoords{
-                    to_degrees(*a.latitude),
-                    to_degrees(*a.longitude)
-                });
+            coords.geographic = Xyz::Vector2D(to_degrees(*a.latitude),
+                                              to_degrees(*a.longitude));
         }
         if (const auto& c = a.quadrangle_corners[0])
-        {
-            grid.set_planar_coords(
-                PlanarCoords{
-                    c->easting, c->northing, 0.0,
-                    a.ref_sys_zone.value_or(0)
-                });
-        }
+            coords.model = Xyz::Vector3D(c->easting, c->northing, 0.0);
+        grid.set_coordinates(coords);
+
         if (a.horizontal_datum)
         {
             grid.set_reference_system(
-                ReferenceSystem{
+                {
                     *a.horizontal_datum,
-                    a.vertical_datum.value_or(0)
+                    a.vertical_datum.value_or(0),
+                    0,
+                    a.ref_sys_zone.value_or(0)
                 });
         }
         double factor = 1.0;

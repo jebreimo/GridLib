@@ -21,6 +21,30 @@ namespace GridLib
         return {};
     }
 
+    Unit get_horizontal_unit(const Yimage::GeoTiffMetadata& metadata)
+    {
+        if (metadata.projected_linear_units)
+            return epsg_unit_to_unit(metadata.projected_linear_units);
+
+        int epsg = metadata.projected_crs
+                       ? metadata.projected_crs
+                       : metadata.geodetic_crs;
+        return epsg_crs_to_horizontal_unit(epsg);
+    }
+
+    Unit get_vertical_unit(const Yimage::GeoTiffMetadata& metadata)
+    {
+        if (metadata.vertical_units)
+            return epsg_unit_to_unit(metadata.vertical_units);
+
+        int epsg = metadata.vertical_crs
+                       ? metadata.vertical_crs
+                       : metadata.projected_crs
+                             ? metadata.projected_crs
+                             : metadata.geodetic_crs;
+        return epsg_crs_to_vertical_unit(epsg);
+    }
+
     Grid read_geotiff(const std::filesystem::path& path)
     {
         auto img = Yimage::read_tiff(path);
@@ -39,25 +63,58 @@ namespace GridLib
             std::copy(elevations.begin(), elevations.end(), dst.begin());
         }
 
-        result.set_reference_system(ReferenceSystem{
+        result.set_reference_system(CoordinateReferenceSystem{
             metadata->projected_crs,
             metadata->vertical_crs,
-            metadata->geodetic_crs
+            metadata->geodetic_crs,
+            0
         });
 
-        auto x = metadata->model_tie_point[3];
-        auto y = metadata->model_tie_point[4];
-        result.set_planar_coords(get_planar_coords(x, y, metadata->projected_crs));
-        result.set_spherical_coords(get_spherical_coords(x, y, metadata->projected_crs));
+        Coordinates coordinates;
+        coordinates.model = {
+            metadata->model_tie_point[3],
+            metadata->model_tie_point[4],
+            metadata->model_tie_point[5]
+        };
+        coordinates.grid = {
+            metadata->model_tie_point[1],
+            metadata->model_tie_point[0]
+        };
 
-        auto lin_unit = epsg_to_unit(metadata->projected_linear_units);
-        if (auto xs = metadata->model_pixel_scale[0]; xs != 0)
-            result.set_row_axis({{xs, 0.0, 0.0}, lin_unit});
-        if (auto ys = metadata->model_pixel_scale[1]; ys != 0)
-            result.set_column_axis({{0.0, -ys, 0.0}, lin_unit});
-        auto ver_unit = epsg_to_unit(metadata->vertical_units);
-        if (auto zs = metadata->model_pixel_scale[2]; zs != 0)
-            result.set_vertical_axis({{0.0, 0.0, zs}, ver_unit});
+        if (metadata->projected_crs)
+        {
+            coordinates.planar = Xyz::Vector2D(coordinates.model[0],
+                                               coordinates.model[1]);
+        }
+
+        if (metadata->geodetic_crs)
+        {
+            coordinates.geographic = Xyz::Vector2D(coordinates.model[1],
+                                                   coordinates.model[0]);
+        }
+        else if (metadata->projected_crs)
+        {
+            coordinates.geographic = get_geographic_coords(coordinates.model[0],
+                                                           coordinates.model[1],
+                                                           metadata->projected_crs);
+        }
+
+        result.set_coordinates(coordinates);
+
+        auto lin_unit = get_horizontal_unit(*metadata);
+        auto xs = metadata->model_pixel_scale[0];
+        if (xs == 0)
+            xs = 1.0;
+        result.set_row_axis({{xs, 0.0, 0.0}, lin_unit});
+        auto ys = metadata->model_pixel_scale[1];
+        if (ys == 0)
+            ys = 1.0;
+        result.set_column_axis({{0.0, -ys, 0.0}, lin_unit});
+        auto ver_unit = get_vertical_unit(*metadata);
+        auto zs = metadata->model_pixel_scale[2];
+        if (zs == 0)
+            zs = 1.0;
+        result.set_vertical_axis({{0.0, 0.0, zs}, ver_unit});
 
         return result;
     }

@@ -18,8 +18,8 @@ TEST_CASE("Test write_json_grid and read_grid")
     grid.resize(6, 8);
     auto array = grid.elevations().array();
     std::iota(array.begin(), array.end(), 0.0);
-    grid.set_reference_system(GridLib::ReferenceSystem{3000, 1000});
-    grid.set_planar_coords(GridLib::PlanarCoords{5000, 7000, 0, 30});
+    grid.set_reference_system(GridLib::CoordinateReferenceSystem{3000, 1000});
+    grid.set_coordinates({{5000, 7000, 0}});
     grid.set_row_axis(GridLib::Axis{{0, -10, 0}, GridLib::Unit::METER});
     grid.set_column_axis(GridLib::Axis{{10, 0, 0}, GridLib::Unit::METER});
     grid.set_vertical_axis(GridLib::Axis{{0, 0, 1}, GridLib::Unit::METER});

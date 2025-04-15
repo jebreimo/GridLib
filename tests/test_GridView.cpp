@@ -23,13 +23,13 @@ TEST_CASE("test get_bounding_rect")
 {
     Chorasmia::Array2D<float> values({-999, -1, 4, 3, 1, -4}, 2, 3);
     GridLib::Grid grid(std::move(values));
-    grid.set_planar_coords(GridLib::PlanarCoords{500000, 6000000});
+    grid.set_coordinates({{500000, 6000000, 0}});
     grid.set_row_axis({{10, 0, 0}, GridLib::Unit::METER});
     grid.set_column_axis({{0, -10, 0}, GridLib::Unit::METER});
     grid.set_unknown_elevation(-999);
     auto rect = get_bounding_rect(grid.view());
     REQUIRE(rect.origin == Xyz::Vector2D(500000, 6000000));
-    REQUIRE(rect.size == Xyz::Vector2D(30, -20));
+    REQUIRE(rect.size == Xyz::Vector2D(20, -10));
 }
 
 TEST_CASE("test get_elevation")
@@ -87,13 +87,27 @@ TEST_CASE("test get_elevation with only left and top edges")
 TEST_CASE("test model_pos_to_grid_pos")
 {
     GridLib::Grid grid(10, 10);
-    grid.set_planar_coords(GridLib::PlanarCoords{1000, 10000, 0});
+    grid.set_coordinates({{1000, 10000, 0}, {-3, 2}});
     grid.set_row_axis({{10, 0, 0}, GridLib::Unit::METER});
     grid.set_column_axis({{0, -10, 0}, GridLib::Unit::METER});
     auto view = grid.view();
 
-    using V = Xyz::Vector2F;
-    REQUIRE(are_equal(model_pos_to_grid_pos(view, {1000, 10000, 0}), V(0, 0)));
-    REQUIRE(are_equal(model_pos_to_grid_pos(view, {1000, 9990, 0}),  V(1, 0)));
-    REQUIRE(are_equal(model_pos_to_grid_pos(view, {1037, 9942, 0}),  V(5.8, 3.7)));
+    using V = Xyz::Vector2D;
+    REQUIRE(are_equal(model_pos_to_grid_pos(view, {1000, 10000, 0}), V(-3, 2)));
+    REQUIRE(are_equal(model_pos_to_grid_pos(view, {1000, 9990, 0}),  V(-2, 2)));
+    REQUIRE(are_equal(model_pos_to_grid_pos(view, {1037, 9942, 0}),  V(2.8, 5.7)));
+}
+
+TEST_CASE("test grid_pos_to_model_pos")
+{
+    GridLib::Grid grid(10, 10);
+    grid.set_coordinates({{1000, 10000, 0}, {-3, 2}});
+    grid.set_row_axis({{10, 0, 0}, GridLib::Unit::METER});
+    grid.set_column_axis({{0, -10, 0}, GridLib::Unit::METER});
+    auto view = grid.view();
+
+    using V = Xyz::Vector3D;
+    REQUIRE(are_equal(grid_pos_to_model_pos(view, {-3, 2}), V(1000, 10000, 0)));
+    REQUIRE(are_equal(grid_pos_to_model_pos(view, {-2, 2}), V(1000, 9990, 0)));
+    REQUIRE(are_equal(grid_pos_to_model_pos(view, {2.8, 5.7}), V(1037, 9942, 0)));
 }

@@ -108,34 +108,23 @@ namespace GridLib
         return *this;
     }
 
-    const std::optional<SphericalCoords>& Grid::spherical_coords() const
+    const Coordinates& Grid::coordinates() const
     {
-        return spherical_coords_;
+        return coordinates_;
     }
 
-    Grid& Grid::set_spherical_coords(const std::optional<SphericalCoords>& coords)
+    Grid& Grid::set_coordinates(const Coordinates& coords)
     {
-        spherical_coords_ = coords;
+        coordinates_ = coords;
         return *this;
     }
 
-    const std::optional<PlanarCoords>& Grid::planar_coords() const
-    {
-        return planar_coords_;
-    }
-
-    Grid& Grid::set_planar_coords(const std::optional<PlanarCoords>& coords)
-    {
-        planar_coords_ = coords;
-        return *this;
-    }
-
-    const std::optional<ReferenceSystem>& Grid::reference_system() const
+    const CoordinateReferenceSystem& Grid::reference_system() const
     {
         return reference_system_;
     }
 
-    Grid& Grid::set_reference_system(std::optional<ReferenceSystem> system)
+    Grid& Grid::set_reference_system(const CoordinateReferenceSystem& system)
     {
         reference_system_ = system;
         return *this;
@@ -161,8 +150,7 @@ namespace GridLib
                && a.row_axis() == b.row_axis()
                && a.column_axis() == b.column_axis()
                && a.vertical_axis() == b.vertical_axis()
-               && a.spherical_coords() == b.spherical_coords()
-               && a.planar_coords() == b.planar_coords()
+               && a.coordinates() == b.coordinates()
                && a.reference_system() == b.reference_system();
     }
 

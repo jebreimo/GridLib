@@ -18,7 +18,8 @@ namespace GridLib
         METER = 1,
         FOOT = 2,
         US_SURVEY_FOOT = 3,
-        ARC_SECONDS = 4
+        DEGREE = 4,
+        ARC_SECOND = 5
     };
 
     std::string_view to_string(Unit unit);
@@ -48,45 +49,65 @@ namespace GridLib
                && a.unit == b.unit;
     }
 
-    struct SphericalCoords
+    struct Coordinates
     {
-        double latitude = 0;
-        double longitude = 0;
+        /**
+         * @brief The model coordinates in either planar or graphical
+         *      coordinate system.
+         *
+         * The coordinate units are the same as the axes.
+         */
+        Xyz::Vector3D model;
+
+        /**
+         * @brief The grid position, row and column, that correspond to the
+         *      planar and/or geographical coordinates.
+         */
+        Xyz::Vector2D grid;
+
+        /**
+         * @brief The spherical model coordinates in the coordinate system.
+         *
+         * The coordinate order is easting, northing.
+         */
+        std::optional<Xyz::Vector2D> planar;
+
+        /**
+         * @brief The spherical model coordinates in the coordinate system.
+         *
+         * The coordinate order is latitude, longitude.
+         */
+        std::optional<Xyz::Vector2D> geographic;
     };
 
-    constexpr bool operator==(const SphericalCoords& a, const SphericalCoords& b)
+    constexpr bool operator==(const Coordinates& a, const Coordinates& b)
     {
-        return a.latitude == b.latitude && a.longitude == b.longitude;
+        return a.model == b.model
+               && a.geographic == b.geographic
+               && a.grid == b.grid;
     }
 
-    struct PlanarCoords
-    {
-        double easting = 0;
-        double northing = 0;
-        double elevation = 0;
-        int zone = 0;
-    };
-
-    constexpr bool operator==(const PlanarCoords& a, const PlanarCoords& b)
-    {
-        return a.easting == b.easting
-               && a.northing == b.northing
-               && a.elevation == b.elevation
-               && a.zone == b.zone;
-    }
-
-    struct ReferenceSystem
+    struct CoordinateReferenceSystem
     {
         int projected = 0;
         int vertical = 0;
         int geographic = 0;
+        int zone = 0;
+
+        explicit operator bool() const
+        {
+            return projected != 0 || vertical != 0
+                   || geographic != 0 || zone != 0;
+        }
     };
 
-    constexpr bool operator==(const ReferenceSystem& a, const ReferenceSystem& b)
+    constexpr bool operator==(const CoordinateReferenceSystem& a,
+                              const CoordinateReferenceSystem& b)
     {
         return a.projected == b.projected
                && a.vertical == b.vertical
-               && a.geographic == b.geographic;
+               && a.geographic == b.geographic
+               && a.zone == b.zone;
     }
 
     enum class RotationDir

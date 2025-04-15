@@ -12,32 +12,49 @@
 
 namespace GridLib
 {
-    void write_json(Yson::Writer& writer, const PlanarCoords& coords)
+    void write_json(Yson::Writer& writer, const Coordinates& coords)
     {
-        writer.beginObject()
-            .key("northing").value(coords.northing)
-            .key("easting").value(coords.easting)
-            .key("elevation").value(coords.elevation)
-            .key("zone").value(coords.zone)
+        writer.beginObject();
+        writer.key("model").beginObject()
+            .key("x").value(coords.model[0])
+            .key("y").value(coords.model[1])
+            .key("z").value(coords.model[2])
             .endObject();
+        writer.key("grid").beginObject()
+            .key("row").value(coords.grid[0])
+            .key("column").value(coords.grid[1])
+            .endObject();
+        if (coords.planar)
+        {
+            writer.key("planar").beginObject()
+                .key("easting").value((*coords.planar)[0])
+                .key("northing").value((*coords.planar)[1])
+                .endObject();
+        }
+        if (coords.geographic)
+        {
+            writer.key("geographic").beginObject()
+                .key("latitude").value((*coords.geographic)[0])
+                .key("longitude").value((*coords.geographic)[1])
+                .endObject();
+        }
+        writer.endObject();
     }
 
-    void write_json(Yson::Writer& writer, const SphericalCoords& coords)
+    void write_json(Yson::Writer& writer, const CoordinateReferenceSystem& ref_sys)
     {
-        writer.beginObject()
-            .key("latitude").value(coords.latitude)
-            .key("longitude").value(coords.longitude)
-            .endObject();
-    }
+        if (!ref_sys)
+            return;
 
-    void write_json(Yson::Writer& writer, const ReferenceSystem& ref_sys)
-    {
-        writer.beginObject()
-            .key("projected").value(ref_sys.projected);
+        writer.beginObject();
+        if (ref_sys.projected)
+            writer.key("projected").value(ref_sys.projected);
         if (ref_sys.vertical)
             writer.key("vertical").value(ref_sys.vertical);
         if (ref_sys.geographic)
             writer.key("geographic").value(ref_sys.geographic);
+        if (ref_sys.zone)
+            writer.key("zone").value(ref_sys.zone);
         writer.endObject();
     }
 
@@ -73,23 +90,11 @@ namespace GridLib
         writer.key("vertical_axis");
         write_json(writer, grid.vertical_axis());
 
-        if (const auto& coords = grid.planar_coords())
-        {
-            writer.key("planar_coords");
-            write_json(writer, *coords);
-        }
+        writer.key("coordinates");
+        write_json(writer, grid.coordinates());
 
-        if (const auto& coords = grid.spherical_coords())
-        {
-            writer.key("spherical_coords");
-            write_json(writer, *coords);
-        }
-
-        if (const auto& refSys = grid.reference_system())
-        {
-            writer.key("reference_system");
-            write_json(writer, *refSys);
-        }
+        writer.key("reference_system");
+        write_json(writer, grid.reference_system());
 
         writer.endObject();
     }

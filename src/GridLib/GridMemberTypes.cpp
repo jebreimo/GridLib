@@ -19,7 +19,8 @@ namespace GridLib
         TO_STRING(METER);
         TO_STRING(FOOT);
         TO_STRING(US_SURVEY_FOOT);
-        TO_STRING(ARC_SECONDS);
+        TO_STRING(DEGREE);
+        TO_STRING(ARC_SECOND);
         default:
             return "UNDEFINED";
         }
@@ -33,7 +34,9 @@ namespace GridLib
     {
         CHECK_STRING(str, METER);
         CHECK_STRING(str, FOOT);
-        CHECK_STRING(str, ARC_SECONDS);
+        CHECK_STRING(str, US_SURVEY_FOOT);
+        CHECK_STRING(str, DEGREE);
+        CHECK_STRING(str, ARC_SECOND);
         CHECK_STRING(str, UNDEFINED);
         return {};
     }
@@ -50,8 +53,6 @@ namespace GridLib
             return 12 * 0.0254;
         case Unit::US_SURVEY_FOOT:
             return 1200.0 / 3937.0;
-        case Unit::ARC_SECONDS:
-            return 30.87; // At equator
         }
     }
 }
