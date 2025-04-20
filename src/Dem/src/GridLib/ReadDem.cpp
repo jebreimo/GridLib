@@ -32,7 +32,6 @@ namespace GridLib
     }
 
     Grid read_dem(std::istream& stream,
-                  Unit vertical_unit,
                   const ProgressCallback& progress_callback)
     {
         Grid grid;
@@ -65,49 +64,6 @@ namespace GridLib
                     a.ref_sys_zone.value_or(0)
                 });
         }
-        double factor = 1.0;
-        if (vertical_unit == Unit::METER)
-        {
-            if (v_unit == Unit::FOOT)
-            {
-                factor = v_res * METERS_PER_FOOT;
-                v_res = 1.0;
-                v_unit = Unit::METER;
-            }
-            else
-            {
-                factor = v_res;
-                v_res = 1.0;
-            }
-
-            if (h_unit == Unit::FOOT)
-            {
-                r_res *= METERS_PER_FOOT;
-                c_res *= METERS_PER_FOOT;
-                h_unit = Unit::METER;
-            }
-        }
-        else if (vertical_unit == Unit::FOOT)
-        {
-            if (v_unit == Unit::METER)
-            {
-                factor = v_res / METERS_PER_FOOT;
-                v_res = 1.0;
-                v_unit = Unit::FOOT;
-            }
-            else
-            {
-                factor = v_res;
-                v_res = 1.0;
-            }
-
-            if (h_unit == Unit::METER)
-            {
-                r_res *= 1.0 / METERS_PER_FOOT;
-                c_res *= 1.0 / METERS_PER_FOOT;
-                h_unit = Unit::FOOT;
-            }
-        }
 
         auto rot = a.rotation_angle.value_or(0);
         auto row_axis = rotate(Xyz::Vector2D(0.0, r_res), rot);
@@ -115,7 +71,7 @@ namespace GridLib
         auto col_axis = rotate(Xyz::Vector2D(c_res, 0.0), rot);
         grid.set_column_axis({Xyz::make_vector3(col_axis, 0.0), h_unit});
         grid.set_vertical_axis({{0, 0, v_res}, v_unit});
-        grid.set_unknown_elevation(UNKNOWN * factor);
+        grid.set_unknown_elevation(UNKNOWN);
 
         Chorasmia::MutableArrayView2D<float> values;
         auto rows = a.rows.value_or(1);
@@ -136,7 +92,7 @@ namespace GridLib
                 for (int j = 0; j < b->rows; ++j)
                 {
                     auto elev = b->elevations[i * b->rows + j];
-                    values(i + b->column - 1, j + b->row - 1) = elev * factor;
+                    values(i + b->column - 1, j + b->row - 1) = float(elev) * v_res;
                 }
             }
             if (progress_callback && !progress_callback(b->column, cols))
@@ -147,11 +103,10 @@ namespace GridLib
     }
 
     Grid read_dem(const std::string& file_name,
-                  Unit vertical_unit,
                   const ProgressCallback& progress_callback)
     {
         std::ifstream file(file_name, std::ios::binary);
-        return read_dem(file, vertical_unit, progress_callback);
+        return read_dem(file, progress_callback);
     }
 
     bool is_dem(const std::string& file_name)

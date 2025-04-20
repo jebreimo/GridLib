@@ -246,7 +246,7 @@ namespace GridLib
             return read_json_grid(stream);
 #ifdef GridLib_DEM_SUPPORT
         case GridFileType::DEM:
-            return read_dem(stream, Unit::UNDEFINED);
+            return read_dem(stream);
 #endif
 #ifdef GridLib_GEOTIFF_SUPPORT
         case GridFileType::GEOTIFF:
@@ -283,7 +283,7 @@ namespace GridLib
             return read_json_grid(file_name);
 #ifdef GridLib_DEM_SUPPORT
         case GridFileType::DEM:
-            return read_dem(file_name, Unit::METER);
+            return read_dem(file_name);
 #endif
 #ifdef GridLib_GEOTIFF_SUPPORT
         case GridFileType::GEOTIFF:

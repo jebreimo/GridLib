@@ -23,7 +23,7 @@ add_library(GridLib_Dem OBJECT
     src/GridLib/RecordB.hpp
     src/GridLib/RecordC.cpp
     src/GridLib/RecordC.hpp
-    )
+)
 
 target_include_directories(GridLib_Dem
     PUBLIC
