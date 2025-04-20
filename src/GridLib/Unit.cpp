@@ -5,7 +5,7 @@
 // This file is distributed under the Zero-Clause BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "GridLib/GridMemberTypes.hpp"
+#include "GridLib/Unit.hpp"
 
 namespace GridLib
 {

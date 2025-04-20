@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.17)
-project(GridLib VERSION 0.5.1)
+project(GridLib VERSION 0.5.2)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -100,7 +100,7 @@ add_library(GridLib
     include/GridLib/ReadGrid.hpp
     include/GridLib/WriteGrid.hpp
     src/GridLib/Grid.cpp
-    src/GridLib/GridMemberTypes.cpp
+    src/GridLib/Unit.cpp
     src/GridLib/GridView.cpp
     src/GridLib/Profile.cpp
     src/GridLib/Rasterize.cpp
@@ -110,6 +110,7 @@ add_library(GridLib
     src/GridLib/Utilities/CoordinateSystem.cpp
     src/GridLib/Utilities/CoordinateSystem.hpp
     src/GridLib/Utilities/Utm.hpp
+    include/GridLib/Unit.hpp
 )
 
 target_include_directories(GridLib

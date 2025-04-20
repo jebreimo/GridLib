@@ -7,37 +7,16 @@
 //****************************************************************************
 #pragma once
 #include <optional>
-#include <string_view>
 #include <Xyz/Vector.hpp>
+#include "Unit.hpp"
 
 namespace GridLib
 {
-    enum class Unit
-    {
-        UNDEFINED = 0,
-        METER = 1,
-        FOOT = 2,
-        US_SURVEY_FOOT = 3,
-        DEGREE = 4,
-        ARC_SECOND = 5
-    };
-
-    std::string_view to_string(Unit unit);
-
-    std::optional<Unit> parse_unit(std::string_view str);
-
-    double to_meters(Unit unit);
-
     struct Axis
     {
         /**
-         * @brief The axis' direction and point distance in a metric easting,
+         * @brief The axis' direction and point distance in a easting,
          *  northing, height (i.e. x, y, z) coordinate system.
-         *
-         * The length of this vector is the distance in meters between points
-         * along the axis. If the distance between points is 10 meters, the
-         * length of the vector should be 10, if it is 10 feet it should be
-         * 10 * 0.3048 = 3.048.
          */
         Xyz::Vector3D direction;
         Unit unit = Unit::UNDEFINED;
