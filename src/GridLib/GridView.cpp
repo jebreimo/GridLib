@@ -51,22 +51,32 @@ namespace GridLib
         return grid_->unknown_elevation();
     }
 
-    const Axis& GridView::row_axis() const
+    const Xyz::Vector3D& GridView::row_axis() const
     {
         assert_grid();
         return grid_->row_axis();
     }
 
-    const Axis& GridView::col_axis() const
+    const Xyz::Vector3D& GridView::col_axis() const
     {
         assert_grid();
         return grid_->column_axis();
     }
 
-    const Axis& GridView::vertical_axis() const
+    const Xyz::Vector3D& GridView::vertical_axis() const
     {
         assert_grid();
         return grid_->vertical_axis();
+    }
+
+    Unit GridView::horizontal_unit() const
+    {
+        return grid_->horizontal_unit();
+    }
+
+    Unit GridView::vertical_unit() const
+    {
+        return grid_->vertical_unit();
     }
 
     const Coordinates& GridView::coordinates() const
@@ -131,12 +141,11 @@ namespace GridLib
 
     bool is_planar(const GridView& grid)
     {
-        const auto row_vec = grid.col_axis().direction;
-        const auto col_vec = grid.row_axis().direction;
+        const auto& row_vec = grid.col_axis();
+        const auto& col_vec = grid.row_axis();
 
-        constexpr Xyz::Vector3D up(0, 0, 1);
-        return dot(row_vec, up) <= Xyz::Constants<double>::DEFAULT_MARGIN
-               && dot(col_vec, up) <= Xyz::Constants<double>::DEFAULT_MARGIN;
+        return row_vec[2] <= Xyz::Constants<double>::DEFAULT_MARGIN
+               && col_vec[2] <= Xyz::Constants<double>::DEFAULT_MARGIN;
     }
 
     namespace
@@ -154,8 +163,8 @@ namespace GridLib
 
         auto origin = grid_pos_to_model_pos(grid, {0, 0});
         auto [rows, cols] = grid.elevations().dimensions();
-        auto row_vec = double(cols - 1) * grid.row_axis().direction;
-        auto col_vec = double(rows - 1) * grid.col_axis().direction;
+        auto row_vec = double(cols - 1) * grid.row_axis();
+        auto col_vec = double(rows - 1) * grid.col_axis();
 
         auto row_sign = get_max_abs(row_vec[0], row_vec[1]) > 0 ? 1 : -1;
         auto col_sign = get_max_abs(col_vec[0], col_vec[1]) > 0 ? 1 : -1;
@@ -252,8 +261,8 @@ namespace GridLib
     Xyz::Vector2D model_pos_to_grid_pos(const GridView& grid,
                                         const Xyz::Vector3D& model_pos)
     {
-        const auto row = grid.row_axis().direction;
-        const auto col = grid.col_axis().direction;
+        const auto& row = grid.row_axis();
+        const auto& col = grid.col_axis();
         const auto offset = model_pos - grid.coordinates().model;
         return grid.coordinates().grid + Xyz::Vector2D(
                    dot(offset, col) / dot(col, col),
@@ -266,7 +275,7 @@ namespace GridLib
     {
         const auto offset = grid_pos - grid.coordinates().grid;
         return grid.coordinates().model
-               + offset[0] * grid.col_axis().direction
-               + offset[1] * grid.row_axis().direction;
+               + offset[0] * grid.col_axis()
+               + offset[1] * grid.row_axis();
     }
 }

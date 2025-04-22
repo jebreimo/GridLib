@@ -11,18 +11,21 @@ namespace GridLib
 {
     Grid::Grid()
         : Grid(Chorasmia::Array2D<float>())
-    {}
+    {
+    }
 
     Grid::Grid(size_t rows, size_t columns)
         : Grid(Chorasmia::Array2D<float>(rows, columns))
-    {}
+    {
+    }
 
     Grid::Grid(Chorasmia::Array2D<float> values)
         : grid_(std::move(values)),
-          row_axis_{{1, 0, 0}, Unit::UNDEFINED},
-          column_axis_{{0, -1, 0}, Unit::UNDEFINED},
-          vertical_axis_{{0, 0, 1}, Unit::UNDEFINED}
-    {}
+          row_axis_{1, 0, 0},
+          column_axis_{0, -1, 0},
+          vertical_axis_{0, 0, 1}
+    {
+    }
 
     void Grid::clear()
     {
@@ -75,36 +78,58 @@ namespace GridLib
         return *this;
     }
 
-    const Axis& Grid::row_axis() const
+    const Xyz::Vector3D& Grid::row_axis() const
     {
         return row_axis_;
     }
 
-    Grid& Grid::set_row_axis(const Axis& axis)
+    Grid& Grid::set_row_axis(const Xyz::Vector3D& axis)
     {
         row_axis_ = axis;
         return *this;
     }
 
-    const Axis& Grid::column_axis() const
+    const Xyz::Vector3D& Grid::column_axis() const
     {
         return column_axis_;
     }
 
-    Grid& Grid::set_column_axis(const Axis& axis)
+    Grid& Grid::set_column_axis(const Xyz::Vector3D& axis)
     {
         column_axis_ = axis;
         return *this;
     }
 
-    const Axis& Grid::vertical_axis() const
+    const Xyz::Vector3D& Grid::vertical_axis() const
     {
         return vertical_axis_;
     }
 
-    Grid& Grid::set_vertical_axis(const Axis& axis)
+    Grid& Grid::set_vertical_axis(const Xyz::Vector3D& axis)
     {
         vertical_axis_ = axis;
+        return *this;
+    }
+
+    Unit Grid::horizontal_unit() const
+    {
+        return horizontal_unit_;
+    }
+
+    Grid& Grid::set_horizontal_unit(Unit unit)
+    {
+        horizontal_unit_ = unit;
+        return *this;
+    }
+
+    Unit Grid::vertical_unit() const
+    {
+        return vertical_unit_;
+    }
+
+    Grid& Grid::set_vertical_unit(Unit unit)
+    {
+        vertical_unit_ = unit;
         return *this;
     }
 
@@ -150,6 +175,8 @@ namespace GridLib
                && a.row_axis() == b.row_axis()
                && a.column_axis() == b.column_axis()
                && a.vertical_axis() == b.vertical_axis()
+               && a.horizontal_unit() == b.horizontal_unit()
+               && a.vertical_unit() == b.vertical_unit()
                && a.coordinates() == b.coordinates()
                && a.reference_system() == b.reference_system();
     }

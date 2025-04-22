@@ -38,9 +38,9 @@ namespace GridLib
             auto easting = planar_coords[0];
             auto northing = planar_coords[1];
 
-            auto c_dir = grid.col_axis().direction;
-            auto r_dir = grid.row_axis().direction;
-            auto z_dir = grid.vertical_axis().direction;
+            auto& c_dir = grid.col_axis();
+            auto& r_dir = grid.row_axis();
+            auto& z_dir = grid.vertical_axis();
 
             return {
                 c_dir[0], r_dir[0], z_dir[0], easting,

@@ -12,22 +12,6 @@
 
 namespace GridLib
 {
-    struct Axis
-    {
-        /**
-         * @brief The axis' direction and point distance in a easting,
-         *  northing, height (i.e. x, y, z) coordinate system.
-         */
-        Xyz::Vector3D direction;
-        Unit unit = Unit::UNDEFINED;
-    };
-
-    constexpr bool operator==(const Axis& a, const Axis& b)
-    {
-        return a.direction == b.direction
-               && a.unit == b.unit;
-    }
-
     struct Coordinates
     {
         /**

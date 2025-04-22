@@ -40,13 +40,19 @@ namespace GridLib
         std::optional<float> unknown_elevation() const;
 
         [[nodiscard]]
-        const Axis& row_axis() const;
+        const Xyz::Vector3D& row_axis() const;
 
         [[nodiscard]]
-        const Axis& col_axis() const;
+        const Xyz::Vector3D& col_axis() const;
 
         [[nodiscard]]
-        const Axis& vertical_axis() const;
+        const Xyz::Vector3D& vertical_axis() const;
+
+        [[nodiscard]]
+        Unit horizontal_unit() const;
+
+        [[nodiscard]]
+        Unit vertical_unit() const;
 
         [[nodiscard]]
         const Coordinates& coordinates() const;

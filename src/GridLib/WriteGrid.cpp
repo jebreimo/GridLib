@@ -58,6 +58,15 @@ namespace GridLib
         writer.endObject();
     }
 
+    void write_json(Yson::Writer& writer, const Xyz::Vector2D& vec)
+    {
+        using namespace Yson;
+        writer.beginArray(JsonParameters(JsonFormatting::FLAT))
+            .value(vec[0])
+            .value(vec[1])
+            .endArray();
+    }
+
     void write_json(Yson::Writer& writer, const Xyz::Vector3D& vec)
     {
         using namespace Yson;
@@ -66,16 +75,6 @@ namespace GridLib
             .value(vec[1])
             .value(vec[2])
             .endArray();
-    }
-
-    void write_json(Yson::Writer& writer, const Axis& axis)
-    {
-        using namespace Yson;
-        writer.beginObject();
-        writer.key("unit").value(std::string(to_string(axis.unit)));
-        writer.key("direction");
-        write_json(writer, axis.direction);
-        writer.endObject();
     }
 
     void write_metadata(Yson::Writer& writer, const GridView& grid)
@@ -89,6 +88,9 @@ namespace GridLib
         write_json(writer, grid.col_axis());
         writer.key("vertical_axis");
         write_json(writer, grid.vertical_axis());
+
+        writer.key("horizontal_unit").value(std::string(to_string(grid.horizontal_unit())));
+        writer.key("vertical_unit").value(std::string(to_string(grid.vertical_unit())));
 
         writer.key("coordinates");
         write_json(writer, grid.coordinates());

@@ -8,16 +8,17 @@
 #include "GridLib/ReadGrid.hpp"
 
 #include <map>
+#include <Xyz/Matrix.hpp>
 #include <Yson/ReaderIterators.hpp>
 #include "GridLib/GridLibException.hpp"
 #include "GridLibVersion.hpp"
 
 #ifdef GridLib_DEM_SUPPORT
-    #include "GridLib/ReadDem.hpp"
+#include "GridLib/ReadDem.hpp"
 #endif
 
 #ifdef GridLib_GEOTIFF_SUPPORT
-    #include "GridLib/ReadGeoTiff.hpp"
+#include "GridLib/ReadGeoTiff.hpp"
 #endif
 
 namespace GridLib
@@ -38,23 +39,9 @@ namespace GridLib
         return result;
     }
 
-    Axis read_axis(Yson::Reader& reader)
+    Unit read_unit(Yson::Reader& reader)
     {
-        using Yson::read;
-        Axis axis;
-        for (const auto& key : Yson::keys(reader))
-        {
-            if (key == "unit")
-            {
-                axis.unit = parse_unit(read<std::string>(reader))
-                    .value_or(Unit::UNDEFINED);
-            }
-            else if (key == "direction")
-            {
-                axis.direction = read_vector<double, 3>(reader);
-            }
-        }
-        return axis;
+        return parse_unit(read<std::string>(reader)).value_or(Unit::UNDEFINED);
     }
 
     Xyz::Vector3D read_model_coords(Yson::Reader& reader)
@@ -162,11 +149,15 @@ namespace GridLib
             else if (key == "column_count")
                 column_count = read<uint32_t>(reader);
             else if (key == "row_axis")
-                grid.set_row_axis(read_axis(reader));
+                grid.set_row_axis(read_vector<double, 3>(reader));
             else if (key == "column_axis")
-                grid.set_column_axis(read_axis(reader));
+                grid.set_column_axis(read_vector<double, 3>(reader));
             else if (key == "vertical_axis")
-                grid.set_vertical_axis(read_axis(reader));
+                grid.set_vertical_axis(read_vector<double, 3>(reader));
+            else if (key == "horizontal_axis")
+                grid.set_horizontal_unit(read_unit(reader));
+            else if (key == "vertical_axis")
+                grid.set_vertical_unit( read_unit(reader));
             else if (key == "coordinates")
                 grid.set_coordinates(read_coords(reader));
             else if (key == "reference_system")
@@ -221,7 +212,7 @@ namespace GridLib
         return read_grid(*Yson::makeReader(file_name));
     }
 
-    #define CASE_ENUM(type, value) \
+#define CASE_ENUM(type, value) \
         case type::value: return #value;
 
     std::string to_string(GridFileType type)
@@ -234,7 +225,7 @@ namespace GridLib
         CASE_ENUM(GridFileType, AUTO_DETECT);
         default:
             GRIDLIB_THROW("Unknown GridFileType: "
-                          + std::to_string(int(type)));
+                + std::to_string(int(type)));
         }
     }
 

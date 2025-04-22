@@ -93,22 +93,23 @@ namespace GridLib
                                                                metadata->projected_crs);
             }
 
-            result.set_coordinates(coordinates);
-
-            auto lin_unit = get_horizontal_unit(*metadata);
             auto xs = metadata->model_pixel_scale[0];
             if (xs == 0)
                 xs = 1.0;
-            result.set_row_axis({{xs, 0.0, 0.0}, lin_unit});
+            result.set_row_axis({xs, 0.0, 0.0});
             auto ys = metadata->model_pixel_scale[1];
             if (ys == 0)
                 ys = 1.0;
-            result.set_column_axis({{0.0, -ys, 0.0}, lin_unit});
-            auto ver_unit = get_vertical_unit(*metadata);
+            result.set_column_axis({0.0, -ys, 0.0});
             auto zs = metadata->model_pixel_scale[2];
             if (zs == 0)
                 zs = 1.0;
-            result.set_vertical_axis({{0.0, 0.0, zs}, ver_unit});
+            result.set_vertical_axis({0.0, 0.0, zs});
+
+            result.set_horizontal_unit(get_horizontal_unit(*metadata));
+            result.set_vertical_unit(get_vertical_unit(*metadata));
+
+            result.set_coordinates(coordinates);
 
             return result;
         }

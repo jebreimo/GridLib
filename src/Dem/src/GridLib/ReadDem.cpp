@@ -67,11 +67,14 @@ namespace GridLib
 
         auto rot = a.rotation_angle.value_or(0);
         auto row_axis = rotate(Xyz::Vector2D(0.0, r_res), rot);
-        grid.set_row_axis({Xyz::make_vector3(row_axis, 0.0), h_unit});
+        grid.set_row_axis(Xyz::make_vector3(row_axis, 0.0));
         auto col_axis = rotate(Xyz::Vector2D(c_res, 0.0), rot);
-        grid.set_column_axis({Xyz::make_vector3(col_axis, 0.0), h_unit});
-        grid.set_vertical_axis({{0, 0, v_res}, v_unit});
+        grid.set_column_axis(Xyz::make_vector3(col_axis, 0.0));
+        grid.set_vertical_axis({0, 0, v_res});
         grid.set_unknown_elevation(UNKNOWN);
+
+        grid.set_horizontal_unit(h_unit);
+        grid.set_vertical_unit(v_unit);
 
         Chorasmia::MutableArrayView2D<float> values;
         auto rows = a.rows.value_or(1);
