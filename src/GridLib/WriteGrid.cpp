@@ -12,31 +12,46 @@
 
 namespace GridLib
 {
+    namespace
+    {
+        void write_json(Yson::Writer& writer, const Xyz::Vector2D& vec)
+        {
+            using namespace Yson;
+            writer.beginArray(JsonParameters(JsonFormatting::FLAT))
+                .value(vec[0])
+                .value(vec[1])
+                .endArray();
+        }
+
+        void write_json(Yson::Writer& writer, const Xyz::Vector3D& vec)
+        {
+            using namespace Yson;
+            writer.beginArray(JsonParameters(JsonFormatting::FLAT))
+                .value(vec[0])
+                .value(vec[1])
+                .value(vec[2])
+                .endArray();
+        }
+    }
+
     void write_json(Yson::Writer& writer, const Coordinates& coords)
     {
         writer.beginObject();
-        writer.key("model").beginObject()
-            .key("x").value(coords.model[0])
-            .key("y").value(coords.model[1])
-            .key("z").value(coords.model[2])
-            .endObject();
-        writer.key("grid").beginObject()
-            .key("row").value(coords.grid[0])
-            .key("column").value(coords.grid[1])
-            .endObject();
+        writer.key("model");
+        write_json(writer, coords.model);
+        writer.key("grid");
+        write_json(writer, coords.grid);
+
         if (coords.planar)
         {
-            writer.key("planar").beginObject()
-                .key("easting").value((*coords.planar)[0])
-                .key("northing").value((*coords.planar)[1])
-                .endObject();
+            writer.key("planar");
+            write_json(writer, *coords.planar);
         }
+
         if (coords.geographic)
         {
-            writer.key("geographic").beginObject()
-                .key("latitude").value((*coords.geographic)[0])
-                .key("longitude").value((*coords.geographic)[1])
-                .endObject();
+            writer.key("geographic");
+            write_json(writer, *coords.geographic);
         }
         writer.endObject();
     }
@@ -56,25 +71,6 @@ namespace GridLib
         if (ref_sys.zone)
             writer.key("zone").value(ref_sys.zone);
         writer.endObject();
-    }
-
-    void write_json(Yson::Writer& writer, const Xyz::Vector2D& vec)
-    {
-        using namespace Yson;
-        writer.beginArray(JsonParameters(JsonFormatting::FLAT))
-            .value(vec[0])
-            .value(vec[1])
-            .endArray();
-    }
-
-    void write_json(Yson::Writer& writer, const Xyz::Vector3D& vec)
-    {
-        using namespace Yson;
-        writer.beginArray(JsonParameters(JsonFormatting::FLAT))
-            .value(vec[0])
-            .value(vec[1])
-            .value(vec[2])
-            .endArray();
     }
 
     void write_metadata(Yson::Writer& writer, const GridView& grid)

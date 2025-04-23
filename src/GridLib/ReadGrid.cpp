@@ -31,85 +31,27 @@ namespace GridLib
                    + ", column " + std::to_string(reader.columnNumber())
                    + "]";
         }
-    }
 
-    template <typename T, size_t N>
-    Xyz::Vector<T, N> read_vector(Yson::Reader& reader)
-    {
-        Xyz::Vector<T, N> result;
-        reader.enter();
-        for (size_t i = 0; i < N; ++i)
+        template <typename T, size_t N>
+        Xyz::Vector<T, N> read_vector(Yson::Reader& reader)
         {
-            reader.nextValue();
-            result[i] = Yson::read<T>(reader);
+            Xyz::Vector<T, N> result;
+            reader.enter();
+            for (size_t i = 0; i < N; ++i)
+            {
+                reader.nextValue();
+                result[i] = Yson::read<T>(reader);
+            }
+            if (reader.nextValue())
+                GRIDLIB_THROW("vector contains too many values.");
+            reader.leave();
+            return result;
         }
-        if (reader.nextValue())
-            GRIDLIB_THROW("vector contains too many values.");
-        reader.leave();
-        return result;
     }
 
     Unit read_unit(Yson::Reader& reader)
     {
         return parse_unit(read<std::string>(reader)).value_or(Unit::UNDEFINED);
-    }
-
-    Xyz::Vector3D read_model_coords(Yson::Reader& reader)
-    {
-        using Yson::read;
-        Xyz::Vector3D coords;
-        for (const auto& key : keys(reader))
-        {
-            if (key == "x")
-                coords[0] = read<double>(reader);
-            else if (key == "y")
-                coords[1] = read<double>(reader);
-            else if (key == "z")
-                coords[2] = read<double>(reader);
-        }
-        return coords;
-    }
-
-    Xyz::Vector2D read_grid_coords(Yson::Reader& reader)
-    {
-        using Yson::read;
-        Xyz::Vector2D coords;
-        for (const auto& key : keys(reader))
-        {
-            if (key == "row")
-                coords[0] = read<double>(reader);
-            else if (key == "column")
-                coords[1] = read<double>(reader);
-        }
-        return coords;
-    }
-
-    Xyz::Vector2D read_planar_coords(Yson::Reader& reader)
-    {
-        using Yson::read;
-        Xyz::Vector2D coords;
-        for (const auto& key : keys(reader))
-        {
-            if (key == "northing")
-                coords[0] = read<double>(reader);
-            else if (key == "easting")
-                coords[1] = read<double>(reader);
-        }
-        return coords;
-    }
-
-    Xyz::Vector2D read_spherical_coords(Yson::Reader& reader)
-    {
-        using Yson::read;
-        Xyz::Vector2D coords;
-        for (const auto& key : keys(reader))
-        {
-            if (key == "latitude")
-                coords[0] = read<double>(reader);
-            else if (key == "longitude")
-                coords[1] = read<double>(reader);
-        }
-        return coords;
     }
 
     Coordinates read_coords(Yson::Reader& reader)
@@ -118,13 +60,13 @@ namespace GridLib
         for (const auto& key : keys(reader))
         {
             if (key == "model")
-                coords.model = read_model_coords(reader);
+                coords.model = read_vector<double, 3>(reader);
             else if (key == "grid")
-                coords.grid = read_grid_coords(reader);
+                coords.grid = read_vector<double, 2>(reader);
             else if (key == "planar")
-                coords.planar = read_planar_coords(reader);
+                coords.planar = read_vector<double, 2>(reader);
             else if (key == "geographic")
-                coords.geographic = read_spherical_coords(reader);
+                coords.geographic = read_vector<double, 2>(reader);
         }
         return coords;
     }
@@ -211,7 +153,7 @@ namespace GridLib
             else if (key == "elevations")
                 read_elevations(reader, grid);
             else if (strict)
-            GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
+                GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
         }
         return grid;
     }
