@@ -24,8 +24,10 @@ TEST_CASE("test get_bounding_rect")
     Chorasmia::Array2D<float> values({-999, -1, 4, 3, 1, -4}, 2, 3);
     GridLib::Grid grid(std::move(values));
     grid.set_coordinates({{500000, 6000000, 0}});
-    grid.set_row_axis({{10, 0, 0}, GridLib::Unit::METER});
-    grid.set_column_axis({{0, -10, 0}, GridLib::Unit::METER});
+    grid.set_horizontal_unit(GridLib::Unit::METER);
+    grid.set_vertical_unit(GridLib::Unit::METER);
+    grid.set_row_axis({10, 0, 0});
+    grid.set_column_axis({0, -10, 0});
     grid.set_unknown_elevation(-999);
     auto rect = get_bounding_rect(grid.view());
     REQUIRE(rect.origin == Xyz::Vector2D(500000, 6000000));
@@ -88,8 +90,10 @@ TEST_CASE("test model_pos_to_grid_pos")
 {
     GridLib::Grid grid(10, 10);
     grid.set_coordinates({{1000, 10000, 0}, {-3, 2}});
-    grid.set_row_axis({{10, 0, 0}, GridLib::Unit::METER});
-    grid.set_column_axis({{0, -10, 0}, GridLib::Unit::METER});
+    grid.set_horizontal_unit(GridLib::Unit::METER);
+    grid.set_vertical_unit(GridLib::Unit::METER);
+    grid.set_row_axis({10, 0, 0});
+    grid.set_column_axis({0, -10, 0});
     auto view = grid.view();
 
     using V = Xyz::Vector2D;
@@ -102,8 +106,10 @@ TEST_CASE("test grid_pos_to_model_pos")
 {
     GridLib::Grid grid(10, 10);
     grid.set_coordinates({{1000, 10000, 0}, {-3, 2}});
-    grid.set_row_axis({{10, 0, 0}, GridLib::Unit::METER});
-    grid.set_column_axis({{0, -10, 0}, GridLib::Unit::METER});
+    grid.set_horizontal_unit(GridLib::Unit::METER);
+    grid.set_vertical_unit(GridLib::Unit::METER);
+    grid.set_row_axis({10, 0, 0});
+    grid.set_column_axis({0, -10, 0});
     auto view = grid.view();
 
     using V = Xyz::Vector3D;

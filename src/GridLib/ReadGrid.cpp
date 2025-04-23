@@ -23,6 +23,16 @@
 
 namespace GridLib
 {
+    namespace
+    {
+        std::string get_reader_position(Yson::Reader& reader)
+        {
+            return " [line " + std::to_string(reader.lineNumber())
+                   + ", column " + std::to_string(reader.columnNumber())
+                   + "]";
+        }
+    }
+
     template <typename T, size_t N>
     Xyz::Vector<T, N> read_vector(Yson::Reader& reader)
     {
@@ -137,7 +147,7 @@ namespace GridLib
         return system;
     }
 
-    void read_metadata(Yson::Reader& reader, Grid& grid)
+    void read_metadata(Yson::Reader& reader, Grid& grid, bool strict)
     {
         using Yson::read;
         size_t row_count = 0;
@@ -154,14 +164,16 @@ namespace GridLib
                 grid.set_column_axis(read_vector<double, 3>(reader));
             else if (key == "vertical_axis")
                 grid.set_vertical_axis(read_vector<double, 3>(reader));
-            else if (key == "horizontal_axis")
+            else if (key == "horizontal_unit")
                 grid.set_horizontal_unit(read_unit(reader));
-            else if (key == "vertical_axis")
-                grid.set_vertical_unit( read_unit(reader));
+            else if (key == "vertical_unit")
+                grid.set_vertical_unit(read_unit(reader));
             else if (key == "coordinates")
                 grid.set_coordinates(read_coords(reader));
             else if (key == "reference_system")
                 grid.set_reference_system(read_reference_system(reader));
+            else if (strict)
+                GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
         }
         grid.resize(row_count, column_count);
     }
@@ -189,27 +201,29 @@ namespace GridLib
         }
     }
 
-    Grid read_grid(Yson::Reader& reader)
+    Grid read_grid(Yson::Reader& reader, bool strict)
     {
         Grid grid;
         for (const auto& key : keys(reader))
         {
             if (key == "metadata")
-                read_metadata(reader, grid);
+                read_metadata(reader, grid, strict);
             else if (key == "elevations")
                 read_elevations(reader, grid);
+            else if (strict)
+            GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
         }
         return grid;
     }
 
-    Grid read_json_grid(std::istream& stream)
+    Grid read_json_grid(std::istream& stream, bool strict)
     {
-        return read_grid(*Yson::makeReader(stream));
+        return read_grid(*Yson::makeReader(stream), strict);
     }
 
-    Grid read_json_grid(const std::string& file_name)
+    Grid read_json_grid(const std::string& file_name, bool strict)
     {
-        return read_grid(*Yson::makeReader(file_name));
+        return read_grid(*Yson::makeReader(file_name), strict);
     }
 
 #define CASE_ENUM(type, value) \

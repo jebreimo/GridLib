@@ -56,9 +56,11 @@ TEST_CASE("Profile with transformation")
                                     3, 3);
     GridLib::Grid grid(array);
     grid.set_coordinates({{500.0, 1000.0, 0}});
-    grid.set_row_axis({{10, 0, 0}, GridLib::Unit::METER});
-    grid.set_column_axis({{0, -10, 0}, GridLib::Unit::METER});
-    grid.set_vertical_axis({{0, 0, 10}, GridLib::Unit::METER});
+    grid.set_horizontal_unit(GridLib::Unit::METER);
+    grid.set_vertical_unit(GridLib::Unit::METER);
+    grid.set_row_axis({10, 0, 0});
+    grid.set_column_axis({0, -10, 0});
+    grid.set_vertical_axis({0, 0, 10});
 
     GridLib::ProfileMaker maker(grid.view());
 
