@@ -76,9 +76,9 @@ namespace GridLib
 
     std::optional<DegMinSec> read_DegMinSec(FortranReader& reader)
     {
-        auto d = reader.read_int16(4);
-        auto m = reader.read_int16(2);
-        auto s = reader.read_float32(7);
+        const auto d = reader.read_int16(4);
+        const auto m = reader.read_int16(2);
+        const auto s = reader.read_float32(7);
         if (!d || !m || !s)
             return {};
         return DegMinSec{*d, *m, *s};

@@ -35,8 +35,8 @@ namespace GridLib
             int epsg = metadata.vertical_crs
                            ? metadata.vertical_crs
                            : metadata.projected_crs
-                                 ? metadata.projected_crs
-                                 : metadata.geodetic_crs;
+                           ? metadata.projected_crs
+                           : metadata.geodetic_crs;
             return epsg_crs_to_vertical_unit(epsg);
         }
 
@@ -57,59 +57,70 @@ namespace GridLib
                 std::copy(elevations.begin(), elevations.end(), dst.begin());
             }
 
-            result.set_reference_system(CoordinateReferenceSystem{
+            Xyz::Vector2D tie_point{
+                metadata->model_tie_point[1],
+                metadata->model_tie_point[0]
+            };
+            result.set_model_tie_point(tie_point);
+
+            auto& model = result.model();
+
+            model.reference_system = (CoordinateReferenceSystem{
                 metadata->projected_crs,
                 metadata->vertical_crs,
                 metadata->geodetic_crs,
                 0
             });
 
-            Coordinates coordinates;
-            coordinates.model = {
+            Xyz::Vector3D location{
                 metadata->model_tie_point[3],
                 metadata->model_tie_point[4],
                 metadata->model_tie_point[5]
             };
-            coordinates.grid = {
-                metadata->model_tie_point[1],
-                metadata->model_tie_point[0]
-            };
+            model.set_location(location);
+
+            std::vector<SpatialTiePoint> spatial_ties;
 
             if (metadata->projected_crs)
             {
-                coordinates.planar = Xyz::Vector2D(coordinates.model[0],
-                                                   coordinates.model[1]);
+                spatial_ties.push_back({
+                    tie_point, location,
+                    ProjectedCrs{
+                        metadata->projected_crs,
+                        metadata->vertical_crs
+                    }
+                });
             }
 
             if (metadata->geodetic_crs)
             {
-                coordinates.geographic = Xyz::Vector2D(coordinates.model[1],
-                                                       coordinates.model[0]);
+                spatial_ties.push_back({
+                    tie_point, location,
+                    GeographicCrs{
+                        metadata->geodetic_crs,
+                        metadata->vertical_crs
+                    }
+                });
             }
-            else if (metadata->projected_crs)
-            {
-                coordinates.geographic = get_geographic_coords(coordinates.model[0],
-                                                               coordinates.model[1],
-                                                               metadata->projected_crs);
-            }
+
+            result.set_spatial_tie_points(std::move(spatial_ties));
 
             auto xs = metadata->model_pixel_scale[0];
             if (xs == 0)
                 xs = 1.0;
-            result.set_row_axis({xs, 0.0, 0.0});
+
+            model.set_row_axis({xs, 0.0, 0.0});
             auto ys = metadata->model_pixel_scale[1];
             if (ys == 0)
                 ys = 1.0;
-            result.set_column_axis({0.0, -ys, 0.0});
+            model.set_column_axis({0.0, -ys, 0.0});
             auto zs = metadata->model_pixel_scale[2];
             if (zs == 0)
                 zs = 1.0;
-            result.set_vertical_axis({0.0, 0.0, zs});
+            model.set_vertical_axis({0.0, 0.0, zs});
 
-            result.set_horizontal_unit(get_horizontal_unit(*metadata));
-            result.set_vertical_unit(get_vertical_unit(*metadata));
-
-            result.set_coordinates(coordinates);
+            model.horizontal_unit = get_horizontal_unit(*metadata);
+            model.vertical_unit = get_vertical_unit(*metadata);
 
             return result;
         }

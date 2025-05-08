@@ -13,7 +13,7 @@ TEST_CASE("test get_min_max_elevation")
 {
     Chorasmia::Array2D<float> values({-999, -1, 4, 3, 1, -4}, 2, 3);
     GridLib::Grid grid(std::move(values));
-    grid.set_unknown_elevation(-999);
+    grid.model().unknown_elevation = -999;
     auto [min, max] = get_min_max_elevation(grid.view());
     REQUIRE(min == -4);
     REQUIRE(max == 4);
@@ -23,12 +23,13 @@ TEST_CASE("test get_bounding_rect")
 {
     Chorasmia::Array2D<float> values({-999, -1, 4, 3, 1, -4}, 2, 3);
     GridLib::Grid grid(std::move(values));
-    grid.set_coordinates({{500000, 6000000, 0}});
-    grid.set_horizontal_unit(GridLib::Unit::METER);
-    grid.set_vertical_unit(GridLib::Unit::METER);
-    grid.set_row_axis({10, 0, 0});
-    grid.set_column_axis({0, -10, 0});
-    grid.set_unknown_elevation(-999);
+    auto& model = grid.model();
+    model.set_location({500000, 6000000, 0});
+    model.horizontal_unit = GridLib::Unit::METER;
+    model.vertical_unit = GridLib::Unit::METER;
+    model.set_row_axis({10, 0, 0});
+    model.set_column_axis({0, -10, 0});
+    model. unknown_elevation = -999;
     auto rect = get_bounding_rect(grid.view());
     REQUIRE(rect.origin == Xyz::Vector2D(500000, 6000000));
     REQUIRE(rect.size == Xyz::Vector2D(20, -10));
@@ -39,7 +40,7 @@ TEST_CASE("test get_elevation")
     using Catch::Matchers::WithinAbs;
     Chorasmia::Array2D<float> values({-1, 4, 3, -999, 1, -4}, 2, 3);
     GridLib::Grid grid(std::move(values));
-    grid.set_unknown_elevation(-999);
+    grid.model().unknown_elevation = -999;
     auto view = grid.view();
 
     REQUIRE(get_elevation(view, {0, 0}) == -1);
@@ -71,7 +72,7 @@ TEST_CASE("test get_elevation with only left and top edges")
     using Catch::Matchers::WithinAbs;
     Chorasmia::Array2D<float> values({-1, 4, 3, -999}, 2, 2);
     GridLib::Grid grid(std::move(values));
-    grid.set_unknown_elevation(-999);
+    grid.model().unknown_elevation = -999;
     auto view = grid.view();
 
     REQUIRE(get_elevation(view, {0, 0}) == -1);
@@ -89,12 +90,14 @@ TEST_CASE("test get_elevation with only left and top edges")
 TEST_CASE("test model_pos_to_grid_pos")
 {
     GridLib::Grid grid(10, 10);
-    grid.set_coordinates({{1000, 10000, 0}, {-3, 2}});
-    grid.set_horizontal_unit(GridLib::Unit::METER);
-    grid.set_vertical_unit(GridLib::Unit::METER);
-    grid.set_row_axis({10, 0, 0});
-    grid.set_column_axis({0, -10, 0});
-    auto view = grid.view();
+    grid.set_model_tie_point({-3, 2});
+    auto& model = grid.model();
+    model.set_location({1000, 10000, 0});
+    model.horizontal_unit = GridLib::Unit::METER;
+    model.vertical_unit = GridLib::Unit::METER;
+    model.set_row_axis({10, 0, 0});
+    model.set_column_axis({0, -10, 0});
+    const auto view = grid.view();
 
     using V = Xyz::Vector2D;
     REQUIRE(are_equal(model_pos_to_grid_pos(view, {1000, 10000, 0}), V(-3, 2)));
@@ -105,12 +108,14 @@ TEST_CASE("test model_pos_to_grid_pos")
 TEST_CASE("test grid_pos_to_model_pos")
 {
     GridLib::Grid grid(10, 10);
-    grid.set_coordinates({{1000, 10000, 0}, {-3, 2}});
-    grid.set_horizontal_unit(GridLib::Unit::METER);
-    grid.set_vertical_unit(GridLib::Unit::METER);
-    grid.set_row_axis({10, 0, 0});
-    grid.set_column_axis({0, -10, 0});
-    auto view = grid.view();
+    grid.set_model_tie_point({-3, 2});
+    auto& model = grid.model();
+    model.set_location({1000, 10000, 0});
+    model.horizontal_unit = GridLib::Unit::METER;
+    model.vertical_unit = GridLib::Unit::METER;
+    model.set_row_axis({10, 0, 0});
+    model.set_column_axis({0, -10, 0});
+    const auto view = grid.view();
 
     using V = Xyz::Vector3D;
     REQUIRE(are_equal(grid_pos_to_model_pos(view, {-3, 2}), V(1000, 10000, 0)));

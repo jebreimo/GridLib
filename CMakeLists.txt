@@ -41,7 +41,7 @@ if (GridLib_INSTALL)
 endif ()
 FetchContent_Declare(chorasmia
     GIT_REPOSITORY "https://github.com/jebreimo/Chorasmia.git"
-    GIT_TAG v0.2.1)
+    GIT_TAG v0.3.0)
 
 if (GridLib_INSTALL)
     set(XYZ_INSTALL ON)
@@ -111,6 +111,11 @@ add_library(GridLib
     src/GridLib/Utilities/CoordinateSystem.hpp
     src/GridLib/Utilities/Utm.hpp
     include/GridLib/Unit.hpp
+    src/GridLib/GridSomething.hpp
+    include/GridLib/GridModel.hpp
+    src/GridLib/GridModel.cpp
+    src/GridLib/GridBuilder.cpp
+    src/GridLib/GridBuilder.hpp
 )
 
 target_include_directories(GridLib

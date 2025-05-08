@@ -11,6 +11,7 @@
 #include <Xyz/Rectangle.hpp>
 
 #include "GridMemberTypes.hpp"
+#include "GridModel.hpp"
 
 namespace GridLib
 {
@@ -25,7 +26,7 @@ namespace GridLib
 
         GridView(const Grid& grid,
                  const Chorasmia::ArrayView2D<float>& elevations,
-                 const Coordinates& coords = {}) noexcept;
+                 const Xyz::Vector2D& model_tie_point = {}) noexcept;
 
         [[nodiscard]]
         size_t row_count() const;
@@ -37,28 +38,10 @@ namespace GridLib
         Chorasmia::ArrayView2D<float> elevations() const;
 
         [[nodiscard]]
-        std::optional<float> unknown_elevation() const;
+        const Xyz::Vector2D& model_tie_point() const;
 
         [[nodiscard]]
-        const Xyz::Vector3D& row_axis() const;
-
-        [[nodiscard]]
-        const Xyz::Vector3D& col_axis() const;
-
-        [[nodiscard]]
-        const Xyz::Vector3D& vertical_axis() const;
-
-        [[nodiscard]]
-        Unit horizontal_unit() const;
-
-        [[nodiscard]]
-        Unit vertical_unit() const;
-
-        [[nodiscard]]
-        const Coordinates& coordinates() const;
-
-        [[nodiscard]]
-        const CoordinateReferenceSystem& reference_system() const;
+        const GridModel& model() const;
 
         [[nodiscard]]
         const Grid* base_grid() const;
@@ -72,7 +55,7 @@ namespace GridLib
 
         const Grid* grid_ = nullptr;
         Chorasmia::ArrayView2D<float> elevations_;
-        Coordinates coordinates_;
+        Xyz::Vector2D model_tie_point_;
     };
 
     [[nodiscard]]

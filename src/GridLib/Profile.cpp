@@ -34,18 +34,17 @@ namespace GridLib
         [[nodiscard]]
         Xyz::Matrix4D get_transform(const GridView& grid)
         {
-            auto planar_coords = grid.coordinates().model;
-            auto easting = planar_coords[0];
-            auto northing = planar_coords[1];
+            auto& model = grid.model();
+            auto loc = model.location();
 
-            auto& c_dir = grid.col_axis();
-            auto& r_dir = grid.row_axis();
-            auto& z_dir = grid.vertical_axis();
+            auto c_dir = model.column_axis();
+            auto r_dir = model.row_axis();
+            auto z_dir = model.vertical_axis();
 
             return {
-                c_dir[0], r_dir[0], z_dir[0], easting,
-                c_dir[1], r_dir[1], z_dir[1], northing,
-                c_dir[2], r_dir[2], z_dir[2], 0,
+                c_dir[0], r_dir[0], z_dir[0], loc[0],
+                c_dir[1], r_dir[1], z_dir[1], loc[1],
+                c_dir[2], r_dir[2], z_dir[2], loc[2],
                 0, 0, 0, 1
             };
         }

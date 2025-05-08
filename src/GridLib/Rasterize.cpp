@@ -186,8 +186,8 @@ namespace GridLib
     Chorasmia::Index2DMode
     get_index_mode_for_top_left_origin(const GridView& grid)
     {
-        auto rv = grid.row_axis();
-        auto cv = grid.col_axis();
+        auto rv = grid.model().row_axis();
+        auto cv = grid.model().column_axis();
         auto r_dir = get_cardinal_direction(Xyz::Vector2D(rv[0], rv[1]));
         auto c_dir = get_cardinal_direction(Xyz::Vector2D(cv[0], cv[1]));
         return get_index_2d_mode(r_dir, c_dir,

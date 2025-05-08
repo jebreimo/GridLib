@@ -73,31 +73,31 @@ namespace GridLib
         writer.endObject();
     }
 
-    void write_metadata(Yson::Writer& writer, const GridView& grid)
+    void write_json(Yson::Writer& writer, const GridModel& model)
     {
         writer.beginObject();
-        writer.key("row_count").value(uint64_t(grid.row_count()));
-        writer.key("column_count").value(uint64_t(grid.col_count()));
-        writer.key("row_axis");
-        write_json(writer, grid.row_axis());
+        writer.key("location");
+        write_json(writer, model.location());
+
         writer.key("column_axis");
-        write_json(writer, grid.col_axis());
+        write_json(writer, model.column_axis());
+        writer.key("row_axis");
+        write_json(writer, model.row_axis());
         writer.key("vertical_axis");
-        write_json(writer, grid.vertical_axis());
+        write_json(writer, model.vertical_axis());
 
-        writer.key("horizontal_unit").value(std::string(to_string(grid.horizontal_unit())));
-        writer.key("vertical_unit").value(std::string(to_string(grid.vertical_unit())));
-
-        writer.key("coordinates");
-        write_json(writer, grid.coordinates());
+        writer.key("horizontal_unit").value(to_string(model.horizontal_unit));
+        writer.key("vertical_unit").value(to_string(model.vertical_unit));
+        if (model.unknown_elevation)
+            writer.key("unknown_elevation").value(*model.unknown_elevation);
 
         writer.key("reference_system");
-        write_json(writer, grid.reference_system());
+        write_json(writer, model.reference_system);
 
         writer.endObject();
     }
 
-    void write_json(Yson::Writer& writer,
+   void write_json(Yson::Writer& writer,
                     const Chorasmia::ArrayView2D<float>& values,
                     std::optional<float> null_value)
     {
@@ -123,10 +123,14 @@ namespace GridLib
     void write_json(Yson::Writer& writer, const GridView& grid)
     {
         writer.beginObject();
-        writer.key("metadata");
-        write_metadata(writer, grid);
+        writer.key("row_count").value(uint64_t(grid.row_count()));
+        writer.key("column_count").value(uint64_t(grid.col_count()));
+        writer.key("model_tie_point");
+        write_json(writer, grid.model_tie_point());
+        writer.key("model");
+        write_json(writer, grid.model());
         writer.key("elevations");
-        write_json(writer, grid.elevations(), grid.unknown_elevation());
+        write_json(writer, grid.elevations(), grid.model().unknown_elevation);
         writer.endObject();
     }
 

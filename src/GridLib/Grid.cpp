@@ -20,10 +20,7 @@ namespace GridLib
     }
 
     Grid::Grid(Chorasmia::Array2D<float> values)
-        : grid_(std::move(values)),
-          row_axis_{1, 0, 0},
-          column_axis_{0, -1, 0},
-          vertical_axis_{0, 0, 1}
+        : grid_(std::move(values))
     {
     }
 
@@ -67,92 +64,34 @@ namespace GridLib
         return {grid_.data(), grid_.row_count(), grid_.col_count()};
     }
 
-    std::optional<float> Grid::unknown_elevation() const
+    const Xyz::Vector2D& Grid::model_tie_point() const
     {
-        return unknown_elevation_;
+        return model_tie_point_;
     }
 
-    Grid& Grid::set_unknown_elevation(std::optional<float> value)
+    void Grid::set_model_tie_point(const Xyz::Vector2D& value)
     {
-        unknown_elevation_ = value;
-        return *this;
+        model_tie_point_ = value;
     }
 
-    const Xyz::Vector3D& Grid::row_axis() const
+    const GridModel& Grid::model() const
     {
-        return row_axis_;
+        return model_;
     }
 
-    Grid& Grid::set_row_axis(const Xyz::Vector3D& axis)
+    GridModel& Grid::model()
     {
-        row_axis_ = axis;
-        return *this;
+        return model_;
     }
 
-    const Xyz::Vector3D& Grid::column_axis() const
+    const std::vector<SpatialTiePoint>& Grid::spatial_tie_points() const
     {
-        return column_axis_;
+        return spatial_tie_points_;
     }
 
-    Grid& Grid::set_column_axis(const Xyz::Vector3D& axis)
+    void Grid::set_spatial_tie_points(std::vector<SpatialTiePoint> value)
     {
-        column_axis_ = axis;
-        return *this;
-    }
-
-    const Xyz::Vector3D& Grid::vertical_axis() const
-    {
-        return vertical_axis_;
-    }
-
-    Grid& Grid::set_vertical_axis(const Xyz::Vector3D& axis)
-    {
-        vertical_axis_ = axis;
-        return *this;
-    }
-
-    Unit Grid::horizontal_unit() const
-    {
-        return horizontal_unit_;
-    }
-
-    Grid& Grid::set_horizontal_unit(Unit unit)
-    {
-        horizontal_unit_ = unit;
-        return *this;
-    }
-
-    Unit Grid::vertical_unit() const
-    {
-        return vertical_unit_;
-    }
-
-    Grid& Grid::set_vertical_unit(Unit unit)
-    {
-        vertical_unit_ = unit;
-        return *this;
-    }
-
-    const Coordinates& Grid::coordinates() const
-    {
-        return coordinates_;
-    }
-
-    Grid& Grid::set_coordinates(const Coordinates& coords)
-    {
-        coordinates_ = coords;
-        return *this;
-    }
-
-    const CoordinateReferenceSystem& Grid::reference_system() const
-    {
-        return reference_system_;
-    }
-
-    Grid& Grid::set_reference_system(const CoordinateReferenceSystem& system)
-    {
-        reference_system_ = system;
-        return *this;
+        spatial_tie_points_ = std::move(value);
     }
 
     GridView Grid::subgrid(size_t row, size_t column,
@@ -171,14 +110,8 @@ namespace GridLib
         if (&a == &b)
             return true;
         return a.elevations() == b.elevations()
-               && a.unknown_elevation() == b.unknown_elevation()
-               && a.row_axis() == b.row_axis()
-               && a.column_axis() == b.column_axis()
-               && a.vertical_axis() == b.vertical_axis()
-               && a.horizontal_unit() == b.horizontal_unit()
-               && a.vertical_unit() == b.vertical_unit()
-               && a.coordinates() == b.coordinates()
-               && a.reference_system() == b.reference_system();
+                && a.model_tie_point() == b.model_tie_point()
+                && a.model() == b.model();
     }
 
     bool operator!=(const Grid& a, const Grid& b)

@@ -50,6 +50,37 @@ namespace GridLib
                && a.grid == b.grid;
     }
 
+    struct ProjectedCrs
+    {
+        int projection = 0;
+        int vertical = 0;
+
+        explicit operator bool() const
+        {
+            return projection != 0 || vertical != 0;
+        }
+    };
+
+    struct GeographicCrs
+    {
+        int geographic = 0;
+        int vertical = 0;
+
+        explicit operator bool() const
+        {
+            return geographic != 0 || vertical != 0;
+        }
+    };
+
+    using Crs = std::variant<std::monostate, ProjectedCrs, GeographicCrs>;
+
+    struct SpatialTiePoint
+    {
+        Xyz::Vector2D grid_point;
+        Xyz::Vector3D location;
+        Crs crs;
+    };
+
     struct CoordinateReferenceSystem
     {
         int projected = 0;

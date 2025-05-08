@@ -7,9 +7,12 @@
 //****************************************************************************
 #include "GridLib/ReadGrid.hpp"
 
+#include <cmath>
 #include <map>
 #include <Xyz/Matrix.hpp>
 #include <Yson/ReaderIterators.hpp>
+
+#include "GridBuilder.hpp"
 #include "GridLib/GridLibException.hpp"
 #include "GridLibVersion.hpp"
 
@@ -54,23 +57,6 @@ namespace GridLib
         return parse_unit(read<std::string>(reader)).value_or(Unit::UNDEFINED);
     }
 
-    Coordinates read_coords(Yson::Reader& reader)
-    {
-        Coordinates coords;
-        for (const auto& key : keys(reader))
-        {
-            if (key == "model")
-                coords.model = read_vector<double, 3>(reader);
-            else if (key == "grid")
-                coords.grid = read_vector<double, 2>(reader);
-            else if (key == "planar")
-                coords.planar = read_vector<double, 2>(reader);
-            else if (key == "geographic")
-                coords.geographic = read_vector<double, 2>(reader);
-        }
-        return coords;
-    }
-
     CoordinateReferenceSystem read_reference_system(Yson::Reader& reader)
     {
         using Yson::read;
@@ -89,73 +75,68 @@ namespace GridLib
         return system;
     }
 
-    void read_metadata(Yson::Reader& reader, Grid& grid, bool strict)
+    GridModel read_model(Yson::Reader& reader, bool strict)
     {
         using Yson::read;
-        size_t row_count = 0;
-        size_t column_count = 0;
+        GridModel result;
         for (const auto& key : keys(reader))
         {
-            if (key == "row_count")
-                row_count = read<uint32_t>(reader);
-            else if (key == "column_count")
-                column_count = read<uint32_t>(reader);
+            if (key == "location")
+                result.set_location(read_vector<double, 3>(reader));
             else if (key == "row_axis")
-                grid.set_row_axis(read_vector<double, 3>(reader));
+                result.set_row_axis(read_vector<double, 3>(reader));
             else if (key == "column_axis")
-                grid.set_column_axis(read_vector<double, 3>(reader));
+                result.set_column_axis(read_vector<double, 3>(reader));
             else if (key == "vertical_axis")
-                grid.set_vertical_axis(read_vector<double, 3>(reader));
+                result.set_vertical_axis(read_vector<double, 3>(reader));
             else if (key == "horizontal_unit")
-                grid.set_horizontal_unit(read_unit(reader));
+                result.horizontal_unit = read_unit(reader);
             else if (key == "vertical_unit")
-                grid.set_vertical_unit(read_unit(reader));
-            else if (key == "coordinates")
-                grid.set_coordinates(read_coords(reader));
+                result.vertical_unit = read_unit(reader);
             else if (key == "reference_system")
-                grid.set_reference_system(read_reference_system(reader));
+                result.reference_system = read_reference_system(reader);
             else if (strict)
                 GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
         }
-        grid.resize(row_count, column_count);
+        return result;
     }
 
-    void read_elevations(Yson::Reader& reader, Grid& grid)
+    std::vector<float> read_elevations(Yson::Reader& reader)
     {
         using Yson::read;
-        auto array = grid.elevations().array();
-        size_t index = 0;
+        std::vector<float> result;
         for (Yson::ArrayIterator row_it(reader); row_it.next();)
         {
             for (Yson::ArrayIterator col_it(reader); col_it.next();)
             {
                 if (reader.readNull())
-                {
-                    if (!grid.unknown_elevation())
-                        grid.set_unknown_elevation(FLT_TRUE_MIN);
-                    array[index++] = FLT_TRUE_MIN;
-                }
+                    result.push_back(NAN);
                 else
-                {
-                    array[index++] = read<float>(reader);
-                }
+                    result.push_back(read<float>(reader));
             }
         }
+        return result;
     }
 
     Grid read_grid(Yson::Reader& reader, bool strict)
     {
-        Grid grid;
+        GridBuilder builder;
         for (const auto& key : keys(reader))
         {
-            if (key == "metadata")
-                read_metadata(reader, grid, strict);
+            if (key == "row_count")
+                builder.row_count = read<uint32_t>(reader);
+            else if (key == "column_count")
+                builder.col_count = read<uint32_t>(reader);
+            else if (key == "model_tie_point")
+                builder.model_tie_point = read_vector<double, 2>(reader);
+            else if (key == "model")
+                builder.model = read_model(reader, strict);
             else if (key == "elevations")
-                read_elevations(reader, grid);
+                builder.elevations = read_elevations(reader);
             else if (strict)
                 GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
         }
-        return grid;
+        return builder.build();
     }
 
     Grid read_json_grid(std::istream& stream, bool strict)

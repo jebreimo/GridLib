@@ -17,16 +17,16 @@ namespace GridLib
     GridView::GridView(const Grid& grid) noexcept
         : GridView(grid,
                    grid.elevations(),
-                   grid.coordinates())
+                   grid.model_tie_point())
     {
     }
 
     GridView::GridView(const Grid& grid,
                        const Chorasmia::ArrayView2D<float>& elevations,
-                       const Coordinates& coords) noexcept
+                       const Xyz::Vector2D& model_tie_point) noexcept
         : grid_(&grid),
           elevations_(elevations),
-          coordinates_(coords)
+          model_tie_point_(model_tie_point)
     {
     }
 
@@ -45,49 +45,15 @@ namespace GridLib
         return elevations_;
     }
 
-    std::optional<float> GridView::unknown_elevation() const
+    const Xyz::Vector2D& GridView::model_tie_point() const
+    {
+        return model_tie_point_;
+    }
+
+    const GridModel& GridView::model() const
     {
         assert_grid();
-        return grid_->unknown_elevation();
-    }
-
-    const Xyz::Vector3D& GridView::row_axis() const
-    {
-        assert_grid();
-        return grid_->row_axis();
-    }
-
-    const Xyz::Vector3D& GridView::col_axis() const
-    {
-        assert_grid();
-        return grid_->column_axis();
-    }
-
-    const Xyz::Vector3D& GridView::vertical_axis() const
-    {
-        assert_grid();
-        return grid_->vertical_axis();
-    }
-
-    Unit GridView::horizontal_unit() const
-    {
-        return grid_->horizontal_unit();
-    }
-
-    Unit GridView::vertical_unit() const
-    {
-        return grid_->vertical_unit();
-    }
-
-    const Coordinates& GridView::coordinates() const
-    {
-        return coordinates_;
-    }
-
-    const CoordinateReferenceSystem& GridView::reference_system() const
-    {
-        assert_grid();
-        return grid_->reference_system();
+        return grid_->model();
     }
 
     const Grid* GridView::base_grid() const
@@ -99,13 +65,10 @@ namespace GridLib
                                size_t n_rows, size_t n_cols) const
     {
         assert_grid();
-        auto coords = coordinates();
-        if (row != 0 || column != 0)
-            coords.grid -= {float(row), float(column)};
         return {
             *grid_,
             elevations_.subarray(row, column, n_rows, n_cols),
-            coords
+            model_tie_point_ - Xyz::Vector2D{double(row), double(column)}
         };
     }
 
@@ -118,7 +81,7 @@ namespace GridLib
     std::pair<float, float> get_min_max_elevation(const GridView& grid)
     {
         const auto elevations = grid.elevations();
-        const auto no_value = grid.unknown_elevation();
+        const auto no_value = grid.model().unknown_elevation;
         auto min = FLT_MAX, max = FLT_TRUE_MIN;
         for (const auto row : elevations)
         {
@@ -141,11 +104,9 @@ namespace GridLib
 
     bool is_planar(const GridView& grid)
     {
-        const auto& row_vec = grid.col_axis();
-        const auto& col_vec = grid.row_axis();
-
-        return row_vec[2] <= Xyz::Constants<double>::DEFAULT_MARGIN
-               && col_vec[2] <= Xyz::Constants<double>::DEFAULT_MARGIN;
+        const auto& m = grid.model();
+        return m.row_axis()[2] <= Xyz::Constants<double>::DEFAULT_MARGIN
+               && m.column_axis()[2] <= Xyz::Constants<double>::DEFAULT_MARGIN;
     }
 
     namespace
@@ -163,8 +124,9 @@ namespace GridLib
 
         auto origin = grid_pos_to_model_pos(grid, {0, 0});
         auto [rows, cols] = grid.elevations().dimensions();
-        auto row_vec = double(cols - 1) * grid.row_axis();
-        auto col_vec = double(rows - 1) * grid.col_axis();
+        const auto& m = grid.model();
+        auto row_vec = double(cols - 1) * m.row_axis();
+        auto col_vec = double(rows - 1) * m.column_axis();
 
         auto row_sign = get_max_abs(row_vec[0], row_vec[1]) > 0 ? 1 : -1;
         auto col_sign = get_max_abs(col_vec[0], col_vec[1]) > 0 ? 1 : -1;
@@ -202,9 +164,9 @@ namespace GridLib
         bool has_unknown_elevation(const GridView& grid,
                                    const Xyz::Vector4F& values)
         {
-            if (!grid.unknown_elevation())
+            if (!grid.model().unknown_elevation)
                 return false;
-            const auto unknown = *grid.unknown_elevation();
+            const auto unknown = *grid.model().unknown_elevation;
             return values[0] == unknown || values[1] == unknown
                    || values[2] == unknown || values[3] == unknown;
         }
@@ -225,7 +187,7 @@ namespace GridLib
             if (rf == 0 && cf == 0)
                 return values[r * 2 + c];
 
-            const auto unknown = *grid.unknown_elevation();
+            const auto unknown = *grid.model().unknown_elevation;
             if (rf == 0)
             {
                 if (values[r * 2] != unknown && values[r * 2 + 1] != unknown)
@@ -261,10 +223,11 @@ namespace GridLib
     Xyz::Vector2D model_pos_to_grid_pos(const GridView& grid,
                                         const Xyz::Vector3D& model_pos)
     {
-        const auto& row = grid.row_axis();
-        const auto& col = grid.col_axis();
-        const auto offset = model_pos - grid.coordinates().model;
-        return grid.coordinates().grid + Xyz::Vector2D(
+        const auto& m = grid.model();
+        const auto& row = m.row_axis();
+        const auto& col = m.column_axis();
+        const auto offset = model_pos - m.location();
+        return grid.model_tie_point() + Xyz::Vector2D(
                    dot(offset, col) / dot(col, col),
                    dot(offset, row) / dot(row, row)
                );
@@ -273,9 +236,10 @@ namespace GridLib
     Xyz::Vector3D
     grid_pos_to_model_pos(const GridView& grid, const Xyz::Vector2D& grid_pos)
     {
-        const auto offset = grid_pos - grid.coordinates().grid;
-        return grid.coordinates().model
-               + offset[0] * grid.col_axis()
-               + offset[1] * grid.row_axis();
+        const auto offset = grid_pos - grid.model_tie_point();
+        const auto& m = grid.model();
+        return m.location()
+               + offset[0] * m.column_axis()
+               + offset[1] * m.row_axis();
     }
 }

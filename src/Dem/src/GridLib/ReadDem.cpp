@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <fstream>
 #include "DemReader.hpp"
+#include "GridLib/GridLibException.hpp"
 
 namespace GridLib
 {
@@ -31,12 +32,90 @@ namespace GridLib
         }
     }
 
+    int get_vertical_epsg(const RecordA& a)
+    {
+        if (const auto vd = a.vertical_datum.value_or(0); vd != 1)
+            GRIDLIB_THROW("Unsupported vertical datum: " + std::to_string(vd));
+
+        return 0;
+    }
+
+    Crs get_crs(const RecordA& a)
+    {
+        if (const int hd = a.horizontal_datum.value_or(0); hd != 3)
+            GRIDLIB_THROW("Unsupported horizontal datum: " + std::to_string(hd));
+
+        const int vd = get_vertical_epsg(a);
+        const auto ref_sys = a.ref_sys.value_or(0);
+        if (ref_sys == 0)
+            return GeographicCrs{4326, vd};
+        if (ref_sys == 1)
+            return ProjectedCrs{32600 + a.ref_sys_zone.value_or(0), vd}; // Assuming northern hemisphere
+
+        GRIDLIB_THROW("Unsupported reference system: " + std::to_string(ref_sys));
+    }
+
+
     Grid read_dem(std::istream& stream,
                   const ProgressCallback& progress_callback)
     {
         Grid grid;
         DemReader reader(stream);
         auto& a = reader.record_a();
+
+        auto rows = a.rows.value_or(1);
+        auto cols = a.columns.value_or(1);
+
+        auto crs = get_crs(a);
+        auto z = a.vertical_datum_shift.value_or(0);
+
+        auto& model = grid.model();
+
+        std::vector<SpatialTiePoint> spatial_ties;
+        if (a.longitude && a.latitude)
+        {
+            spatial_ties.push_back({
+                {0, 0},
+                {to_degrees(*a.latitude), to_degrees(*a.longitude), z},
+                GeographicCrs{4326, 0}
+            });
+        }
+        if (const auto& c = a.quadrangle_corners[0])
+        {
+            model.set_location({c->easting, c->northing, z});
+            spatial_ties.push_back({
+                {0, 0},
+                {c->easting, c->northing, z},
+                crs
+            });
+        }
+        if (const auto& c = a.quadrangle_corners[1])
+        {
+            spatial_ties.push_back({
+                {double(rows - 1), 0},
+                {c->easting, c->northing, z},
+                crs
+            });
+        }
+        if (const auto& c = a.quadrangle_corners[2])
+        {
+            spatial_ties.push_back({
+                {double(rows - 1), double(cols - 1)},
+                {c->easting, c->northing, z},
+                crs
+            });
+        }
+        if (const auto& c = a.quadrangle_corners[3])
+        {
+            spatial_ties.push_back({
+                {0, double(cols - 1)},
+                {c->easting, c->northing, z},
+                crs
+            });
+        }
+
+        grid.set_spatial_tie_points(std::move(spatial_ties));
+
         auto h_unit = from_dem_unit(a.horizontal_unit.value_or(0));
         double c_res = a.x_resolution.value_or(1.0);
         double r_res = a.y_resolution.value_or(1.0);
@@ -44,41 +123,18 @@ namespace GridLib
         auto v_unit = from_dem_unit(a.vertical_unit.value_or(0));
         float v_res = a.z_resolution.value_or(1.0);
 
-        Coordinates coords;
-        if (a.longitude && a.latitude)
-        {
-            coords.geographic = Xyz::Vector2D(to_degrees(*a.latitude),
-                                              to_degrees(*a.longitude));
-        }
-        if (const auto& c = a.quadrangle_corners[0])
-            coords.model = Xyz::Vector3D(c->easting, c->northing, 0.0);
-        grid.set_coordinates(coords);
-
-        if (a.horizontal_datum)
-        {
-            grid.set_reference_system(
-                {
-                    *a.horizontal_datum,
-                    a.vertical_datum.value_or(0),
-                    0,
-                    a.ref_sys_zone.value_or(0)
-                });
-        }
-
         auto rot = a.rotation_angle.value_or(0);
         auto row_axis = rotate(Xyz::Vector2D(0.0, r_res), rot);
-        grid.set_row_axis(Xyz::make_vector3(row_axis, 0.0));
+        model.set_row_axis(Xyz::make_vector3(row_axis, 0.0));
         auto col_axis = rotate(Xyz::Vector2D(c_res, 0.0), rot);
-        grid.set_column_axis(Xyz::make_vector3(col_axis, 0.0));
-        grid.set_vertical_axis({0, 0, v_res});
-        grid.set_unknown_elevation(UNKNOWN);
+        model.set_column_axis(Xyz::make_vector3(col_axis, 0.0));
+        model.set_vertical_axis({0, 0, v_res});
 
-        grid.set_horizontal_unit(h_unit);
-        grid.set_vertical_unit(v_unit);
+        model.unknown_elevation = UNKNOWN;
+        model.horizontal_unit = h_unit;
+        model.vertical_unit = v_unit;
 
         Chorasmia::MutableArrayView2D<float> values;
-        auto rows = a.rows.value_or(1);
-        auto cols = a.columns.value_or(1);
         while (auto b = reader.next_record_b())
         {
             if (values.empty())
