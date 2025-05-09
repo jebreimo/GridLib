@@ -34,28 +34,6 @@ namespace GridLib
         }
     }
 
-    void write_json(Yson::Writer& writer, const Coordinates& coords)
-    {
-        writer.beginObject();
-        writer.key("model");
-        write_json(writer, coords.model);
-        writer.key("grid");
-        write_json(writer, coords.grid);
-
-        if (coords.planar)
-        {
-            writer.key("planar");
-            write_json(writer, *coords.planar);
-        }
-
-        if (coords.geographic)
-        {
-            writer.key("geographic");
-            write_json(writer, *coords.geographic);
-        }
-        writer.endObject();
-    }
-
     void write_json(Yson::Writer& writer, const CoordinateReferenceSystem& ref_sys)
     {
         if (!ref_sys)

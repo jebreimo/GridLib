@@ -12,44 +12,6 @@
 
 namespace GridLib
 {
-    struct Coordinates
-    {
-        /**
-         * @brief The model coordinates in either planar or graphical
-         *      coordinate system.
-         *
-         * The coordinate units are the same as the axes.
-         */
-        Xyz::Vector3D model;
-
-        /**
-         * @brief The grid position, row and column, that correspond to the
-         *      planar and/or geographical coordinates.
-         */
-        Xyz::Vector2D grid;
-
-        /**
-         * @brief The spherical model coordinates in the coordinate system.
-         *
-         * The coordinate order is easting, northing.
-         */
-        std::optional<Xyz::Vector2D> planar;
-
-        /**
-         * @brief The spherical model coordinates in the coordinate system.
-         *
-         * The coordinate order is latitude, longitude.
-         */
-        std::optional<Xyz::Vector2D> geographic;
-    };
-
-    constexpr bool operator==(const Coordinates& a, const Coordinates& b)
-    {
-        return a.model == b.model
-               && a.geographic == b.geographic
-               && a.grid == b.grid;
-    }
-
     struct ProjectedCrs
     {
         int projection = 0;

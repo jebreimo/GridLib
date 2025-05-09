@@ -20,6 +20,4 @@ namespace GridLib
     void write_json(const std::string& file_name, const GridView& grid);
 
     void write_json(Yson::Writer& writer, const GridView& grid);
-
-    void write_json(Yson::Writer& writer, const Coordinates& coords);
 }
