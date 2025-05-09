@@ -62,29 +62,6 @@ namespace GridLib
                && a.crs == b.crs;
     }
 
-    struct CoordinateReferenceSystem
-    {
-        int projected = 0;
-        int vertical = 0;
-        int geographic = 0;
-        int zone = 0;
-
-        explicit operator bool() const
-        {
-            return projected != 0 || vertical != 0
-                   || geographic != 0 || zone != 0;
-        }
-    };
-
-    constexpr bool operator==(const CoordinateReferenceSystem& a,
-                              const CoordinateReferenceSystem& b)
-    {
-        return a.projected == b.projected
-               && a.vertical == b.vertical
-               && a.geographic == b.geographic
-               && a.zone == b.zone;
-    }
-
     enum class RotationDir
     {
         CLOCKWISE,

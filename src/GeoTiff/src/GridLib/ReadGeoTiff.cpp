@@ -57,6 +57,27 @@ namespace GridLib
             };
         }
 
+        Crs get_crs(const Yimage::GeoTiffMetadata& metadata)
+        {
+            if (metadata.projected_crs != 0)
+            {
+                return ProjectedCrs{
+                    metadata.projected_crs,
+                    metadata.vertical_crs
+                };
+            }
+
+            if (metadata.geodetic_crs != 0)
+            {
+                return GeographicCrs{
+                    metadata.geodetic_crs,
+                    metadata.vertical_crs
+                };
+            }
+
+            return {};
+        }
+
         Grid create_grid(const Yimage::Image& img)
         {
             const auto metadata = dynamic_cast<const Yimage::GeoTiffMetadata*>(img.metadata());
@@ -79,38 +100,16 @@ namespace GridLib
 
             auto& model = result.model();
 
-            model.reference_system = CoordinateReferenceSystem{
-                metadata->projected_crs,
-                metadata->vertical_crs,
-                metadata->geodetic_crs,
-                0
-            };
-
             const auto location = get_location(*metadata);
             model.set_location(location);
 
             std::vector<SpatialTiePoint> spatial_ties;
 
-            if (metadata->projected_crs)
+            auto crs = get_crs(*metadata);
+            if (!std::holds_alternative<std::monostate>(crs))
             {
-                spatial_ties.push_back({
-                    tie_point, location,
-                    ProjectedCrs{
-                        metadata->projected_crs,
-                        metadata->vertical_crs
-                    }
-                });
-            }
-
-            if (metadata->geodetic_crs)
-            {
-                spatial_ties.push_back({
-                    tie_point, location,
-                    GeographicCrs{
-                        metadata->geodetic_crs,
-                        metadata->vertical_crs
-                    }
-                });
+                model.crs = crs;
+                spatial_ties.push_back({tie_point, location, crs});
             }
 
             result.set_spatial_tie_points(std::move(spatial_ties));

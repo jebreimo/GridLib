@@ -62,7 +62,7 @@ namespace GridLib
         return lhs.matrix == rhs.matrix
                && lhs.horizontal_unit == rhs.horizontal_unit
                && lhs.vertical_unit == rhs.vertical_unit
-               && lhs.reference_system == rhs.reference_system
+               && lhs.crs == rhs.crs
                && lhs.unknown_elevation == rhs.unknown_elevation
                && lhs.information == rhs.information;
     }

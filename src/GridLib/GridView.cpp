@@ -56,6 +56,26 @@ namespace GridLib
         return grid_->model();
     }
 
+    std::vector<SpatialTiePoint> GridView::spatial_tie_points() const
+    {
+        assert_grid();
+        if (model_tie_point_ == grid_->model_tie_point())
+            return grid_->spatial_tie_points();
+
+        const auto delta = model_tie_point_ - grid_->model_tie_point();
+
+        std::vector<SpatialTiePoint> result;
+        for (const auto& pt : grid_->spatial_tie_points())
+        {
+            result.push_back({
+                pt.grid_point + delta,
+                pt.location,
+                pt.crs
+            });
+        }
+        return result;
+    }
+
     const Grid* GridView::base_grid() const
     {
         return grid_;

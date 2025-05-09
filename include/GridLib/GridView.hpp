@@ -44,6 +44,9 @@ namespace GridLib
         const GridModel& model() const;
 
         [[nodiscard]]
+        std::vector<SpatialTiePoint> spatial_tie_points() const;
+
+        [[nodiscard]]
         const Grid* base_grid() const;
 
         [[nodiscard]]

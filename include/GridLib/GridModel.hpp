@@ -21,7 +21,7 @@ namespace GridLib
 
         Unit vertical_unit = Unit::UNDEFINED;
 
-        CoordinateReferenceSystem reference_system;
+        Crs crs;
 
         std::optional<float> unknown_elevation;
 

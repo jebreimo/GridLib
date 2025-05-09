@@ -12,21 +12,28 @@
 #include <sstream>
 #include <catch2/catch_test_macros.hpp>
 
-
 TEST_CASE("Test write_json_grid and read_grid")
 {
     GridLib::Grid grid;
     grid.resize(6, 8);
     auto array = grid.elevations().array();
     std::iota(array.begin(), array.end(), 0.0);
+    grid.set_model_tie_point({2, 3});
     auto& model = grid.model();
-    model.reference_system = GridLib::CoordinateReferenceSystem{3000, 1000};
+    model.crs = GridLib::ProjectedCrs{3000, 1000};
     model.set_location({5000, 7000, 0});
     model.horizontal_unit = GridLib::Unit::METER;
     model.vertical_unit = GridLib::Unit::METER;
     model.set_row_axis({0, -10, 0});
     model.set_column_axis({10, 0, 0});
     model.set_vertical_axis({0, 0, 1});
+    std::vector<GridLib::SpatialTiePoint> tie_points;
+    tie_points.push_back({
+        grid.model_tie_point(),
+        model.location(),
+        model.crs
+    });
+    grid.set_spatial_tie_points(std::move(tie_points));
     std::stringstream ss;
     GridLib::write_json(ss, grid.view());
     ss.seekg(0);

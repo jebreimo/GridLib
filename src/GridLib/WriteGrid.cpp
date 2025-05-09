@@ -34,21 +34,24 @@ namespace GridLib
         }
     }
 
-    void write_json(Yson::Writer& writer, const CoordinateReferenceSystem& ref_sys)
+    void write_json(Yson::Writer& writer, const Crs& crs)
     {
-        if (!ref_sys)
-            return;
-
-        writer.beginObject();
-        if (ref_sys.projected)
-            writer.key("projected").value(ref_sys.projected);
-        if (ref_sys.vertical)
-            writer.key("vertical").value(ref_sys.vertical);
-        if (ref_sys.geographic)
-            writer.key("geographic").value(ref_sys.geographic);
-        if (ref_sys.zone)
-            writer.key("zone").value(ref_sys.zone);
-        writer.endObject();
+        if (const auto* p = std::get_if<ProjectedCrs>(&crs))
+        {
+            writer.beginObject();
+            writer.key("type").value("projection");
+            writer.key("projection").value(p->projection);
+            writer.key("vertical").value(p->vertical);
+            writer.endObject();
+        }
+        else if (const auto* g = std::get_if<GeographicCrs>(&crs))
+        {
+            writer.beginObject();
+            writer.key("type").value("projection");
+            writer.key("geographic").value(g->geographic);
+            writer.key("vertical").value(g->vertical);
+            writer.endObject();
+        }
     }
 
     void write_json(Yson::Writer& writer,
@@ -83,8 +86,8 @@ namespace GridLib
         if (model.unknown_elevation)
             writer.key("unknown_elevation").value(*model.unknown_elevation);
 
-        writer.key("reference_system");
-        write_json(writer, model.reference_system);
+        writer.key("crs");
+        write_json(writer, model.crs);
 
         writer.key("information");
         write_json(writer, model.information);
@@ -92,6 +95,25 @@ namespace GridLib
         writer.endObject();
     }
 
+    void write_json(Yson::Writer& writer, const std::vector<SpatialTiePoint>& points)
+    {
+        if (points.empty())
+            return;
+
+        writer.beginObject();
+        for (const auto& point : points)
+        {
+            writer.beginObject();
+            writer.key("grid_point");
+            write_json(writer, point.grid_point);
+            writer.key("location");
+            write_json(writer, point.location);
+            writer.key("crs");
+            write_json(writer, point.crs);
+            writer.endObject();
+        }
+        writer.endObject();
+    }
     void write_json(Yson::Writer& writer,
                     const Chorasmia::ArrayView2D<float>& values,
                     std::optional<float> null_value)
@@ -124,6 +146,8 @@ namespace GridLib
         write_json(writer, grid.model_tie_point());
         writer.key("model");
         write_json(writer, grid.model());
+        writer.key("spatial_tie_points");
+        write_json(writer, grid.spatial_tie_points());
         writer.key("elevations");
         write_json(writer, grid.elevations(), grid.model().unknown_elevation);
         writer.endObject();

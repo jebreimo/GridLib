@@ -57,22 +57,29 @@ namespace GridLib
         return parse_unit(read<std::string>(reader)).value_or(Unit::UNDEFINED);
     }
 
-    CoordinateReferenceSystem read_reference_system(Yson::Reader& reader)
+    Crs read_crs(Yson::Reader& reader)
     {
-        using Yson::read;
-        CoordinateReferenceSystem system;
-        for (const auto& key : keys(reader))
+        auto values = reader.readItem();
+        auto type = Yson::get<std::string>(values["type"]);
+        if (type == "projection")
         {
-            if (key == "projected")
-                system.projected = read<int>(reader);
-            else if (key == "vertical")
-                system.vertical = read<int>(reader);
-            else if (key == "geographic")
-                system.geographic = read<int>(reader);
-            else if (key == "zone")
-                system.zone = read<int>(reader);
+            return ProjectedCrs
+            {
+                Yson::get<int>(values["projection"]),
+                Yson::get<int>(values["vertical"]),
+            };
         }
-        return system;
+
+        if (type == "geographic")
+        {
+            return GeographicCrs
+            {
+                Yson::get<int>(values["geographic"]),
+                Yson::get<int>(values["vertical"]),
+            };
+        }
+
+        return {};
     }
 
     std::vector<std::pair<std::string, std::string>>
@@ -102,13 +109,39 @@ namespace GridLib
                 result.horizontal_unit = read_unit(reader);
             else if (key == "vertical_unit")
                 result.vertical_unit = read_unit(reader);
-            else if (key == "reference_system")
-                result.reference_system = read_reference_system(reader);
+            else if (key == "crs")
+                result.crs = read_crs(reader);
             else if (key == "information")
                 result.information = read_dictionary(reader);
             else if (strict)
                 GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
         }
+        return result;
+    }
+
+    std::vector<SpatialTiePoint>
+    read_spatial_tie_points(Yson::Reader& reader, bool strict)
+    {
+        std::vector<SpatialTiePoint> result;
+        reader.enter();
+        while (reader.nextValue())
+        {
+            using Yson::read;
+            SpatialTiePoint point;
+            for (const auto& key : keys(reader))
+            {
+                if (key == "grid_point")
+                    point.grid_point = read_vector<double, 2>(reader);
+                else if (key == "location")
+                    point.location = read_vector<double, 3>(reader);
+                else if (key == "crs")
+                    point.crs = read_crs(reader);
+                else if (strict)
+                    GRIDLIB_THROW("Unknown key: '" + key + "'");
+            }
+            result.push_back(point);
+        }
+        reader.leave();
         return result;
     }
 
@@ -142,6 +175,8 @@ namespace GridLib
                 builder.model_tie_point = read_vector<double, 2>(reader);
             else if (key == "model")
                 builder.model = read_model(reader, strict);
+            else if (key == "spatial_tie_points")
+                builder.spatial_tie_points = read_spatial_tie_points(reader, strict);
             else if (key == "elevations")
                 builder.elevations = read_elevations(reader);
             else if (strict)
