@@ -6,8 +6,8 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
+#include <vector>
 #include <Xyz/Matrix.hpp>
-
 #include "GridLib/GridMemberTypes.hpp"
 #include "GridLib/Unit.hpp"
 
