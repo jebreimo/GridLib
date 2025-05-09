@@ -40,6 +40,23 @@ namespace GridLib
             return epsg_crs_to_vertical_unit(epsg);
         }
 
+        Xyz::Vector2D get_tie_point(const Yimage::GeoTiffMetadata& metadata)
+        {
+            return {
+                metadata.model_tie_point[1],
+                metadata.model_tie_point[0]
+            };
+        }
+
+        Xyz::Vector3D get_location(const Yimage::GeoTiffMetadata& metadata)
+        {
+            return {
+                metadata.model_tie_point[3],
+                metadata.model_tie_point[4],
+                metadata.model_tie_point[5]
+            };
+        }
+
         Grid create_grid(const Yimage::Image& img)
         {
             auto metadata = dynamic_cast<const Yimage::GeoTiffMetadata*>(img.metadata());
@@ -57,11 +74,8 @@ namespace GridLib
                 std::copy(elevations.begin(), elevations.end(), dst.begin());
             }
 
-            Xyz::Vector2D tie_point{
-                metadata->model_tie_point[1],
-                metadata->model_tie_point[0]
-            };
-            result.set_model_tie_point(tie_point);
+            auto tie_point = get_tie_point(*metadata);
+            result.set_model_tie_point(get_tie_point(*metadata));
 
             auto& model = result.model();
 
@@ -72,11 +86,7 @@ namespace GridLib
                 0
             });
 
-            Xyz::Vector3D location{
-                metadata->model_tie_point[3],
-                metadata->model_tie_point[4],
-                metadata->model_tie_point[5]
-            };
+            auto location = get_location(*metadata);
             model.set_location(location);
 
             std::vector<SpatialTiePoint> spatial_ties;
@@ -121,6 +131,17 @@ namespace GridLib
 
             model.horizontal_unit = get_horizontal_unit(*metadata);
             model.vertical_unit = get_vertical_unit(*metadata);
+
+            if (!metadata->citation.empty())
+                model.information.emplace_back("citation", metadata->citation);
+            if (!metadata->geog_citation.empty())
+                model.information.emplace_back("geographical", metadata->geog_citation);
+            if (!metadata->projected_citation.empty())
+                model.information.emplace_back("projected", metadata->projected_citation);
+            if (!metadata->gdal_metadata.empty())
+                model.information.emplace_back("gdal", metadata->gdal_metadata);
+            if (!metadata->date_time.empty())
+                model.information.emplace_back("date", metadata->date_time);
 
             return result;
         }
