@@ -27,16 +27,16 @@ namespace GridLib
                  const Xyz::Vector2D& model_tie_point = {}) noexcept;
 
         [[nodiscard]]
-        size_t row_count() const;
+        size_t row_count() const override;
 
         [[nodiscard]]
-        size_t col_count() const;
+        size_t col_count() const override;
 
         [[nodiscard]]
-        const Xyz::Vector2D& model_tie_point() const;
+        const Xyz::Vector2D& model_tie_point() const override;
 
         [[nodiscard]]
-        const GridModel& model() const;
+        const GridModel& model() const override;
 
         [[nodiscard]]
         std::vector<SpatialTiePoint> spatial_tie_points() const;

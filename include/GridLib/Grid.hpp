@@ -31,10 +31,10 @@ namespace GridLib
         GridView view() const;
 
         [[nodiscard]]
-        size_t row_count() const;
+        size_t row_count() const override;
 
         [[nodiscard]]
-        size_t col_count() const;
+        size_t col_count() const override;
 
         void resize(size_t rows, size_t columns);
 
@@ -45,12 +45,12 @@ namespace GridLib
         Chorasmia::MutableArrayView2D<float> elevations();
 
         [[nodiscard]]
-        const Xyz::Vector2D& model_tie_point() const;
+        const Xyz::Vector2D& model_tie_point() const override;
 
         void set_model_tie_point(const Xyz::Vector2D& value);
 
         [[nodiscard]]
-        const GridModel& model() const;
+        const GridModel& model() const override;
 
         [[nodiscard]]
         GridModel& model();
