@@ -7,6 +7,7 @@
 //****************************************************************************
 #include "GridBuilder.hpp"
 
+#include <cmath>
 #include "GridLib/GridLibException.hpp"
 
 namespace GridLib
