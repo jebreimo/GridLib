@@ -14,7 +14,7 @@
 namespace GridLib
 {
     [[nodiscard]] std::vector<Xyz::Vector3D>
-    make_profile(const GridView& grid,
+    make_profile(const IGrid& grid,
                  const Xyz::Vector2D& from,
                  const Xyz::Vector2D& to,
                  size_t steps);
@@ -22,7 +22,7 @@ namespace GridLib
     class ProfileMaker
     {
     public:
-        explicit ProfileMaker(const GridView& grid);
+        explicit ProfileMaker(const IGrid& grid);
 
         [[nodiscard]] std::vector<Xyz::Vector3D>
         make_profile(const Xyz::Vector2D& from,

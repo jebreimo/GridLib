@@ -35,7 +35,7 @@ TEST_CASE("Test write_json_grid and read_grid")
     });
     grid.set_spatial_tie_points(std::move(tie_points));
     std::stringstream ss;
-    GridLib::write_json(ss, grid.view());
+    GridLib::write_json(ss, grid);
     ss.seekg(0);
     auto in_grid = GridLib::read_json_grid(ss, true);
     REQUIRE(grid == in_grid);

@@ -11,7 +11,7 @@
 #include <Chorasmia/Index2DMap.hpp>
 #include <Chorasmia/IntervalMap.hpp>
 #include <Yimage/Image.hpp>
-#include "Grid.hpp"
+#include "IGrid.hpp"
 
 namespace GridLib
 {
@@ -77,7 +77,7 @@ namespace GridLib
 
     template <ColorFunc ColorFunc>
     Yimage::Image
-    rasterize_rgba(const GridView& grid, ColorFunc color_func,
+    rasterize_rgba(const IGrid& grid, ColorFunc color_func,
                    Chorasmia::Index2DMode mode = Chorasmia::Index2DMode::ROWS)
     {
         return rasterize_rgba(grid.elevations(),
@@ -90,5 +90,5 @@ namespace GridLib
      *  origin in its top left corner.
      */
     Chorasmia::Index2DMode
-    get_index_mode_for_top_left_origin(const GridView& grid);
+    get_index_mode_for_top_left_origin(const IGrid& grid);
 }

@@ -184,7 +184,7 @@ namespace GridLib
     }
 
     Chorasmia::Index2DMode
-    get_index_mode_for_top_left_origin(const GridView& grid)
+    get_index_mode_for_top_left_origin(const IGrid& grid)
     {
         auto rv = grid.model().row_axis();
         auto cv = grid.model().column_axis();

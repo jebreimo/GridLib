@@ -97,7 +97,7 @@ add_library(GridLib
     include/GridLib/GridMemberTypes.hpp
     include/GridLib/GridModel.hpp
     include/GridLib/GridView.hpp
-    include/GridLib/IGridMetadata.hpp
+    include/GridLib/IGrid.hpp
     include/GridLib/Profile.hpp
     include/GridLib/Rasterize.hpp
     include/GridLib/ReadGrid.hpp
@@ -115,6 +115,7 @@ add_library(GridLib
     src/GridLib/Utilities/CoordinateSystem.cpp
     src/GridLib/Utilities/CoordinateSystem.hpp
     src/GridLib/WriteGrid.cpp
+    src/GridLib/IGrid.cpp
 )
 
 target_include_directories(GridLib

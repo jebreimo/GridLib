@@ -6,7 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include "GridView.hpp"
+#include "IGrid.hpp"
 
 namespace Yson
 {
@@ -15,9 +15,9 @@ namespace Yson
 
 namespace GridLib
 {
-    void write_json(std::ostream& stream, const GridView& grid);
+    void write_json(std::ostream& stream, const IGrid& grid);
 
-    void write_json(const std::string& file_name, const GridView& grid);
+    void write_json(const std::string& file_name, const IGrid& grid);
 
-    void write_json(Yson::Writer& writer, const GridView& grid);
+    void write_json(Yson::Writer& writer, const IGrid& grid);
 }

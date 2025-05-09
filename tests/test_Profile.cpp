@@ -22,7 +22,7 @@ TEST_CASE("Profile without clipping")
                                      },
                                      3, 3);
     GridLib::Grid grid(std::move(values));
-    auto contour = GridLib::make_profile(grid.view(), {0.5, 0.5}, {1.5, 1.5}, 2);
+    auto contour = GridLib::make_profile(grid, {0.5, 0.5}, {1.5, 1.5}, 2);
     REQUIRE(contour.size() == 3);
     REQUIRE_THAT(contour[0][2], WithinAbs(3, 1e-12));
     REQUIRE_THAT(contour[1][2], WithinAbs(5, 1e-12));
@@ -32,13 +32,13 @@ TEST_CASE("Profile without clipping")
 TEST_CASE("Profile with clipping")
 {
     Chorasmia::Array2D<float> values({
-                                       1, 2, 3,
-                                       4, 5, 6,
-                                       7, 8, 9
-                                   },
-                                   3, 3);
+                                         1, 2, 3,
+                                         4, 5, 6,
+                                         7, 8, 9
+                                     },
+                                     3, 3);
     GridLib::Grid grid(std::move(values));
-    auto contour = GridLib::make_profile(grid.view(), {4.5, 3}, {-2.5, -0.5}, 7);
+    auto contour = GridLib::make_profile(grid, {4.5, 3}, {-2.5, -0.5}, 7);
     REQUIRE(contour.size() == 4);
     REQUIRE_THAT(contour[0][2], WithinAbs(8.75, 1e-12));
     REQUIRE_THAT(contour[1][2], WithinAbs(7, 1e-12));
@@ -63,7 +63,7 @@ TEST_CASE("Profile with transformation")
     model.set_column_axis({0, -10, 0});
     model.set_vertical_axis({0, 0, 10});
 
-    GridLib::ProfileMaker maker(grid.view());
+    GridLib::ProfileMaker maker(grid);
 
     auto contour = maker.make_profile({530, 955}, {495, 1025}, 7);
     REQUIRE(contour.size() == 4);

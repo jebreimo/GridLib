@@ -13,7 +13,7 @@
 
 namespace GridLib
 {
-    class Grid : public IGridMetadata
+    class Grid : public IGrid
     {
     public:
         Grid();
@@ -39,7 +39,7 @@ namespace GridLib
         void resize(size_t rows, size_t columns);
 
         [[nodiscard]]
-        Chorasmia::ArrayView2D<float> elevations() const;
+        Chorasmia::ArrayView2D<float> elevations() const override;
 
         [[nodiscard]]
         Chorasmia::MutableArrayView2D<float> elevations();
@@ -56,14 +56,13 @@ namespace GridLib
         GridModel& model();
 
         [[nodiscard]]
-        const std::vector<SpatialTiePoint>& spatial_tie_points() const;
+        std::vector<SpatialTiePoint> spatial_tie_points() const override;
 
         void set_spatial_tie_points(std::vector<SpatialTiePoint> value);
 
         [[nodiscard]]
         GridView subgrid(size_t row, size_t column,
-                         size_t n_rows = SIZE_MAX,
-                         size_t n_cols = SIZE_MAX) const;
+                         size_t n_rows, size_t n_cols) const override;
 
         [[nodiscard]]
         Chorasmia::Array2D<float> release();

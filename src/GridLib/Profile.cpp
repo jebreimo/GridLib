@@ -16,7 +16,7 @@ namespace GridLib
     namespace
     {
         [[nodiscard]]
-        Xyz::RectangleD to_rectangle(const GridView& grid)
+        Xyz::RectangleD to_rectangle(const IGrid& grid)
         {
             auto width = double(grid.row_count() - 1);
             auto height = double(grid.col_count() - 1);
@@ -24,14 +24,14 @@ namespace GridLib
         }
 
         [[nodiscard]]
-        Xyz::Vector3D get_point(const GridView& grid,
+        Xyz::Vector3D get_point(const IGrid& grid,
                                 const Xyz::Vector2D& pos)
         {
             return make_vector3(pos, get_elevation(grid, pos));
         }
 
         [[nodiscard]]
-        Xyz::Matrix4D get_transform(const GridView& grid)
+        Xyz::Matrix4D get_transform(const IGrid& grid)
         {
             return grid.model().matrix;
         }
@@ -55,7 +55,7 @@ namespace GridLib
     }
 
     std::vector<Xyz::Vector3D>
-    make_profile(const GridView& grid,
+    make_profile(const IGrid& grid,
                  const Xyz::Vector2D& from,
                  const Xyz::Vector2D& to,
                  size_t steps)
@@ -88,8 +88,8 @@ namespace GridLib
         return result;
     }
 
-    ProfileMaker::ProfileMaker(const GridView& grid)
-        : grid_(grid),
+    ProfileMaker::ProfileMaker(const IGrid& grid)
+        : grid_(grid.subgrid(0, 0)),
           transform_(get_transform(grid_)),
           inverse_transform_(invert(transform_))
     {}

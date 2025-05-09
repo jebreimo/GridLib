@@ -84,7 +84,7 @@ namespace GridLib
         return model_;
     }
 
-    const std::vector<SpatialTiePoint>& Grid::spatial_tie_points() const
+    std::vector<SpatialTiePoint> Grid::spatial_tie_points() const
     {
         return spatial_tie_points_;
     }

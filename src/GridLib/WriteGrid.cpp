@@ -137,7 +137,7 @@ namespace GridLib
         writer.endArray();
     }
 
-    void write_json(Yson::Writer& writer, const GridView& grid)
+    void write_json(Yson::Writer& writer, const IGrid& grid)
     {
         writer.beginObject();
         writer.key("row_count").value(uint64_t(grid.row_count()));
@@ -153,14 +153,14 @@ namespace GridLib
         writer.endObject();
     }
 
-    void write_json(std::ostream& stream, const GridView& grid)
+    void write_json(std::ostream& stream, const IGrid& grid)
     {
         Yson::JsonWriter writer(stream, Yson::JsonFormatting::FORMAT);
         writer.setNonFiniteFloatsEnabled(true);
         write_json(writer, grid);
     }
 
-    void write_json(const std::string& file_name, const GridView& grid)
+    void write_json(const std::string& file_name, const IGrid& grid)
     {
         std::ofstream file(file_name);
         if (!file)
