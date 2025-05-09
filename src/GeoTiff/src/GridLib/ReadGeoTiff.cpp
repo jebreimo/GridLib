@@ -21,9 +21,9 @@ namespace GridLib
             if (metadata.projected_linear_units)
                 return epsg_unit_to_unit(metadata.projected_linear_units);
 
-            int epsg = metadata.projected_crs
-                           ? metadata.projected_crs
-                           : metadata.geodetic_crs;
+            const int epsg = metadata.projected_crs
+                                 ? metadata.projected_crs
+                                 : metadata.geodetic_crs;
             return epsg_crs_to_horizontal_unit(epsg);
         }
 
@@ -32,11 +32,11 @@ namespace GridLib
             if (metadata.vertical_units)
                 return epsg_unit_to_unit(metadata.vertical_units);
 
-            int epsg = metadata.vertical_crs
-                           ? metadata.vertical_crs
-                           : metadata.projected_crs
-                           ? metadata.projected_crs
-                           : metadata.geodetic_crs;
+            const int epsg = metadata.vertical_crs
+                                 ? metadata.vertical_crs
+                                 : metadata.projected_crs
+                                 ? metadata.projected_crs
+                                 : metadata.geodetic_crs;
             return epsg_crs_to_vertical_unit(epsg);
         }
 
@@ -59,7 +59,7 @@ namespace GridLib
 
         Grid create_grid(const Yimage::Image& img)
         {
-            auto metadata = dynamic_cast<const Yimage::GeoTiffMetadata*>(img.metadata());
+            const auto metadata = dynamic_cast<const Yimage::GeoTiffMetadata*>(img.metadata());
             if (!metadata || img.pixel_type() != Yimage::PixelType::MONO_FLOAT_32)
                 return {};
 
@@ -74,19 +74,19 @@ namespace GridLib
                 std::copy(elevations.begin(), elevations.end(), dst.begin());
             }
 
-            auto tie_point = get_tie_point(*metadata);
+            const auto tie_point = get_tie_point(*metadata);
             result.set_model_tie_point(get_tie_point(*metadata));
 
             auto& model = result.model();
 
-            model.reference_system = (CoordinateReferenceSystem{
+            model.reference_system = CoordinateReferenceSystem{
                 metadata->projected_crs,
                 metadata->vertical_crs,
                 metadata->geodetic_crs,
                 0
-            });
+            };
 
-            auto location = get_location(*metadata);
+            const auto location = get_location(*metadata);
             model.set_location(location);
 
             std::vector<SpatialTiePoint> spatial_ties;
@@ -142,6 +142,12 @@ namespace GridLib
                 model.information.emplace_back("gdal", metadata->gdal_metadata);
             if (!metadata->date_time.empty())
                 model.information.emplace_back("date", metadata->date_time);
+            if (!metadata->artist.empty())
+                model.information.emplace_back("artist", metadata->artist);
+            if (!metadata->host_computer.empty())
+                model.information.emplace_back("host_computer", metadata->host_computer);
+            if (!metadata->software.empty())
+                model.information.emplace_back("software", metadata->software);
 
             return result;
         }
@@ -149,13 +155,13 @@ namespace GridLib
 
     Grid read_geotiff(std::istream& stream)
     {
-        auto img = Yimage::read_tiff(stream);
+        const auto img = Yimage::read_tiff(stream);
         return create_grid(img);
     }
 
     Grid read_geotiff(const std::filesystem::path& path)
     {
-        auto img = Yimage::read_tiff(path);
+        const auto img = Yimage::read_tiff(path);
         return create_grid(img);
     }
 

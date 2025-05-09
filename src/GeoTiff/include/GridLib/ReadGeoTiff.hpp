@@ -13,7 +13,7 @@ namespace GridLib
 {
     [[nodiscard]] Grid read_geotiff(std::istream& stream);
 
-    [[nodiscard]] Grid read_geotiff(const std::filesystem::path& file_name);
+    [[nodiscard]] Grid read_geotiff(const std::filesystem::path& path);
 
     [[nodiscard]] bool is_tiff(const std::filesystem::path& path);
 }
