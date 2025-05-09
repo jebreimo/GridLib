@@ -44,7 +44,7 @@ namespace GridLib
         return str[0];
     }
 
-    std::string_view FortranReader::read_string(size_t size, bool trim_spaces)
+    std::string FortranReader::read_string(size_t size, bool trim_spaces)
     {
         while (str_.size() < size && fill_buffer(size))
             continue;
@@ -53,7 +53,7 @@ namespace GridLib
         size = std::min(size, str_.size());
         auto result = str_.substr(0, size);
         str_ = str_.substr(size);
-        return trim_spaces ? trim(result) : result;
+        return std::string(trim_spaces ? trim(result) : result);
     }
 
     std::optional<int8_t> FortranReader::read_int8(size_t size)

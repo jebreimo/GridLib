@@ -23,7 +23,7 @@ namespace GridLib
         explicit FortranReader(std::istream& stream,
                                size_t buffer_size = 8192);
 
-        std::string_view read_string(size_t size, bool trim_spaces = true);
+        std::string read_string(size_t size, bool trim_spaces = true);
 
         std::optional<char> read_char();
 
