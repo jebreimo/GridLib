@@ -61,6 +61,12 @@ namespace GridLib
         }
     };
 
+    inline bool operator==(const ProjectedCrs& a, const ProjectedCrs& b)
+    {
+        return a.projection == b.projection
+                && a.vertical == b.vertical;
+    }
+
     struct GeographicCrs
     {
         int geographic = 0;
@@ -72,6 +78,12 @@ namespace GridLib
         }
     };
 
+    inline bool operator==(const GeographicCrs& a, const GeographicCrs& b)
+    {
+        return a.geographic == b.geographic
+               && a.vertical == b.vertical;
+    }
+
     using Crs = std::variant<std::monostate, ProjectedCrs, GeographicCrs>;
 
     struct SpatialTiePoint
@@ -80,6 +92,13 @@ namespace GridLib
         Xyz::Vector3D location;
         Crs crs;
     };
+
+    inline bool operator==(const SpatialTiePoint& a, const SpatialTiePoint& b)
+    {
+        return a.grid_point == b.grid_point
+               && a.location == b.location
+               && a.crs == b.crs;
+    }
 
     struct CoordinateReferenceSystem
     {

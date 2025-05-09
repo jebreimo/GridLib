@@ -41,39 +41,39 @@ namespace GridLib
         [[nodiscard]]
         Xyz::Vector3D column_axis() const
         {
-            return {matrix[{0, 0}], matrix[{0, 1}], matrix[{0, 2}]};
+            return {matrix[{0, 0}], matrix[{1, 0}], matrix[{2, 0}]};
         }
 
         void set_column_axis(const Xyz::Vector3D& v)
         {
             matrix[{0, 0}] = v[0];
-            matrix[{0, 1}] = v[1];
-            matrix[{0, 2}] = v[2];
+            matrix[{1, 0}] = v[1];
+            matrix[{2, 0}] = v[2];
         }
 
         [[nodiscard]]
         Xyz::Vector3D row_axis() const
         {
-            return {matrix[{1, 0}], matrix[{1, 1}], matrix[{1, 2}]};
+            return {matrix[{0, 1}], matrix[{1, 1}], matrix[{2, 1}]};
         }
 
         void set_row_axis(const Xyz::Vector3D& v)
         {
-            matrix[{1, 0}] = v[0];
+            matrix[{0, 1}] = v[0];
             matrix[{1, 1}] = v[1];
-            matrix[{1, 2}] = v[2];
+            matrix[{2, 1}] = v[2];
         }
 
         [[nodiscard]]
         Xyz::Vector3D vertical_axis() const
         {
-            return {matrix[{2, 0}], matrix[{2, 1}], matrix[{2, 2}]};
+            return {matrix[{0, 2}], matrix[{1, 2}], matrix[{2, 2}]};
         }
 
         void set_vertical_axis(const Xyz::Vector3D& v)
         {
-            matrix[{2, 0}] = v[0];
-            matrix[{2, 1}] = v[1];
+            matrix[{0, 2}] = v[0];
+            matrix[{1, 2}] = v[1];
             matrix[{2, 2}] = v[2];
         }
     };

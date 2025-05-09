@@ -110,8 +110,9 @@ namespace GridLib
         if (&a == &b)
             return true;
         return a.elevations() == b.elevations()
-                && a.model_tie_point() == b.model_tie_point()
-                && a.model() == b.model();
+               && a.model_tie_point() == b.model_tie_point()
+               && a.model() == b.model()
+               && a.spatial_tie_points() == b.spatial_tie_points();
     }
 
     bool operator!=(const Grid& a, const Grid& b)

@@ -27,33 +27,20 @@ namespace GridLib
         Xyz::Vector3D get_point(const GridView& grid,
                                 const Xyz::Vector2D& pos)
         {
-            auto z = get_elevation(grid, pos);
-            return make_vector3(pos, z);
+            return make_vector3(pos, get_elevation(grid, pos));
         }
 
         [[nodiscard]]
         Xyz::Matrix4D get_transform(const GridView& grid)
         {
-            auto& model = grid.model();
-            auto loc = model.location();
-
-            auto c_dir = model.column_axis();
-            auto r_dir = model.row_axis();
-            auto z_dir = model.vertical_axis();
-
-            return {
-                c_dir[0], r_dir[0], z_dir[0], loc[0],
-                c_dir[1], r_dir[1], z_dir[1], loc[1],
-                c_dir[2], r_dir[2], z_dir[2], loc[2],
-                0, 0, 0, 1
-            };
+            return grid.model().matrix;
         }
 
         [[nodiscard]]
         Xyz::Vector2D transform_point(const Xyz::Matrix4D& transform,
                                       const Xyz::Vector2D& point)
         {
-            auto v4 = Xyz::make_vector4(point[0], point[1], 0.0, 1.0);
+            const auto v4 = Xyz::make_vector4(point[0], point[1], 0.0, 1.0);
             auto result = transform * v4;
             return {result[0], result[1]};
         }
@@ -73,7 +60,7 @@ namespace GridLib
                  const Xyz::Vector2D& to,
                  size_t steps)
     {
-        Xyz::LineSegment<double, 2> line(from, to);
+        Xyz::LineSegment line(from, to);
         const auto clip = get_clipping_positions(to_rectangle(grid), line);
         if (!clip)
             return {};
@@ -112,8 +99,8 @@ namespace GridLib
                                const Xyz::Vector2D& to,
                                size_t steps) const
     {
-        auto from2 = transform_point(inverse_transform_, from);
-        auto to2 = transform_point(inverse_transform_, to);
+        const auto from2 = transform_point(inverse_transform_, from);
+        const auto to2 = transform_point(inverse_transform_, to);
         auto profile = GridLib::make_profile(grid_, from2, to2, steps);
         for (auto& point : profile)
             point = transform_point(transform_, point);
