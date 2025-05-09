@@ -7,8 +7,8 @@
 //****************************************************************************
 #pragma once
 #include <optional>
+#include <variant>
 #include <Xyz/Vector.hpp>
-#include "Unit.hpp"
 
 namespace GridLib
 {

@@ -7,6 +7,7 @@
 //****************************************************************************
 #pragma once
 #include "GridLib/GridMemberTypes.hpp"
+#include "GridLib/Unit.hpp"
 
 namespace GridLib
 {
