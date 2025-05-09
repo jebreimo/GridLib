@@ -38,7 +38,7 @@ namespace GridLib
         try
         {
             auto elevations = std::move(this->elevations);
-            if (model.unknown_elevation && !isnan(*model.unknown_elevation))
+            if (model.unknown_elevation && !std::isnan(*model.unknown_elevation))
                 replace_nans(elevations, *model.unknown_elevation);
 
             auto grid = elevations.empty()
