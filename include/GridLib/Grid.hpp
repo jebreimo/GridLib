@@ -13,7 +13,7 @@
 
 namespace GridLib
 {
-    class Grid
+    class Grid : public IGridMetadata
     {
     public:
         Grid();

@@ -6,18 +6,16 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include <optional>
 #include <Chorasmia/ArrayView2D.hpp>
 #include <Xyz/Rectangle.hpp>
 
-#include "GridMemberTypes.hpp"
-#include "GridModel.hpp"
+#include "IGridMetadata.hpp"
 
 namespace GridLib
 {
     class Grid;
 
-    class GridView
+    class GridView : public IGridMetadata
     {
     public:
         GridView() noexcept;
@@ -35,9 +33,6 @@ namespace GridLib
         size_t col_count() const;
 
         [[nodiscard]]
-        Chorasmia::ArrayView2D<float> elevations() const;
-
-        [[nodiscard]]
         const Xyz::Vector2D& model_tie_point() const;
 
         [[nodiscard]]
@@ -45,6 +40,9 @@ namespace GridLib
 
         [[nodiscard]]
         std::vector<SpatialTiePoint> spatial_tie_points() const;
+
+        [[nodiscard]]
+        Chorasmia::ArrayView2D<float> elevations() const;
 
         [[nodiscard]]
         const Grid* base_grid() const;

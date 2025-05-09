@@ -91,31 +91,30 @@ include(GNUInstallDirs)
 configure_file(src/GridLib/GridLibVersion.hpp.in GridLibVersion.hpp @ONLY)
 
 add_library(GridLib
+    include/GridLib/Crs.hpp
     include/GridLib/Grid.hpp
     include/GridLib/GridLibException.hpp
     include/GridLib/GridMemberTypes.hpp
+    include/GridLib/GridModel.hpp
     include/GridLib/GridView.hpp
+    include/GridLib/IGridMetadata.hpp
     include/GridLib/Profile.hpp
     include/GridLib/Rasterize.hpp
     include/GridLib/ReadGrid.hpp
+    include/GridLib/Unit.hpp
     include/GridLib/WriteGrid.hpp
     src/GridLib/Grid.cpp
-    src/GridLib/Unit.cpp
+    src/GridLib/GridBuilder.cpp
+    src/GridLib/GridBuilder.hpp
+    src/GridLib/GridModel.cpp
     src/GridLib/GridView.cpp
     src/GridLib/Profile.cpp
     src/GridLib/Rasterize.cpp
     src/GridLib/ReadGrid.cpp
-    src/GridLib/WriteGrid.cpp
-    src/GridLib/Utilities/Utm.cpp
+    src/GridLib/Unit.cpp
     src/GridLib/Utilities/CoordinateSystem.cpp
     src/GridLib/Utilities/CoordinateSystem.hpp
-    src/GridLib/Utilities/Utm.hpp
-    include/GridLib/Unit.hpp
-    src/GridLib/GridSomething.hpp
-    include/GridLib/GridModel.hpp
-    src/GridLib/GridModel.cpp
-    src/GridLib/GridBuilder.cpp
-    src/GridLib/GridBuilder.hpp
+    src/GridLib/WriteGrid.cpp
 )
 
 target_include_directories(GridLib

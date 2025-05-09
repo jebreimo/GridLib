@@ -6,7 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include <cmath>
-#include "Utm.hpp"
+#include "../../../../../src/GridLib/Utilities/Utm.hpp"
 
 namespace GridLib
 {

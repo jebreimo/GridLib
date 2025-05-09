@@ -7,28 +7,8 @@
 //****************************************************************************
 #include "CoordinateSystem.hpp"
 
-#include "Utm.hpp"
-
 namespace GridLib
 {
-    int get_crs_zone(int epsg)
-    {
-        if (25828 <= epsg && epsg <= 25838)
-            return epsg - 25828 + 28;
-        return 0;
-    }
-
-    std::optional<Xyz::Vector2D>
-    get_geographic_coords(double x, double y, int epsg)
-    {
-        if (25828 <= epsg && epsg <= 25838)
-        {
-            auto zone = epsg - 25828 + 28;
-            return utm_to_geo(x, y, zone);
-        }
-        return {};
-    }
-
     Unit epsg_unit_to_unit(int epsg)
     {
         switch (epsg)
