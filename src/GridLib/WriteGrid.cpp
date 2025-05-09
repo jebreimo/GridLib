@@ -51,6 +51,20 @@ namespace GridLib
         writer.endObject();
     }
 
+    void write_json(Yson::Writer& writer,
+                    const std::vector<std::pair<std::string, std::string>>& pairs)
+    {
+        if (pairs.empty())
+            return;
+
+        writer.beginObject();
+        for (const auto& [key, value] : pairs)
+        {
+            writer.key(key).value(value);
+        }
+        writer.endObject();
+    }
+
     void write_json(Yson::Writer& writer, const GridModel& model)
     {
         writer.beginObject();
@@ -72,10 +86,13 @@ namespace GridLib
         writer.key("reference_system");
         write_json(writer, model.reference_system);
 
+        writer.key("information");
+        write_json(writer, model.information);
+
         writer.endObject();
     }
 
-   void write_json(Yson::Writer& writer,
+    void write_json(Yson::Writer& writer,
                     const Chorasmia::ArrayView2D<float>& values,
                     std::optional<float> null_value)
     {

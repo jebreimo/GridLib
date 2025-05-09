@@ -75,6 +75,15 @@ namespace GridLib
         return system;
     }
 
+    std::vector<std::pair<std::string, std::string>>
+    read_dictionary(Yson::Reader& reader)
+    {
+        std::vector<std::pair<std::string, std::string>> result;
+        for (const auto& key : keys(reader))
+            result.emplace_back(key, read<std::string>(reader));
+        return result;
+    }
+
     GridModel read_model(Yson::Reader& reader, bool strict)
     {
         using Yson::read;
@@ -95,6 +104,8 @@ namespace GridLib
                 result.vertical_unit = read_unit(reader);
             else if (key == "reference_system")
                 result.reference_system = read_reference_system(reader);
+            else if (key == "information")
+                result.information = read_dictionary(reader);
             else if (strict)
                 GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
         }
