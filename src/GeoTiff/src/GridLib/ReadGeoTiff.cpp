@@ -61,6 +61,7 @@ namespace GridLib
         Crs get_crs(const Yimage::GeoTiffMetadata& metadata)
         {
             Crs result;
+
             if (metadata.projected_crs != 0)
             {
                 result.type = CrsType::PROJECTED;
@@ -68,8 +69,7 @@ namespace GridLib
                 result.library = CrsLibrary::EPSG;
                 result.citation = metadata.projected_citation;
             }
-
-            if (metadata.geodetic_crs != 0)
+            else if (metadata.geodetic_crs != 0)
             {
                 result.type = CrsType::GEOGRAPHIC;
                 result.code = metadata.geodetic_crs;
@@ -79,7 +79,7 @@ namespace GridLib
 
             result.vertical_code = metadata.vertical_crs;
 
-            return {};
+            return result;
         }
 
         Grid create_grid(const Yimage::Image& img)
@@ -109,7 +109,7 @@ namespace GridLib
 
             std::vector<SpatialTiePoint> spatial_ties;
 
-            auto crs = get_crs(*metadata);
+            const auto crs = get_crs(*metadata);
             model.crs = crs;
             spatial_ties.push_back({tie_point, location, crs});
 

@@ -22,4 +22,8 @@ TEST_CASE("Read DEM file")
     REQUIRE(Xyz::are_equal(grid.model().column_axis(), {1, 0, 0}));
     REQUIRE(Xyz::are_equal(grid.model().row_axis(), {0, 1, 0}));
     REQUIRE(Xyz::are_equal(grid.model().vertical_axis(), {0, 0, 0.1}));
+    auto& crs = grid.model().crs;
+    REQUIRE(crs.code == 32632);
+    REQUIRE(crs.type == GridLib::CrsType::PROJECTED);
+    REQUIRE(crs.library == GridLib::CrsLibrary::EPSG);
 }
