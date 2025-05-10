@@ -56,8 +56,7 @@ namespace GridLib
     }
 
 
-    Grid read_dem(std::istream& stream,
-                  const ProgressCallback& progress_callback)
+    Grid read_dem(std::istream& stream)
     {
         Grid grid;
         DemReader reader(stream);
@@ -154,18 +153,15 @@ namespace GridLib
                     values(i + b->column - 1, j + b->row - 1) = float(elev) * v_res;
                 }
             }
-            if (progress_callback && !progress_callback(b->column, cols))
-                return {};
         }
 
         return grid;
     }
 
-    Grid read_dem(const std::string& file_name,
-                  const ProgressCallback& progress_callback)
+    Grid read_dem(const std::string& file_name)
     {
         std::ifstream file(file_name, std::ios::binary);
-        return read_dem(file, progress_callback);
+        return read_dem(file);
     }
 
     bool is_dem(const std::string& file_name)
