@@ -125,7 +125,7 @@ namespace GridLib
         double r_res = a.y_resolution.value_or(1.0);
 
         auto v_unit = from_dem_unit(a.vertical_unit.value_or(0));
-        float v_res = a.z_resolution.value_or(1.0);
+        double v_res = a.z_resolution.value_or(1.0);
 
         auto rot = a.rotation_angle.value_or(0);
         auto row_axis = rotate(Xyz::Vector2D(0.0, r_res), rot);
@@ -133,6 +133,7 @@ namespace GridLib
         auto col_axis = rotate(Xyz::Vector2D(c_res, 0.0), rot);
         model.set_column_axis(Xyz::make_vector3(col_axis, 0.0));
         model.set_vertical_axis({0, 0, v_res});
+        model.crs = crs;
 
         model.unknown_elevation = UNKNOWN;
         model.horizontal_unit = h_unit;

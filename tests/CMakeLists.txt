@@ -11,20 +11,41 @@ include(FetchContent)
 FetchContent_Declare(catch
     GIT_REPOSITORY "https://github.com/catchorg/Catch2.git"
     GIT_TAG "v3.5.2"
-    )
-FetchContent_MakeAvailable(catch)
+)
+FetchContent_Declare(cppembed
+    GIT_REPOSITORY "https://github.com/jebreimo/cppembed.git"
+    GIT_TAG "v0.1.0"
+)
+FetchContent_MakeAvailable(catch cppembed)
+
+list(APPEND CMAKE_MODULE_PATH ${cppembed_SOURCE_DIR}/cmake)
+
+include(TargetEmbedCppData)
 
 add_executable(GridLibTest
     test_GridView.cpp
     test_Profile.cpp
     test_Rasterize.cpp
     test_ReadAndWriteGrid.cpp
-    )
+    test_ReadDem.cpp
+    test_ReadGeoTiff.cpp
+)
 
 target_link_libraries(GridLibTest
     PRIVATE
         GridLib::GridLib
         Catch2::Catch2WithMain
+)
+
+target_embed_cpp_data(GridLibTest
+    FILES
+        dem_file.hpp.in
+        geotiff_file.hpp.in
+)
+
+target_include_directories(GridLibTest
+    PUBLIC
+        ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 GridLib_enable_all_warnings(GridLibTest)

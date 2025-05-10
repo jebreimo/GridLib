@@ -116,9 +116,9 @@ namespace GridLib
         result.max_elevation = reader.read_float64(24);
         result.rotation_angle = reader.read_float64(24);
         result.elevation_accuracy = reader.read_int16(6);
-        result.x_resolution = reader.read_float32(12);
-        result.y_resolution = reader.read_float32(12);
-        result.z_resolution = reader.read_float32(12);
+        result.x_resolution = reader.read_float64(12);
+        result.y_resolution = reader.read_float64(12);
+        result.z_resolution = reader.read_float64(12);
         result.rows = reader.read_int16(6);
         result.columns = reader.read_int16(6);
         result.largest_contour_interval = reader.read_int16(5);

@@ -1,0 +1,13 @@
+//****************************************************************************
+// Copyright © 2025 Jan Erik Breimo. All rights reserved.
+// Created by Jan Erik Breimo on 2025-05-09.
+//
+// This file is distributed under the Zero-Clause BSD License.
+// License text is included with the source distribution.
+//****************************************************************************
+#pragma once
+#include <string_view>
+
+const char GEOTIFF_FILE_STR[] = #embed "../misc/examples/NDH Lofoten 2pkt 2017-33-1-484-313-03-dtm.tif";
+
+std::string_view GEOTIFF_FILE(GEOTIFF_FILE_STR, sizeof(GEOTIFF_FILE_STR) - 1);

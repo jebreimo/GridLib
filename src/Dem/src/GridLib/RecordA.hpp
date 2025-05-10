@@ -51,9 +51,9 @@ namespace GridLib
         std::optional<double> max_elevation;
         std::optional<double> rotation_angle;
         std::optional<int16_t> elevation_accuracy;
-        std::optional<float> x_resolution;
-        std::optional<float> y_resolution;
-        std::optional<float> z_resolution;
+        std::optional<double> x_resolution;
+        std::optional<double> y_resolution;
+        std::optional<double> z_resolution;
         std::optional<int16_t> rows;
         std::optional<int16_t> columns;
         std::optional<int16_t> largest_contour_interval;
