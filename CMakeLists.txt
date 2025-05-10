@@ -116,6 +116,7 @@ add_library(GridLib
     src/GridLib/Utilities/CoordinateSystem.hpp
     src/GridLib/WriteGrid.cpp
     src/GridLib/IGrid.cpp
+    src/GridLib/Crs.cpp
 )
 
 target_include_directories(GridLib

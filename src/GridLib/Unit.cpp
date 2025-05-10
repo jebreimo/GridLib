@@ -7,6 +7,9 @@
 //****************************************************************************
 #include "GridLib/Unit.hpp"
 
+#include <string>
+#include "GridLib/GridLibException.hpp"
+
 namespace GridLib
 {
     #define TO_STRING(name) \
@@ -27,10 +30,19 @@ namespace GridLib
     }
 
     #define CHECK_STRING(str, name) \
-        if (str == #name) \
+        if ((str) == #name) \
             return Unit::name
 
-    std::optional<Unit> parse_unit(std::string_view str)
+    Unit parse_unit(std::string_view str)
+    {
+        auto unit = try_parse_unit(str);
+        if (unit)
+            return *unit;
+
+        GRIDLIB_THROW("Unknown unit: " + std::string(str));
+    }
+
+    std::optional<Unit> try_parse_unit(std::string_view str)
     {
         CHECK_STRING(str, METER);
         CHECK_STRING(str, FOOT);

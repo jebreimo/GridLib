@@ -60,21 +60,24 @@ namespace GridLib
 
         Crs get_crs(const Yimage::GeoTiffMetadata& metadata)
         {
+            Crs result;
             if (metadata.projected_crs != 0)
             {
-                return ProjectedCrs{
-                    metadata.projected_crs,
-                    metadata.vertical_crs
-                };
+                result.type = CrsType::PROJECTED;
+                result.code = metadata.projected_crs;
+                result.library = CrsLibrary::EPSG;
+                result.citation = metadata.projected_citation;
             }
 
             if (metadata.geodetic_crs != 0)
             {
-                return GeographicCrs{
-                    metadata.geodetic_crs,
-                    metadata.vertical_crs
-                };
+                result.type = CrsType::GEOGRAPHIC;
+                result.code = metadata.geodetic_crs;
+                result.library = CrsLibrary::EPSG;
+                result.citation = metadata.geog_citation;
             }
+
+            result.vertical_code = metadata.vertical_crs;
 
             return {};
         }
@@ -107,11 +110,8 @@ namespace GridLib
             std::vector<SpatialTiePoint> spatial_ties;
 
             auto crs = get_crs(*metadata);
-            if (!std::holds_alternative<std::monostate>(crs))
-            {
-                model.crs = crs;
-                spatial_ties.push_back({tie_point, location, crs});
-            }
+            model.crs = crs;
+            spatial_ties.push_back({tie_point, location, crs});
 
             result.set_spatial_tie_points(std::move(spatial_ties));
 
@@ -134,10 +134,6 @@ namespace GridLib
 
             if (!metadata->citation.empty())
                 model.information.emplace_back("citation", metadata->citation);
-            if (!metadata->geog_citation.empty())
-                model.information.emplace_back("geographical", metadata->geog_citation);
-            if (!metadata->projected_citation.empty())
-                model.information.emplace_back("projected", metadata->projected_citation);
             if (!metadata->gdal_metadata.empty())
                 model.information.emplace_back("gdal", metadata->gdal_metadata);
             if (!metadata->date_time.empty())

@@ -36,22 +36,14 @@ namespace GridLib
 
     void write_json(Yson::Writer& writer, const Crs& crs)
     {
-        if (const auto* p = std::get_if<ProjectedCrs>(&crs))
-        {
-            writer.beginObject();
-            writer.key("type").value("projection");
-            writer.key("projection").value(p->projection);
-            writer.key("vertical").value(p->vertical);
-            writer.endObject();
-        }
-        else if (const auto* g = std::get_if<GeographicCrs>(&crs))
-        {
-            writer.beginObject();
-            writer.key("type").value("projection");
-            writer.key("geographic").value(g->geographic);
-            writer.key("vertical").value(g->vertical);
-            writer.endObject();
-        }
+        writer.beginObject();
+        writer.key("code").value(crs.code);
+        writer.key("vertical_code").value(crs.vertical_code);
+        writer.key("type").value(to_string(crs.type));
+        writer.key("library").value(to_string(crs.library));
+        if (!crs.citation.empty())
+            writer.key("citation").value(crs.citation);
+        writer.endObject();
     }
 
     void write_json(Yson::Writer& writer,

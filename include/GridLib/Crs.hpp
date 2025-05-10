@@ -6,43 +6,46 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include <variant>
+#include <string>
 
 namespace GridLib
 {
-    struct ProjectedCrs
+    enum class CrsType
     {
-        int projection = 0;
-        int vertical = 0;
+        UNKNOWN,
+        PROJECTED,
+        GEOGRAPHIC
+    };
+
+    std::string to_string(CrsType type);
+
+    CrsType parse_crs_type(const std::string& str);
+
+    enum class CrsLibrary
+    {
+        UNKNOWN,
+        EPSG
+    };
+
+    std::string to_string(CrsLibrary type);
+
+    CrsLibrary parse_crs_library(const std::string& str);
+
+    struct Crs
+    {
+        int code = 0;
+        int vertical_code = 0;
+        CrsType type = CrsType::UNKNOWN;
+        CrsLibrary library = CrsLibrary::UNKNOWN;
+        std::string citation;
 
         explicit operator bool() const
         {
-            return projection != 0 || vertical != 0;
+            return code != 0
+                   || vertical_code != 0
+                   || !citation.empty();
         }
     };
 
-    inline bool operator==(const ProjectedCrs& a, const ProjectedCrs& b)
-    {
-        return a.projection == b.projection
-               && a.vertical == b.vertical;
-    }
-
-    struct GeographicCrs
-    {
-        int geographic = 0;
-        int vertical = 0;
-
-        explicit operator bool() const
-        {
-            return geographic != 0 || vertical != 0;
-        }
-    };
-
-    inline bool operator==(const GeographicCrs& a, const GeographicCrs& b)
-    {
-        return a.geographic == b.geographic
-               && a.vertical == b.vertical;
-    }
-
-    using Crs = std::variant<std::monostate, ProjectedCrs, GeographicCrs>;
+    bool operator==(const Crs& lhs, const Crs& rhs);
 }

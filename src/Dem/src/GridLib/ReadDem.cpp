@@ -46,16 +46,20 @@ namespace GridLib
         if (const int hd = a.horizontal_datum.value_or(0); hd != 3)
             GRIDLIB_THROW("Unsupported horizontal datum: " + std::to_string(hd));
 
-        const int vd = get_vertical_epsg(a);
+        const int v = get_vertical_epsg(a);
         const auto ref_sys = a.ref_sys.value_or(0);
         if (ref_sys == 0)
-            return GeographicCrs{4326, vd};
+            return {4326, v, CrsType::GEOGRAPHIC, CrsLibrary::EPSG};
+
         if (ref_sys == 1)
-            return ProjectedCrs{32600 + a.ref_sys_zone.value_or(0), vd}; // Assuming northern hemisphere
+        {
+            int zone = a.ref_sys_zone.value_or(0);
+            // Assuming northern hemisphere
+            return {32600 + zone, v, CrsType::PROJECTED, CrsLibrary::EPSG};
+        }
 
         GRIDLIB_THROW("Unsupported reference system: " + std::to_string(ref_sys));
     }
-
 
     Grid read_dem(std::istream& stream)
     {
@@ -77,7 +81,7 @@ namespace GridLib
             spatial_ties.push_back({
                 {0, 0},
                 {to_degrees(*a.latitude), to_degrees(*a.longitude), z},
-                GeographicCrs{4326, 0}
+                {4326, 0, CrsType::GEOGRAPHIC, CrsLibrary::EPSG}
             });
         }
         if (const auto& c = a.quadrangle_corners[0])

@@ -23,7 +23,9 @@ namespace GridLib
 
     std::string_view to_string(Unit unit);
 
-    std::optional<Unit> parse_unit(std::string_view str);
+    Unit parse_unit(std::string_view str);
+
+    std::optional<Unit> try_parse_unit(std::string_view str);
 
     double to_meters(Unit unit);
 }

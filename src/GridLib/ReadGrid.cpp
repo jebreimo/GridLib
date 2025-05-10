@@ -54,32 +54,28 @@ namespace GridLib
 
     Unit read_unit(Yson::Reader& reader)
     {
-        return parse_unit(read<std::string>(reader)).value_or(Unit::UNDEFINED);
+        return parse_unit(read<std::string>(reader));
     }
 
-    Crs read_crs(Yson::Reader& reader)
+    Crs read_crs(Yson::Reader& reader, bool strict)
     {
-        auto values = reader.readItem();
-        auto type = Yson::get<std::string>(values["type"]);
-        if (type == "projection")
+        Crs result;
+        for (const auto& key : keys(reader))
         {
-            return ProjectedCrs
-            {
-                Yson::get<int>(values["projection"]),
-                Yson::get<int>(values["vertical"]),
-            };
+            if (key == "code")
+                result.code = read<int>(reader);
+            else if (key == "vertical_code")
+                result.vertical_code = read<int>(reader);
+            else if (key == "type")
+                result.type = parse_crs_type(read<std::string>(reader));
+            else if (key == "library")
+                result.library = parse_crs_library(read<std::string>(reader));
+            else if (key == "citation")
+                result.citation = read<std::string>(reader);
+            else if (strict)
+                GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
         }
-
-        if (type == "geographic")
-        {
-            return GeographicCrs
-            {
-                Yson::get<int>(values["geographic"]),
-                Yson::get<int>(values["vertical"]),
-            };
-        }
-
-        return {};
+        return result;
     }
 
     std::vector<std::pair<std::string, std::string>>
@@ -110,7 +106,7 @@ namespace GridLib
             else if (key == "vertical_unit")
                 result.vertical_unit = read_unit(reader);
             else if (key == "crs")
-                result.crs = read_crs(reader);
+                result.crs = read_crs(reader, strict);
             else if (key == "information")
                 result.information = read_dictionary(reader);
             else if (strict)
@@ -135,7 +131,7 @@ namespace GridLib
                 else if (key == "location")
                     point.location = read_vector<double, 3>(reader);
                 else if (key == "crs")
-                    point.crs = read_crs(reader);
+                    point.crs = read_crs(reader, strict);
                 else if (strict)
                     GRIDLIB_THROW("Unknown key: '" + key + "'");
             }
