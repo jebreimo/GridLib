@@ -11,6 +11,7 @@
 #include <Yimage/Tiff/GeoTiffMetadata.hpp>
 #include <Yimage/Tiff/ReadTiff.hpp>
 #include "GridLib/Utilities/CoordinateSystem.hpp"
+#include "GridLib/Utilities/ReadOnlyStreamBuffer.hpp"
 
 namespace GridLib
 {
@@ -156,6 +157,13 @@ namespace GridLib
     {
         const auto img = Yimage::read_tiff(stream);
         return create_grid(img);
+    }
+
+    Grid read_geotiff(const void* buffer, size_t size)
+    {
+        ReadOnlyStreamBuffer stream_buffer(static_cast<const char*>(buffer), size);
+        std::istream stream(&stream_buffer);
+        return read_geotiff(stream);
     }
 
     Grid read_geotiff(const std::filesystem::path& path)

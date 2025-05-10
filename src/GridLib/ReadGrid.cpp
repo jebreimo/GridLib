@@ -195,6 +195,12 @@ namespace GridLib
         return read_grid(*Yson::makeReader(file_name), strict);
     }
 
+    Grid read_json_grid(const void* buffer, size_t size, bool strict)
+    {
+        auto str = static_cast<const char*>(buffer);
+        return read_grid(*Yson::makeReader(str, size), strict);
+    }
+
 #define CASE_ENUM(type, value) \
         case type::value: return #value;
 
@@ -265,6 +271,25 @@ namespace GridLib
 #endif
         default:
             GRIDLIB_THROW("Unsupported file type: " + file_name);
+        }
+    }
+
+    Grid read_grid(const void* buffer, size_t size, GridFileType type)
+    {
+        switch (type)
+        {
+        case GridFileType::GRIDLIB_JSON:
+            return read_json_grid(buffer, size);
+#ifdef GridLib_DEM_SUPPORT
+        case GridFileType::DEM:
+            return read_dem(buffer, size);
+#endif
+#ifdef GridLib_GEOTIFF_SUPPORT
+        case GridFileType::GEOTIFF:
+            return read_geotiff(buffer, size);
+#endif
+        default:
+            GRIDLIB_THROW("Unsupported file type: " + to_string(type));
         }
     }
 }

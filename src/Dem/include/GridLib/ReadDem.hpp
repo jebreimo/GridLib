@@ -13,6 +13,8 @@ namespace GridLib
 {
     Grid read_dem(std::istream& stream);
 
+    Grid read_dem(const void* buffer, size_t size);
+
     Grid read_dem(const std::string& file_name);
 
     bool is_dem(const std::string& file_name);

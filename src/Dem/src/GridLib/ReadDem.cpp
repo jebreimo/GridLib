@@ -11,6 +11,7 @@
 #include <fstream>
 #include "DemReader.hpp"
 #include "GridLib/GridLibException.hpp"
+#include "GridLib/Utilities/ReadOnlyStreamBuffer.hpp"
 
 namespace GridLib
 {
@@ -156,6 +157,13 @@ namespace GridLib
         }
 
         return grid;
+    }
+
+    Grid read_dem(const void* buffer, size_t size)
+    {
+        ReadOnlyStreamBuffer stream_buffer(static_cast<const char*>(buffer), size);
+        std::istream stream(&stream_buffer);
+        return read_dem(stream);
     }
 
     Grid read_dem(const std::string& file_name)
