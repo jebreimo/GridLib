@@ -95,8 +95,8 @@ namespace GridLib
             auto elevations = grid.elevations();
             return {
                 elevations(cell[0], cell[1]),
-                elevations(cell[0], cell[1] + 1),
                 elevations(cell[0] + 1, cell[1]),
+                elevations(cell[0], cell[1] + 1),
                 elevations(cell[0] + 1, cell[1] + 1)
             };
         }
@@ -125,18 +125,18 @@ namespace GridLib
             const auto c = unsigned(ci) - unsigned(cell[1]);
 
             if (rf == 0 && cf == 0)
-                return values[r * 2 + c];
+                return values[r + c * 2];
 
             const auto unknown = *grid.model().unknown_elevation;
             if (rf == 0)
             {
-                if (values[r * 2] != unknown && values[r * 2 + 1] != unknown)
-                    return std::lerp(values[r * 2], values[r * 2 + 1], float(cf));
+                if (values[r] != unknown && values[2 + r] != unknown)
+                    return std::lerp(values[r], values[2 + r], float(cf));
             }
             else if (cf == 0)
             {
-                if (values[c] != unknown && values[2 + c] != unknown)
-                    return std::lerp(values[c], values[2 + c], float(rf));
+                if (values[2 * c] != unknown && values[2 * c + 1] != unknown)
+                    return std::lerp(values[2 * c], values[2 * c + 1], float(rf));
             }
 
             return unknown;
@@ -150,14 +150,9 @@ namespace GridLib
         if (has_unknown_elevation(grid, cell_values))
             return get_edge_elevation(grid, grid_pos, cell, cell_values);
 
-        // Xyz::bilinear assumes column-major order, so we need to swap the
-        // coordinates.
-        std::swap(grid_pos[0], grid_pos[1]);
-        std::swap(cell[0], cell[1]);
-
-        const auto p1 = Xyz::vector_cast<float>(cell);
-        const auto p2 = p1 + Xyz::Vector2F(1, 1);
-        return bilinear(cell_values, p1, p2, Xyz::vector_cast<float>(grid_pos));
+        const auto p1 = Xyz::vector_cast<double>(cell);
+        const auto p2 = p1 + Xyz::Vector2D(1, 1);
+        return bilinear(cell_values, grid_pos, p1, p2);
     }
 
     Xyz::Vector2D model_pos_to_grid_pos(const IGrid& grid,
