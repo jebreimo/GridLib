@@ -141,7 +141,7 @@ namespace GridLib
         writer.key("spatial_tie_points");
         write_json(writer, grid.spatial_tie_points());
         writer.key("elevations");
-        write_json(writer, grid.elevations(), grid.model().unknown_elevation);
+        write_json(writer, grid.values(), grid.model().unknown_elevation);
         writer.endObject();
     }
 

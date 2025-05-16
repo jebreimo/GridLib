@@ -39,7 +39,7 @@ namespace GridLib
         void resize(size_t rows, size_t columns);
 
         [[nodiscard]]
-        Chorasmia::ArrayView2D<float> elevations() const override;
+        Chorasmia::ArrayView2D<float> values() const override;
 
         [[nodiscard]]
         Chorasmia::MutableArrayView2D<float> elevations();

@@ -54,7 +54,7 @@ namespace GridLib
         grid_.resize(rows, columns);
     }
 
-    Chorasmia::ArrayView2D<float> Grid::elevations() const
+    Chorasmia::ArrayView2D<float> Grid::values() const
     {
         return grid_.view();
     }
@@ -109,7 +109,7 @@ namespace GridLib
     {
         if (&a == &b)
             return true;
-        return a.elevations() == b.elevations()
+        return a.values() == b.values()
                && a.model_tie_point() == b.model_tie_point()
                && a.model() == b.model()
                && a.spatial_tie_points() == b.spatial_tie_points();

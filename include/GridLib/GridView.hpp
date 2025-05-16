@@ -39,7 +39,7 @@ namespace GridLib
         std::vector<SpatialTiePoint> spatial_tie_points() const override;
 
         [[nodiscard]]
-        Chorasmia::ArrayView2D<float> elevations() const override;
+        Chorasmia::ArrayView2D<float> values() const override;
 
         [[nodiscard]]
         const Grid* base_grid() const;

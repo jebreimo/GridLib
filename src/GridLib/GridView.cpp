@@ -15,7 +15,7 @@ namespace GridLib
 
     GridView::GridView(const Grid& grid) noexcept
         : GridView(grid,
-                   grid.elevations(),
+                   grid.values(),
                    grid.model_tie_point())
     {
     }
@@ -39,7 +39,7 @@ namespace GridLib
         return elevations_.col_count();
     }
 
-    Chorasmia::ArrayView2D<float> GridView::elevations() const
+    Chorasmia::ArrayView2D<float> GridView::values() const
     {
         return elevations_;
     }

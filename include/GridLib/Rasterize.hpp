@@ -80,7 +80,7 @@ namespace GridLib
     rasterize_rgba(const IGrid& grid, ColorFunc color_func,
                    Chorasmia::Index2DMode mode = Chorasmia::Index2DMode::ROWS)
     {
-        return rasterize_rgba(grid.elevations(),
+        return rasterize_rgba(grid.values(),
                               std::forward<ColorFunc>(color_func),
                               mode);
     }

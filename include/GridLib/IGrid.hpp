@@ -35,7 +35,7 @@ namespace GridLib
         virtual std::vector<SpatialTiePoint> spatial_tie_points() const = 0;
 
         [[nodiscard]]
-        virtual Chorasmia::ArrayView2D<float> elevations() const = 0;
+        virtual Chorasmia::ArrayView2D<float> values() const = 0;
 
         [[nodiscard]]
         GridView subgrid(size_t row, size_t column) const;

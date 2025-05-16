@@ -19,7 +19,7 @@ namespace GridLib
 
     std::pair<float, float> get_min_max_elevation(const IGrid& grid)
     {
-        const auto elevations = grid.elevations();
+        const auto elevations = grid.values();
         const auto no_value = grid.model().unknown_elevation;
         auto min = FLT_MAX, max = FLT_TRUE_MIN;
         for (const auto row : elevations)
@@ -92,7 +92,7 @@ namespace GridLib
         Xyz::Vector4F get_grid_cell_values(const IGrid& grid,
                                            const Xyz::Vector<size_t, 2>& cell)
         {
-            auto elevations = grid.elevations();
+            auto elevations = grid.values();
             return {
                 elevations(cell[0], cell[1]),
                 elevations(cell[0] + 1, cell[1]),

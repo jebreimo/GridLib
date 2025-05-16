@@ -41,7 +41,7 @@ void makeTiles(const GridLib::GridView& grid,
         {
             make_png(fmt::format("{}_{:04}_{:04}{}",
                                  prefix, i, j, extension),
-                     grid.elevations().subarray(i, j, rows, cols),
+                     grid.values().subarray(i, j, rows, cols),
                      index_mode);
         }
     }
