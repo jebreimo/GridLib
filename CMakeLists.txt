@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.17)
-project(GridLib VERSION 0.5.2)
+project(GridLib VERSION 0.6.0)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -48,7 +48,7 @@ if (GridLib_INSTALL)
 endif ()
 FetchContent_Declare(xyz
     GIT_REPOSITORY "https://github.com/jebreimo/Xyz.git"
-    GIT_TAG v0.4.4)
+    GIT_TAG v0.5.0)
 
 if (GridLib_GEOTIFF_SUPPORT)
     set(YIMAGE_TIFF ON)
@@ -117,6 +117,10 @@ add_library(GridLib
     src/GridLib/WriteGrid.cpp
     src/GridLib/IGrid.cpp
     src/GridLib/Crs.cpp
+    src/GridLib/PositionTransformer.cpp
+    include/GridLib/PositionTransformer.hpp
+    src/GridLib/GridInterpolator.cpp
+    include/GridLib/GridInterpolator.hpp
 )
 
 target_include_directories(GridLib

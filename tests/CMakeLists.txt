@@ -29,6 +29,8 @@ add_executable(GridLibTest
     test_ReadAndWriteGrid.cpp
     test_ReadDem.cpp
     test_ReadGeoTiff.cpp
+    test_PositionTransformer.cpp
+    test_GridInterpolator.cpp
 )
 
 target_link_libraries(GridLibTest

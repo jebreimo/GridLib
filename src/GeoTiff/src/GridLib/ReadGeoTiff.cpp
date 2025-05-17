@@ -118,12 +118,13 @@ namespace GridLib
             auto xs = metadata->model_pixel_scale[0];
             if (xs == 0)
                 xs = 1.0;
-
             model.set_row_axis({xs, 0.0, 0.0});
+
             auto ys = metadata->model_pixel_scale[1];
             if (ys == 0)
                 ys = 1.0;
             model.set_column_axis({0.0, -ys, 0.0});
+
             auto zs = metadata->model_pixel_scale[2];
             if (zs == 0)
                 zs = 1.0;
