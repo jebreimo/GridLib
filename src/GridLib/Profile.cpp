@@ -15,95 +15,82 @@ namespace GridLib
 {
     namespace
     {
-        [[nodiscard]]
-        Xyz::RectangleD to_rectangle(const IGrid& grid)
+        Xyz::Matrix4D get_clip_transform(const IGrid& grid)
         {
-            auto width = double(grid.row_count() - 1);
-            auto height = double(grid.col_count() - 1);
-            return {{0, 0}, {width, height}};
-        }
-
-        [[nodiscard]]
-        Xyz::Vector3D get_point(const IGrid& grid,
-                                const Xyz::Vector2D& pos)
-        {
-            return make_vector3(pos, get_elevation(grid, pos));
-        }
-
-        [[nodiscard]]
-        Xyz::Matrix4D get_transform(const IGrid& grid)
-        {
-            return grid.model().matrix;
-        }
-
-        [[nodiscard]]
-        Xyz::Vector2D transform_point(const Xyz::Matrix4D& transform,
-                                      const Xyz::Vector2D& point)
-        {
-            const auto v4 = Xyz::make_vector4(point[0], point[1], 0.0, 1.0);
-            auto result = transform * v4;
-            return {result[0], result[1]};
-        }
-
-        Xyz::Vector3D transform_point(const Xyz::Matrix4D& transform,
-                                      const Xyz::Vector3D& point)
-        {
-            const auto v4 = make_vector4(point, 1.0);
-            auto result = transform * v4;
-            return {result[0], result[1], result[2]};
+            const auto model_rect = get_bounding_rect(grid);
+            return Xyz::get_clip_transform(model_rect)
+                   * Xyz::make_projection_matrix(get_plane(model_rect));
         }
     }
 
-    std::vector<Xyz::Vector3D>
-    make_profile(const IGrid& grid,
-                 const Xyz::Vector2D& from,
-                 const Xyz::Vector2D& to,
-                 size_t steps)
+    std::vector<Xyz::Vector3D> make_profile(const IGrid& grid,
+                                            const Xyz::Vector3D& from,
+                                            const Xyz::Vector3D& to,
+                                            size_t segments)
     {
-        Xyz::LineSegment line(from, to);
-        const auto clip = get_clipping_positions(to_rectangle(grid), line);
-        if (!clip)
-            return {};
-
-        line = make_line_segment(line, clip->first, clip->second);
-
-        const auto step_size = (to - from) / double(steps);
-        const auto first = std::ceil(clip->first * double(steps));
-        const auto last = std::floor(clip->second * double(steps));
-        const auto min_step_length = 1e-3 / double(steps);
-
-        std::vector<Xyz::Vector3D> result;
-        if (std::abs(first / double(steps) - clip->first) > min_step_length)
-            result.push_back(get_point(grid, line.start()));
-
-        for (auto i = size_t(first), n = size_t(last); i <= n; ++i)
-        {
-            auto pos = from + double(i) * step_size;
-            result.push_back(get_point(grid, pos));
-        }
-
-        if (std::abs(clip->second - last / double(steps)) > min_step_length)
-            result.push_back(get_point(grid, line.end()));
-
-        return result;
+        ProfileMaker profile_maker(grid);
+        return profile_maker.make_profile(from, to, segments);
     }
 
     ProfileMaker::ProfileMaker(const IGrid& grid)
-        : grid_(grid.subgrid(0, 0)),
-          transform_(get_transform(grid_)),
-          inverse_transform_(invert(transform_))
-    {}
+        : interpolator_(grid),
+          clipper_(get_clip_transform(grid))
+    {
+    }
 
     std::vector<Xyz::Vector3D>
-    ProfileMaker::make_profile(const Xyz::Vector2D& from,
-                               const Xyz::Vector2D& to,
-                               size_t steps) const
+    ProfileMaker::make_profile(const Xyz::Vector3D& from,
+                               const Xyz::Vector3D& to,
+                               size_t segments) const
     {
-        const auto from2 = transform_point(inverse_transform_, from);
-        const auto to2 = transform_point(inverse_transform_, to);
-        auto profile = GridLib::make_profile(grid_, from2, to2, steps);
-        for (auto& point : profile)
-            point = transform_point(transform_, point);
-        return profile;
+        if (segments == 0)
+            return {};
+
+        auto line = clipper_.clip({from, to});
+        if (!line)
+        {
+            // The line segment is outside the grid.
+            return {};
+        }
+
+        auto total_length = get_length(to - from);
+
+        size_t step0 = 0;
+        if (line->start != from)
+        {
+            step0 = static_cast<size_t>(
+                std::ceil((get_length(line->start - from) / total_length) * static_cast<double>(segments)));
+        }
+
+        size_t step1 = segments;
+        if (line->end != to)
+        {
+            step1 = static_cast<size_t>(
+                std::floor((get_length(line->end - from) / total_length) * static_cast<double>(segments)));
+        }
+
+        std::vector<Xyz::Vector3D> result;
+        if (step0 != 0)
+        {
+            auto p = interpolator_.at_model_pos(line->start);
+            if (p)
+                result.push_back(*p);
+        }
+
+        for (size_t i = step0; i <= step1; ++i)
+        {
+            auto pos = from + (to - from) * double(i) / double(segments);
+            if (auto p = interpolator_.at_model_pos(pos))
+                result.push_back(*p);
+        }
+
+        if (step1 != segments)
+        {
+            auto p = interpolator_.at_model_pos(line->end);
+            if (p)
+                result.push_back(*p);
+        }
+
+        return result;
     }
 }

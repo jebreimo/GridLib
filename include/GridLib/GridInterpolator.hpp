@@ -13,6 +13,8 @@ namespace GridLib
     class GridInterpolator
     {
     public:
+        PositionTransformer transformer;
+
         explicit GridInterpolator(const IGrid& grid);
 
         [[nodiscard]]
@@ -30,8 +32,5 @@ namespace GridLib
         [[nodiscard]]
         std::optional<Xyz::Vector3D>
         at_model_pos(const Xyz::Vector3D& model_pos) const;
-
-    private:
-        PositionTransformer transformer_;
     };
 } // GridLib

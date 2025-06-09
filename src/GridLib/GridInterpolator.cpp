@@ -100,20 +100,20 @@ namespace GridLib
     }
 
     GridInterpolator::GridInterpolator(const IGrid& grid)
-        : transformer_(grid)
+        : transformer(grid)
     {
     }
 
     std::optional<double> GridInterpolator::raw_value_at_grid_pos(
         const Xyz::Vector2D& grid_pos) const
     {
-        return interpolate_value(transformer_.grid, grid_pos);
+        return interpolate_value(transformer.grid, grid_pos);
     }
 
     std::optional<double> GridInterpolator::raw_value_at_model_pos(
         const Xyz::Vector3D& model_pos) const
     {
-        const auto p = transformer_.model_to_grid(model_pos);
+        const auto p = transformer.model_to_grid(model_pos);
         return raw_value_at_grid_pos(p);
     }
 
@@ -121,16 +121,16 @@ namespace GridLib
     GridInterpolator::at_grid_pos(const Xyz::Vector2D& grid_pos) const
     {
         if (const auto z = raw_value_at_grid_pos(grid_pos))
-            return transformer_.grid_to_model({grid_pos[0], grid_pos[1], *z});
+            return transformer.grid_to_model({grid_pos[0], grid_pos[1], *z});
         return {};
     }
 
     std::optional<Xyz::Vector3D>
     GridInterpolator::at_model_pos(const Xyz::Vector3D& model_pos) const
     {
-        const auto p = transformer_.model_to_grid(model_pos);
+        const auto p = transformer.model_to_grid(model_pos);
         if (const auto z = raw_value_at_grid_pos(p))
-            return transformer_.grid_to_model({p[0], p[1], *z});
+            return transformer.grid_to_model({p[0], p[1], *z});
         return {};
     }
 }

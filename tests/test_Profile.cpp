@@ -22,11 +22,11 @@ TEST_CASE("Profile without clipping")
                                      },
                                      3, 3);
     GridLib::Grid grid(std::move(values));
-    auto contour = GridLib::make_profile(grid, {0.5, 0.5}, {1.5, 1.5}, 2);
+    auto contour = GridLib::make_profile(grid, {0, 2, 0}, {2, 0, 0}, 2);
     REQUIRE(contour.size() == 3);
-    REQUIRE_THAT(contour[0][2], WithinAbs(3, 1e-12));
-    REQUIRE_THAT(contour[1][2], WithinAbs(5, 1e-12));
-    REQUIRE_THAT(contour[2][2], WithinAbs(7, 1e-12));
+    CHECK_THAT(contour[0][2], WithinAbs(3, 1e-12));
+    CHECK_THAT(contour[1][2], WithinAbs(5, 1e-12));
+    CHECK_THAT(contour[2][2], WithinAbs(7, 1e-12));
 }
 
 TEST_CASE("Profile with clipping")
@@ -38,12 +38,29 @@ TEST_CASE("Profile with clipping")
                                      },
                                      3, 3);
     GridLib::Grid grid(std::move(values));
-    auto contour = GridLib::make_profile(grid, {4.5, 3}, {-2.5, -0.5}, 7);
+    auto contour = GridLib::make_profile(grid, {4.5, 3, 0}, {-2.5, -0.5, 0}, 7);
     REQUIRE(contour.size() == 4);
-    REQUIRE_THAT(contour[0][2], WithinAbs(8.75, 1e-12));
-    REQUIRE_THAT(contour[1][2], WithinAbs(7, 1e-12));
-    REQUIRE_THAT(contour[2][2], WithinAbs(3.5, 1e-12));
-    REQUIRE_THAT(contour[3][2], WithinAbs(1.75, 1e-12));
+    CHECK_THAT(contour[0][2], WithinAbs(8.75, 1e-12));
+    CHECK_THAT(contour[1][2], WithinAbs(7, 1e-12));
+    CHECK_THAT(contour[2][2], WithinAbs(3.5, 1e-12));
+    CHECK_THAT(contour[3][2], WithinAbs(1.75, 1e-12));
+}
+
+TEST_CASE("Profile with clipping where clipping coincides with grid edge")
+{
+    Chorasmia::Array2D<float> values({
+                                         1, 2, 3,
+                                         4, 5, 6,
+                                         7, 8, 9
+                                     },
+                                     3, 3);
+    GridLib::Grid grid(std::move(values));
+    auto contour = GridLib::make_profile(grid, {4.5, 3, 0}, {-2.5, -0.5, 0}, 7);
+    REQUIRE(contour.size() == 4);
+    CHECK_THAT(contour[0][2], WithinAbs(8.75, 1e-12));
+    CHECK_THAT(contour[1][2], WithinAbs(7, 1e-12));
+    CHECK_THAT(contour[2][2], WithinAbs(3.5, 1e-12));
+    CHECK_THAT(contour[3][2], WithinAbs(1.75, 1e-12));
 }
 
 TEST_CASE("Profile with transformation")
@@ -65,10 +82,10 @@ TEST_CASE("Profile with transformation")
 
     GridLib::ProfileMaker maker(grid);
 
-    auto contour = maker.make_profile({530, 955}, {495, 1025}, 7);
+    auto contour = maker.make_profile({530, 955, 0}, {495, 1025, 0}, 7);
     REQUIRE(contour.size() == 4);
-    REQUIRE(Xyz::are_equal(contour[0], {517.5, 980, 87.5}));
-    REQUIRE(Xyz::are_equal(contour[1], {515, 985, 70}));
-    REQUIRE(Xyz::are_equal(contour[2], {510, 995, 35}));
-    REQUIRE(Xyz::are_equal(contour[3], {507.5, 1000, 17.5}));
+    CHECK(Xyz::are_equal(contour[0], {517.5, 980, 87.5}));
+    CHECK(Xyz::are_equal(contour[1], {515, 985, 70}));
+    CHECK(Xyz::are_equal(contour[2], {510, 995, 35}));
+    CHECK(Xyz::are_equal(contour[3], {507.5, 1000, 17.5}));
 }

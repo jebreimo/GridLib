@@ -7,7 +7,7 @@
 //****************************************************************************
 #pragma once
 #include <Chorasmia/ArrayView2D.hpp>
-#include <Xyz/Rectangle.hpp>
+#include <Xyz/Pgram3.hpp>
 #include "GridLib/GridModel.hpp"
 
 namespace GridLib
@@ -49,35 +49,8 @@ namespace GridLib
     std::pair<float, float> get_min_max_elevation(const IGrid& grid);
 
     [[nodiscard]]
-    bool is_planar(const IGrid& grid);
+    bool is_elevation_grid(const IGrid& grid);
 
     [[nodiscard]]
-    Xyz::RectangleD get_bounding_rect(const IGrid& grid);
-
-    /**
-     * @brief Get the elevation at a given grid position.
-     *
-     * @param grid The grid to get the elevation from.
-     * @param grid_pos The position, in row-major order, in the grid to get
-     *      the elevation from.
-     * @return The elevation at the given position.
-     */
-    [[nodiscard]]
-    float get_elevation(const IGrid& grid, Xyz::Vector2D grid_pos);
-
-    /**
-     * @brief Get the grid position at a given model position.
-     *
-     * @param grid The grid to get the position for.
-     * @param model_pos The position in model coordinates. The order of the
-     *      coordinates are easting, northing, elevation.
-     * @return The elevation at the given position.
-     */
-    [[nodiscard]]
-    Xyz::Vector2D model_pos_to_grid_pos(const IGrid& grid,
-                                        const Xyz::Vector3D& model_pos);
-
-    [[nodiscard]]
-    Xyz::Vector3D grid_pos_to_model_pos(const IGrid& grid,
-                                        const Xyz::Vector2D& grid_pos);
+    Xyz::Pgram3<double> get_bounding_rect(const IGrid& grid);
 }
