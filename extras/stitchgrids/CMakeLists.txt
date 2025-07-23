@@ -16,7 +16,7 @@ FetchContent_Declare(fmt
     GIT_TAG 7.1.3)
 FetchContent_Declare(yglob
     GIT_REPOSITORY "https://github.com/jebreimo/Yglob.git"
-    GIT_TAG "v0.1.0" ## Replace with most recent tag.
+    GIT_TAG "v0.1.1"
 )
 FetchContent_MakeAvailable(argos fmt yglob)
 
