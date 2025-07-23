@@ -7,7 +7,7 @@
 //****************************************************************************
 #include <iostream>
 #include "GridLib/ReadGrid.hpp"
-#include "GridLib/WriteGrid.hpp"
+#include "GridLib/WriteJsonGrid.hpp"
 
 int main(int argc, char* argv[])
 {

@@ -6,7 +6,8 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include <functional>
+#include <filesystem>
+
 #include "GridLib/Grid.hpp"
 
 namespace GridLib
@@ -15,7 +16,7 @@ namespace GridLib
 
     Grid read_dem(const void* buffer, size_t size);
 
-    Grid read_dem(const std::string& file_name);
+    Grid read_dem(const std::filesystem::path& filename);
 
-    bool is_dem(const std::string& file_name);
+    bool is_dem(const std::filesystem::path& filename);
 }

@@ -7,3 +7,4 @@
 # ===========================================================================
 add_subdirectory(grid2json)
 add_subdirectory(grid2png)
+add_subdirectory(stitchgrids)

@@ -5,8 +5,8 @@
 // This file is distributed under the Zero-Clause BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include <GridLib/ReadGrid.hpp>
-#include <GridLib/WriteGrid.hpp>
+#include <GridLib/ReadJsonGrid.hpp>
+#include <GridLib/WriteJsonGrid.hpp>
 
 #include <numeric>
 #include <sstream>
@@ -16,7 +16,7 @@ TEST_CASE("Test write_json_grid and read_grid")
 {
     GridLib::Grid grid;
     grid.resize(6, 8);
-    auto array = grid.elevations().array();
+    auto array = grid.values().array();
     std::iota(array.begin(), array.end(), 0.0);
     grid.set_model_tie_point({2, 3});
     auto& model = grid.model();

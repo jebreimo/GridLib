@@ -42,7 +42,7 @@ namespace GridLib
         Chorasmia::ArrayView2D<float> values() const override;
 
         [[nodiscard]]
-        Chorasmia::MutableArrayView2D<float> elevations();
+        Chorasmia::MutableArrayView2D<float> values();
 
         [[nodiscard]]
         const Xyz::Vector2D& model_tie_point() const override;

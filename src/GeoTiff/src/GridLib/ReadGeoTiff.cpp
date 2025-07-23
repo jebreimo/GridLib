@@ -95,7 +95,7 @@ namespace GridLib
             {
                 auto [src, src_end] = img.row(i);
                 std::copy(src, src_end, reinterpret_cast<unsigned char*>(elevations.data()));
-                const auto dst = result.elevations()[i];
+                const auto dst = result.values()[i];
                 std::copy(elevations.begin(), elevations.end(), dst.begin());
             }
 

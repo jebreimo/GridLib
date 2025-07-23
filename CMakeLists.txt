@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.17)
-project(GridLib VERSION 0.6.0)
+project(GridLib VERSION 0.5.0)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -48,7 +48,7 @@ if (GridLib_INSTALL)
 endif ()
 FetchContent_Declare(xyz
     GIT_REPOSITORY "https://github.com/jebreimo/Xyz.git"
-    GIT_TAG v0.6.0)
+    GIT_TAG v0.8.1)
 
 if (GridLib_GEOTIFF_SUPPORT)
     set(YIMAGE_TIFF ON)
@@ -93,34 +93,36 @@ configure_file(src/GridLib/GridLibVersion.hpp.in GridLibVersion.hpp @ONLY)
 add_library(GridLib
     include/GridLib/Crs.hpp
     include/GridLib/Grid.hpp
+    include/GridLib/GridInterpolator.hpp
     include/GridLib/GridLibException.hpp
     include/GridLib/GridMemberTypes.hpp
     include/GridLib/GridModel.hpp
     include/GridLib/GridView.hpp
     include/GridLib/IGrid.hpp
+    include/GridLib/PositionTransformer.hpp
     include/GridLib/Profile.hpp
     include/GridLib/Rasterize.hpp
     include/GridLib/ReadGrid.hpp
+    include/GridLib/ReadJsonGrid.hpp
     include/GridLib/Unit.hpp
-    include/GridLib/WriteGrid.hpp
+    include/GridLib/WriteJsonGrid.hpp
+    src/GridLib/Crs.cpp
     src/GridLib/Grid.cpp
     src/GridLib/GridBuilder.cpp
     src/GridLib/GridBuilder.hpp
+    src/GridLib/GridInterpolator.cpp
     src/GridLib/GridModel.cpp
     src/GridLib/GridView.cpp
+    src/GridLib/IGrid.cpp
+    src/GridLib/PositionTransformer.cpp
     src/GridLib/Profile.cpp
     src/GridLib/Rasterize.cpp
     src/GridLib/ReadGrid.cpp
+    src/GridLib/ReadJsonGrid.cpp
     src/GridLib/Unit.cpp
     src/GridLib/Utilities/CoordinateSystem.cpp
     src/GridLib/Utilities/CoordinateSystem.hpp
-    src/GridLib/WriteGrid.cpp
-    src/GridLib/IGrid.cpp
-    src/GridLib/Crs.cpp
-    src/GridLib/PositionTransformer.cpp
-    include/GridLib/PositionTransformer.hpp
-    src/GridLib/GridInterpolator.cpp
-    include/GridLib/GridInterpolator.hpp
+    src/GridLib/WriteJsonGrid.cpp
 )
 
 target_include_directories(GridLib

@@ -6,6 +6,8 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include "GridLib/IGrid.hpp"
+
+#include <cfloat>
 #include <Xyz/Interpolation.hpp>
 #include "GridLib/Grid.hpp"
 #include "GridLib/GridLibException.hpp"
@@ -45,17 +47,37 @@ namespace GridLib
     bool is_elevation_grid(const IGrid& grid)
     {
         const auto& m = grid.model();
-        return m.row_axis()[2] <= Xyz::Constants<double>::DEFAULT_MARGIN
-               && m.column_axis()[2] <= Xyz::Constants<double>::DEFAULT_MARGIN;
+        return m.row_axis()[2] <= Xyz::Margin<double>::DEFAULT
+               && m.column_axis()[2] <= Xyz::Margin<double>::DEFAULT;
     }
 
-    Xyz::Pgram3<double> get_bounding_rect(const IGrid& grid)
+    template <typename T, unsigned N>
+    Xyz::Vector<T, N> get_min(const Xyz::Vector<T, N>& v,
+                              const Xyz::Vector<T, N>& w)
+    {
+        Xyz::Vector<T, N> result;
+        for (unsigned i = 0; i < N; ++i)
+            result[i] = std::min(v[i], w[i]);
+        return result;
+    }
+
+    template <typename T, unsigned N>
+    Xyz::Vector<T, N> get_max(const Xyz::Vector<T, N>& v,
+                              const Xyz::Vector<T, N>& w)
+    {
+        Xyz::Vector<T, N> result;
+        for (unsigned i = 0; i < N; ++i)
+            result[i] = std::max(v[i], w[i]);
+        return result;
+    }
+
+    Xyz::Pgram3D get_bounds(const IGrid& grid)
     {
         if (!is_elevation_grid(grid))
             GRIDLIB_THROW("Can not calculate bounding rectangle for non-planar grid.");
 
         const PositionTransformer transformer(grid);
-        auto origin = transformer.grid_to_model({0, 0});
+        const auto origin = transformer.grid_to_model({0, 0});
         const auto rows = grid.row_count();
         const auto cols = grid.col_count();
         const auto& m = grid.model();

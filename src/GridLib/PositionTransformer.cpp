@@ -7,33 +7,29 @@
 //****************************************************************************
 #include "GridLib/PositionTransformer.hpp"
 
-#include <Xyz/MatrixTransformations.hpp>
+#include <Xyz/TransformationMatrix.hpp>
 #include <Xyz/InvertMatrix.hpp>
 
 namespace GridLib
 {
     PositionTransformer::PositionTransformer(const IGrid& grid)
         : grid(grid),
-          transform_(grid.model().matrix * translate4(make_vector3(-grid.model_tie_point(), 0.0))),
-          inverse_transform_(Xyz::invert(transform_))
+          cs(grid.model().matrix * Xyz::affine::translate3(make_vector3(-grid.model_tie_point(), 0.0)))
     {
     }
 
     Xyz::Vector2D PositionTransformer::model_to_grid(const Xyz::Vector3D& pos) const
     {
-        auto p = inverse_transform_ * Xyz::make_vector4(pos, 1.0);
-        return {p[0], p[1]};
+        return cs.to_cs_xy(pos);
     }
 
     Xyz::Vector3D PositionTransformer::grid_to_model(const Xyz::Vector2D& pos) const
     {
-        auto p = transform_ * Xyz::Vector4D(pos[0], pos[1], 0.0, 1.0);
-        return {p[0], p[1], p[2]};
+        return cs.from_cs_xy(pos);
     }
 
     Xyz::Vector3D PositionTransformer::grid_to_model(const Xyz::Vector3D& pos) const
     {
-        auto p = transform_ * Xyz::make_vector4(pos, 1.0);
-        return {p[0], p[1], p[2]};
+        return cs.from_cs(pos);
     }
 }

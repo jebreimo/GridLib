@@ -52,5 +52,5 @@ namespace GridLib
     bool is_elevation_grid(const IGrid& grid);
 
     [[nodiscard]]
-    Xyz::Pgram3<double> get_bounding_rect(const IGrid& grid);
+    Xyz::Pgram3D get_bounds(const IGrid& grid);
 }

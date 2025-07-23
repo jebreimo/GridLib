@@ -7,13 +7,12 @@
 //****************************************************************************
 #include "GridLib/ReadGrid.hpp"
 
-#include <cmath>
 #include <map>
-#include <Xyz/Matrix.hpp>
 #include <Yson/ReaderIterators.hpp>
 
 #include "GridBuilder.hpp"
 #include "GridLib/GridLibException.hpp"
+#include "GridLib/ReadJsonGrid.hpp"
 #include "GridLibVersion.hpp"
 
 #ifdef GridLib_DEM_SUPPORT
@@ -26,177 +25,6 @@
 
 namespace GridLib
 {
-    namespace
-    {
-        std::string get_reader_position(Yson::Reader& reader)
-        {
-            return " [line " + std::to_string(reader.lineNumber())
-                   + ", column " + std::to_string(reader.columnNumber())
-                   + "]";
-        }
-
-        template <typename T, size_t N>
-        Xyz::Vector<T, N> read_vector(Yson::Reader& reader)
-        {
-            Xyz::Vector<T, N> result;
-            reader.enter();
-            for (size_t i = 0; i < N; ++i)
-            {
-                reader.nextValue();
-                result[i] = Yson::read<T>(reader);
-            }
-            if (reader.nextValue())
-                GRIDLIB_THROW("vector contains too many values.");
-            reader.leave();
-            return result;
-        }
-    }
-
-    Unit read_unit(Yson::Reader& reader)
-    {
-        return parse_unit(read<std::string>(reader));
-    }
-
-    Crs read_crs(Yson::Reader& reader, bool strict)
-    {
-        Crs result;
-        for (const auto& key : keys(reader))
-        {
-            if (key == "code")
-                result.code = read<int>(reader);
-            else if (key == "vertical_code")
-                result.vertical_code = read<int>(reader);
-            else if (key == "type")
-                result.type = parse_crs_type(read<std::string>(reader));
-            else if (key == "library")
-                result.library = parse_crs_library(read<std::string>(reader));
-            else if (key == "citation")
-                result.citation = read<std::string>(reader);
-            else if (strict)
-                GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
-        }
-        return result;
-    }
-
-    std::vector<std::pair<std::string, std::string>>
-    read_dictionary(Yson::Reader& reader)
-    {
-        std::vector<std::pair<std::string, std::string>> result;
-        for (const auto& key : keys(reader))
-            result.emplace_back(key, read<std::string>(reader));
-        return result;
-    }
-
-    GridModel read_model(Yson::Reader& reader, bool strict)
-    {
-        using Yson::read;
-        GridModel result;
-        for (const auto& key : keys(reader))
-        {
-            if (key == "location")
-                result.set_location(read_vector<double, 3>(reader));
-            else if (key == "row_axis")
-                result.set_row_axis(read_vector<double, 3>(reader));
-            else if (key == "column_axis")
-                result.set_column_axis(read_vector<double, 3>(reader));
-            else if (key == "vertical_axis")
-                result.set_vertical_axis(read_vector<double, 3>(reader));
-            else if (key == "horizontal_unit")
-                result.horizontal_unit = read_unit(reader);
-            else if (key == "vertical_unit")
-                result.vertical_unit = read_unit(reader);
-            else if (key == "crs")
-                result.crs = read_crs(reader, strict);
-            else if (key == "information")
-                result.information = read_dictionary(reader);
-            else if (strict)
-                GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
-        }
-        return result;
-    }
-
-    std::vector<SpatialTiePoint>
-    read_spatial_tie_points(Yson::Reader& reader, bool strict)
-    {
-        std::vector<SpatialTiePoint> result;
-        reader.enter();
-        while (reader.nextValue())
-        {
-            using Yson::read;
-            SpatialTiePoint point;
-            for (const auto& key : keys(reader))
-            {
-                if (key == "grid_point")
-                    point.grid_point = read_vector<double, 2>(reader);
-                else if (key == "location")
-                    point.location = read_vector<double, 3>(reader);
-                else if (key == "crs")
-                    point.crs = read_crs(reader, strict);
-                else if (strict)
-                    GRIDLIB_THROW("Unknown key: '" + key + "'");
-            }
-            result.push_back(point);
-        }
-        reader.leave();
-        return result;
-    }
-
-    std::vector<float> read_elevations(Yson::Reader& reader)
-    {
-        using Yson::read;
-        std::vector<float> result;
-        for (Yson::ArrayIterator row_it(reader); row_it.next();)
-        {
-            for (Yson::ArrayIterator col_it(reader); col_it.next();)
-            {
-                if (reader.readNull())
-                    result.push_back(NAN);
-                else
-                    result.push_back(read<float>(reader));
-            }
-        }
-        return result;
-    }
-
-    Grid read_grid(Yson::Reader& reader, bool strict)
-    {
-        GridBuilder builder;
-        for (const auto& key : keys(reader))
-        {
-            if (key == "row_count")
-                builder.row_count = read<uint32_t>(reader);
-            else if (key == "column_count")
-                builder.col_count = read<uint32_t>(reader);
-            else if (key == "model_tie_point")
-                builder.model_tie_point = read_vector<double, 2>(reader);
-            else if (key == "model")
-                builder.model = read_model(reader, strict);
-            else if (key == "spatial_tie_points")
-                builder.spatial_tie_points = read_spatial_tie_points(reader, strict);
-            else if (key == "elevations")
-                builder.elevations = read_elevations(reader);
-            else if (strict)
-                GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
-        }
-        return builder.build();
-    }
-
-    Grid read_json_grid(std::istream& stream, bool strict)
-    {
-        return read_grid(*Yson::makeReader(stream), strict);
-    }
-
-    Grid read_json_grid(const std::string& file_name, bool strict)
-    {
-        return read_grid(*Yson::makeReader(file_name), strict);
-    }
-
-    Grid read_json_grid(const void* buffer, size_t size, bool strict)
-    {
-        auto str = static_cast<const char*>(buffer);
-        return read_grid(*Yson::makeReader(str, size), strict);
-    }
-
 #define CASE_ENUM(type, value) \
         case type::value: return #value;
 
@@ -233,7 +61,7 @@ namespace GridLib
         }
     }
 
-    GridFileType detect_file_type(const std::string& fileName)
+    GridFileType detect_file_type(const std::filesystem::path& fileName)
     {
 #ifdef GridLib_DEM_SUPPORT
         if (is_dem(fileName))
@@ -248,25 +76,25 @@ namespace GridLib
         return GridFileType::UNKNOWN;
     }
 
-    Grid read_grid(const std::string& file_name, GridFileType type)
+    Grid read_grid(const std::filesystem::path& filename, GridFileType type)
     {
         if (type == GridFileType::AUTO_DETECT)
-            type = detect_file_type(file_name);
+            type = detect_file_type(filename);
 
         switch (type)
         {
         case GridFileType::GRIDLIB_JSON:
-            return read_json_grid(file_name);
+            return read_json_grid(filename);
 #ifdef GridLib_DEM_SUPPORT
         case GridFileType::DEM:
-            return read_dem(file_name);
+            return read_dem(filename);
 #endif
 #ifdef GridLib_GEOTIFF_SUPPORT
         case GridFileType::GEOTIFF:
-            return read_geotiff(file_name);
+            return read_geotiff(filename);
 #endif
         default:
-            GRIDLIB_THROW("Unsupported file type: " + file_name);
+            GRIDLIB_THROW("Unsupported file type: " + filename.string());
         }
     }
 

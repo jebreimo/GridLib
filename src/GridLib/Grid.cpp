@@ -59,7 +59,7 @@ namespace GridLib
         return grid_.view();
     }
 
-    Chorasmia::MutableArrayView2D<float> Grid::elevations()
+    Chorasmia::MutableArrayView2D<float> Grid::values()
     {
         return {grid_.data(), grid_.row_count(), grid_.col_count()};
     }

@@ -6,16 +6,12 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
+#include <filesystem>
+
 #include "Grid.hpp"
 
 namespace GridLib
 {
-    Grid read_json_grid(std::istream& stream, bool strict = false);
-
-    Grid read_json_grid(const std::string& file_name, bool strict = false);
-
-    Grid read_json_grid(const void* buffer, size_t size, bool strict = false);
-
     enum class GridFileType
     {
         UNKNOWN,
@@ -31,6 +27,6 @@ namespace GridLib
 
     Grid read_grid(const void* buffer, size_t size, GridFileType type);
 
-    Grid read_grid(const std::string& file_name,
+    Grid read_grid(const std::filesystem::path& filename,
                    GridFileType type = GridFileType::AUTO_DETECT);
 }

@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
             auto pos = args.value("--position").split(',', 2, 2).as_uints();
             auto index_mode = GridLib::get_index_mode_for_top_left_origin(grid.view());
             make_png(outFileName,
-                     grid.elevations().subarray(pos[0], pos[1], size[0], size[1]).view(),
+                     grid.values().subarray(pos[0], pos[1], size[0], size[1]).view(),
                      index_mode);
         }
         else

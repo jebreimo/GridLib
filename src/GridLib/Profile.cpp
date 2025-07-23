@@ -9,7 +9,6 @@
 #include <cmath>
 #include <Chorasmia/ArrayView2DAlgorithms.hpp>
 #include <Xyz/LineClipping.hpp>
-#include <Xyz/InvertMatrix.hpp>
 
 namespace GridLib
 {
@@ -17,7 +16,7 @@ namespace GridLib
     {
         Xyz::Matrix4D get_clip_transform(const IGrid& grid)
         {
-            const auto model_rect = get_bounding_rect(grid);
+            const auto model_rect = get_bounds(grid);
             return Xyz::get_clip_transform(model_rect)
                    * Xyz::make_projection_matrix(get_plane(model_rect));
         }
@@ -46,14 +45,14 @@ namespace GridLib
         if (segments == 0)
             return {};
 
-        auto line = clipper_.clip({from, to});
+        const auto line = clipper_.clip({from, to});
         if (!line)
         {
             // The line segment is outside the grid.
             return {};
         }
 
-        auto total_length = get_length(to - from);
+        const auto total_length = get_length(to - from);
 
         size_t step0 = 0;
         if (line->start != from)
@@ -72,8 +71,7 @@ namespace GridLib
         std::vector<Xyz::Vector3D> result;
         if (step0 != 0)
         {
-            auto p = interpolator_.at_model_pos(line->start);
-            if (p)
+            if (const auto p = interpolator_.at_model_pos(line->start))
                 result.push_back(*p);
         }
 

@@ -149,7 +149,7 @@ namespace GridLib
                 // DEM files uses columns as the primary dimension, while Grid
                 // uses rows.
                 grid.resize(cols, rows);
-                values = grid.elevations();
+                values = grid.values();
             }
             for (int i = 0; i < b->columns; ++i)
             {
@@ -171,15 +171,15 @@ namespace GridLib
         return read_dem(stream);
     }
 
-    Grid read_dem(const std::string& file_name)
+    Grid read_dem(const std::filesystem::path& filename)
     {
-        std::ifstream file(file_name, std::ios::binary);
+        std::ifstream file(filename, std::ios::binary);
         return read_dem(file);
     }
 
-    bool is_dem(const std::string& file_name)
+    bool is_dem(const std::filesystem::path& filename)
     {
-        auto ext = std::filesystem::path(file_name).extension().string();
+        auto ext = filename.extension().string();
         constexpr char SUFFIX[] = {'.', 'D', 'E', 'M'};
         return std::equal(ext.begin(), ext.end(),
                           std::begin(SUFFIX), std::end(SUFFIX),

@@ -6,7 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include <Xyz/Vector.hpp>
+#include <Xyz/CoordinateSystem.hpp>
 
 #include "GridLib/IGrid.hpp"
 
@@ -15,9 +15,10 @@ namespace GridLib
     class PositionTransformer
     {
     public:
-        explicit PositionTransformer(const IGrid& grid);
-
         const IGrid& grid;
+        Xyz::CoordinateSystem<double> cs;
+
+        explicit PositionTransformer(const IGrid& grid);
 
         [[nodiscard]]
         Xyz::Vector2D model_to_grid(const Xyz::Vector3D& pos) const;
@@ -27,8 +28,5 @@ namespace GridLib
 
         [[nodiscard]]
         Xyz::Vector3D grid_to_model(const Xyz::Vector3D& pos) const;
-    private:
-        const Xyz::Matrix4D transform_;
-        const Xyz::Matrix4D inverse_transform_;
     };
 }
