@@ -29,7 +29,7 @@ TEST_CASE("test get_bounding_rect")
     model.vertical_unit = GridLib::Unit::METER;
     model.set_row_axis({10, 0, 0});
     model.set_column_axis({0, -10, 0});
-    model. unknown_elevation = -999;
+    model. unknown_elevation = -999.f;
     auto rect = get_bounds(grid);
     using V3 = Xyz::Vector3D;
     REQUIRE(rect.origin == V3(500000, 6000000, 0));
