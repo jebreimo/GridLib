@@ -65,7 +65,7 @@ if (GridLib_INSTALL)
 endif ()
 FetchContent_Declare(yson
     GIT_REPOSITORY "https://github.com/jebreimo/Yson.git"
-    GIT_TAG v1.4.18)
+    GIT_TAG v1.5.0)
 
 FetchContent_MakeAvailable(chorasmia xyz yimage yson)
 
