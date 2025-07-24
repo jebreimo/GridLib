@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.19)
 include(FetchContent)
 FetchContent_Declare(fmt
     GIT_REPOSITORY "https://github.com/fmtlib/fmt.git"
-    GIT_TAG 7.1.3)
+    GIT_TAG 11.2.0)
 FetchContent_Declare(argos
     GIT_REPOSITORY "https://github.com/jebreimo/Argos.git"
     GIT_TAG v1.7.2)

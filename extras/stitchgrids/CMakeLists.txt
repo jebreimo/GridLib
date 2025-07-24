@@ -11,21 +11,17 @@ include(FetchContent)
 FetchContent_Declare(argos
     GIT_REPOSITORY "https://github.com/jebreimo/Argos.git"
     GIT_TAG v1.7.2)
-FetchContent_Declare(fmt
-    GIT_REPOSITORY "https://github.com/fmtlib/fmt.git"
-    GIT_TAG 7.1.3)
 FetchContent_Declare(yglob
     GIT_REPOSITORY "https://github.com/jebreimo/Yglob.git"
     GIT_TAG "v0.1.1"
 )
-FetchContent_MakeAvailable(argos fmt yglob)
+FetchContent_MakeAvailable(argos yglob)
 
 add_executable(stitchgrids
     stitchgrids.cpp)
 
 target_link_libraries(stitchgrids
     Argos::Argos
-    fmt::fmt
     GridLib::GridLib
     Xyz::Xyz
     Yglob::Yglob

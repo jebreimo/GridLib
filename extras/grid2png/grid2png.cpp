@@ -27,11 +27,11 @@ void make_png(const std::string& filename,
     Yimage::write_png(filename, bmp.view());
 }
 
-void makeTiles(const GridLib::GridView& grid,
-               unsigned rows, unsigned cols,
-               const std::string& fileName)
+void make_tiles(const GridLib::GridView& grid,
+                unsigned rows, unsigned cols,
+                const std::string& filename)
 {
-    std::filesystem::path path(fileName);
+    std::filesystem::path path(filename);
     auto extension = path.extension().string();
     auto prefix = path.replace_extension().string();
     auto index_mode = GridLib::get_index_mode_for_top_left_origin(grid);
@@ -66,26 +66,26 @@ int main(int argc, char* argv[])
         .split_n(',', 2)
         .as_uints({UINT_MAX, UINT_MAX});
 
-    auto inFileName = args.value("FILE").as_string();
-    auto outFileName = args.value("OUTPUT").as_string();
+    const auto in_file_name = args.value("FILE").as_string();
+    const auto out_file_name = args.value("OUTPUT").as_string();
 
     try
     {
-        auto grid = GridLib::read_grid(inFileName);
+        auto grid = GridLib::read_grid(in_file_name);
         size[0] = std::min(size[0], unsigned(grid.row_count()));
         size[1] = std::min(size[1], unsigned(grid.col_count()));
         std::cout << "\n";
         if (args.has("-p"))
         {
-            auto pos = args.value("--position").split(',', 2, 2).as_uints();
-            auto index_mode = GridLib::get_index_mode_for_top_left_origin(grid.view());
-            make_png(outFileName,
+            const auto pos = args.value("--position").split(',', 2, 2).as_uints();
+            const auto index_mode = GridLib::get_index_mode_for_top_left_origin(grid.view());
+            make_png(out_file_name,
                      grid.values().subarray(pos[0], pos[1], size[0], size[1]).view(),
                      index_mode);
         }
         else
         {
-            makeTiles(grid.view(), size[0], size[1], outFileName);
+            make_tiles(grid.view(), size[0], size[1], out_file_name);
         }
     }
     catch (std::exception& ex)

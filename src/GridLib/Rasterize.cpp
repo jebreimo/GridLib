@@ -12,38 +12,33 @@ namespace GridLib
 {
     namespace
     {
-        union Color
+        using Color = Xyz::Vector<uint32_t, 4>;
+
+        [[nodiscard]]
+        uint32_t to_rgba(Color c)
         {
-            struct
-            {
-                uint8_t r;
-                uint8_t g;
-                uint8_t b;
-                uint8_t a;
-            };
-            uint32_t rgba;
-        };
+            return (c[0] << 24) | (c[1] << 16) | (c[2] << 8) | c[3];
+        }
+
+        [[nodiscard]]
+        Color from_rgba(uint32_t rgba)
+        {
+            return Color{(rgba >> 24) & 0xFF, (rgba >> 16) & 0xFF,
+                         (rgba >> 8) & 0xFF, rgba & 0xFF};
+        }
 
         void add_range(Chorasmia::IntervalMap<float, uint32_t>& map,
                        float from_height, float to_height,
-                       Color from_color, Color to_color,
-                       unsigned steps)
+                       const Color& from_color, const Color& to_color,
+                       int32_t steps)
         {
-            int32_t base[4] = {from_color.r, from_color.g, from_color.b, from_color.a};
-            int32_t delta[4] = {int32_t(to_color.r - from_color.r),
-                                int32_t(to_color.g - from_color.g),
-                                int32_t(to_color.b - from_color.b),
-                                int32_t(to_color.a - from_color.a)};
+            const auto delta = to_color - from_color;
             for (int32_t i = 0; i < int32_t(steps); ++i)
             {
-                Color c{
-                    .r = uint8_t(base[0] + (delta[0] * i) / int32_t(steps - 1)),
-                    .g = uint8_t(base[1] + (delta[1] * i) / int32_t(steps - 1)),
-                    .b = uint8_t(base[2] + (delta[2] * i) / int32_t(steps - 1)),
-                    .a = uint8_t(base[3] + (delta[3] * i) / int32_t(steps - 1))};
-                map.insert(from_height + (to_height - from_height) * i / steps,
-                           from_height + (to_height - from_height) * (i + 1) / steps,
-                           c.rgba);
+                const auto c = from_color + (delta * i) / int32_t(steps - 1);
+                map.insert(from_height + (to_height - from_height) * float(i) / float(steps),
+                           from_height + (to_height - from_height) * float(i + 1) / float(steps),
+                           to_rgba(c));
             }
         }
     }
@@ -59,18 +54,18 @@ namespace GridLib
     {
         Chorasmia::IntervalMap<float, uint32_t> map(0xFFFF8E5Au);
         map.insert(sea_level_max, 0xFFFCF2E9u);
-        add_range(map, sea_level_min, sea_level_max, Color{.rgba = 0xFFFF8E5Au},
-                  Color{.rgba = 0xFFFAEAD1u}, 10);
-        add_range(map, sea_level_max, ground_level_1_max, Color{.rgba = 0xFF74907Cu},
-                  Color{.rgba = 0xFFD0E8D7u}, 10);
-        add_range(map, ground_level_1_max, ground_level_2_max, Color{.rgba = 0xFFBDE8E5u},
-                  Color{.rgba = 0xFF6F888Cu}, 10);
-        add_range(map, ground_level_2_max, ground_level_3_max, Color{.rgba = 0xFF69848Cu},
-                  Color{.rgba = 0xFF95B9D1u}, 10);
-        add_range(map, ground_level_3_max, ground_level_4_max, Color{.rgba = 0xFF95A9C1u},
-                  Color{.rgba = 0xFFE3DCDCu}, 10);
-        add_range(map, ground_level_4_max, ground_level_5_max, Color{.rgba = 0xFFECC8A6u},
-                  Color{.rgba = 0xFFFCF2E9u}, 10);
+        add_range(map, sea_level_min, sea_level_max, from_rgba(0xFFFF8E5Au),
+                  from_rgba(0xFFFAEAD1u), 10);
+        add_range(map, sea_level_max, ground_level_1_max, from_rgba(0xFF74907Cu),
+                  from_rgba(0xFFD0E8D7u), 10);
+        add_range(map, ground_level_1_max, ground_level_2_max, from_rgba(0xFFBDE8E5u),
+                  from_rgba(0xFF6F888Cu), 10);
+        add_range(map, ground_level_2_max, ground_level_3_max, from_rgba(0xFF69848Cu),
+                  from_rgba(0xFF95B9D1u), 10);
+        add_range(map, ground_level_3_max, ground_level_4_max, from_rgba(0xFF95A9C1u),
+                  from_rgba(0xFFE3DCDCu), 10);
+        add_range(map, ground_level_4_max, ground_level_5_max, from_rgba(0xFFECC8A6u),
+                  from_rgba(0xFFFCF2E9u), 10);
 
         // Extend the sea a little bit:
         map.insert(sea_level_max, sea_level_max + 0.25f, 0xFFFAEAD1u);
@@ -129,7 +124,7 @@ namespace GridLib
             if (!are_orthogonal(dst_row_dir, dst_col_dir))
                 GRIDLIB_THROW("Destination coordinate axes are non-orthogonal.");
 
-            if (auto rot = get_rotation(dst_row_dir, CardinalDirection::EAST))
+            if (const auto rot = get_rotation(dst_row_dir, CardinalDirection::EAST))
             {
                 src_row_dir = rotate(src_row_dir, rot);
                 src_col_dir = rotate(src_col_dir, rot);
@@ -168,7 +163,7 @@ namespace GridLib
         CardinalDirection get_cardinal_direction(const Xyz::Vector2D& v)
         {
             constexpr auto PI = Xyz::Constants<double>::PI;
-            auto a = Xyz::get_ccw_angle<double>(v, {-1, 1});
+            const auto a = Xyz::get_ccw_angle<double>(v, {-1, 1});
             switch (int(floor(2 * a / PI)))
             {
             case 0:
@@ -188,8 +183,8 @@ namespace GridLib
     {
         auto rv = grid.model().row_axis();
         auto cv = grid.model().column_axis();
-        auto r_dir = get_cardinal_direction(Xyz::Vector2D(rv[0], rv[1]));
-        auto c_dir = get_cardinal_direction(Xyz::Vector2D(cv[0], cv[1]));
+        const auto r_dir = get_cardinal_direction(Xyz::Vector2D(rv[0], rv[1]));
+        const auto c_dir = get_cardinal_direction(Xyz::Vector2D(cv[0], cv[1]));
         return get_index_2d_mode(r_dir, c_dir,
                                  CardinalDirection::EAST,
                                  CardinalDirection::SOUTH);

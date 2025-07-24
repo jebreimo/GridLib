@@ -30,7 +30,7 @@ namespace GridLib
         {
             Xyz::Vector<T, N> result;
             reader.enter();
-            for (size_t i = 0; i < N; ++i)
+            for (unsigned i = 0; i < N; ++i)
             {
                 reader.nextValue();
                 result[i] = Yson::read<T>(reader);
