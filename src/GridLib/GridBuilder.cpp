@@ -37,13 +37,13 @@ namespace GridLib
 
         try
         {
-            auto elevations = std::move(this->elevations);
+            auto vals = std::move(values);
             if (model.unknown_elevation && !std::isnan(*model.unknown_elevation))
-                replace_nans(elevations, *model.unknown_elevation);
+                replace_nans(vals, *model.unknown_elevation);
 
-            auto grid = elevations.empty()
+            auto grid = vals.empty()
                             ? Grid(Chorasmia::Array2D<float>(row_count, col_count))
-                            : Grid(Chorasmia::Array2D(std::move(elevations),
+                            : Grid(Chorasmia::Array2D(std::move(vals),
                                                       row_count, col_count));
             grid.set_model_tie_point(model_tie_point);
             grid.model() = model;

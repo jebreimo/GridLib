@@ -164,7 +164,7 @@ namespace GridLib
             else if (key == "spatial_tie_points")
                 builder.spatial_tie_points = read_spatial_tie_points(reader, strict);
             else if (key == "elevations")
-                builder.elevations = read_elevations(reader);
+                builder.values = read_elevations(reader);
             else if (strict)
                 GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
         }
