@@ -69,8 +69,8 @@ void sort_grids(std::vector<GridLib::Grid>& grids)
 {
     std::ranges::sort(grids, [](const auto& a, const auto& b)
     {
-        const auto& apc = a.model().location();
-        const auto& bpc = b.model().location();
+        const auto& apc = a.spatial_data().location();
+        const auto& bpc = b.spatial_data().location();
         if (apc[1] != bpc[1])
             return apc[1] > bpc[1];
         return apc[0] < bpc[0];

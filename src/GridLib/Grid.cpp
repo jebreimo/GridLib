@@ -74,12 +74,12 @@ namespace GridLib
         model_tie_point_ = value;
     }
 
-    const GridModel& Grid::model() const
+    const SpatialData& Grid::spatial_data() const
     {
         return model_;
     }
 
-    GridModel& Grid::model()
+    SpatialData& Grid::model()
     {
         return model_;
     }
@@ -111,7 +111,7 @@ namespace GridLib
             return true;
         return a.values() == b.values()
                && a.model_tie_point() == b.model_tie_point()
-               && a.model() == b.model()
+               && a.spatial_data() == b.spatial_data()
                && a.spatial_tie_points() == b.spatial_tie_points();
     }
 

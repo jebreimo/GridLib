@@ -14,7 +14,7 @@ namespace GridLib
 {
     PositionTransformer::PositionTransformer(const IGrid& grid)
         : grid(grid),
-          cs(grid.model().matrix * Xyz::affine::translate3(make_vector3(-grid.model_tie_point(), 0.0)))
+          cs(grid.spatial_data().matrix * Xyz::affine::translate3(make_vector3(-grid.model_tie_point(), 0.0)))
     {
     }
 

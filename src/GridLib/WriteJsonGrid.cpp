@@ -60,7 +60,7 @@ namespace GridLib
         writer.endObject();
     }
 
-    void write_json(Yson::Writer& writer, const GridModel& model)
+    void write_json(Yson::Writer& writer, const SpatialData& model)
     {
         writer.beginObject();
         writer.key("location");
@@ -137,11 +137,11 @@ namespace GridLib
         writer.key("model_tie_point");
         write_json(writer, grid.model_tie_point());
         writer.key("model");
-        write_json(writer, grid.model());
+        write_json(writer, grid.spatial_data());
         writer.key("spatial_tie_points");
         write_json(writer, grid.spatial_tie_points());
         writer.key("elevations");
-        write_json(writer, grid.values(), grid.model().unknown_elevation);
+        write_json(writer, grid.values(), grid.spatial_data().unknown_elevation);
         writer.endObject();
     }
 

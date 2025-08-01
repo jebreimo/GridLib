@@ -50,10 +50,10 @@ namespace GridLib
         void set_model_tie_point(const Xyz::Vector2D& value);
 
         [[nodiscard]]
-        const GridModel& model() const override;
+        const SpatialData& spatial_data() const override;
 
         [[nodiscard]]
-        GridModel& model();
+        SpatialData& model();
 
         [[nodiscard]]
         std::vector<SpatialTiePoint> spatial_tie_points() const override;
@@ -68,7 +68,7 @@ namespace GridLib
         Chorasmia::Array2D<float> release();
     private:
         Chorasmia::Array2D<float> grid_;
-        GridModel model_;
+        SpatialData model_;
         Xyz::Vector2D model_tie_point_;
         std::vector<SpatialTiePoint> spatial_tie_points_;
     };

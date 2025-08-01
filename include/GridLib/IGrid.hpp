@@ -8,7 +8,7 @@
 #pragma once
 #include <Chorasmia/ArrayView2D.hpp>
 #include <Xyz/Pgram3.hpp>
-#include "GridLib/GridModel.hpp"
+#include "GridLib/SpatialData.hpp"
 
 namespace GridLib
 {
@@ -29,7 +29,7 @@ namespace GridLib
         virtual const Xyz::Vector2D& model_tie_point() const = 0;
 
         [[nodiscard]]
-        virtual const GridModel& model() const = 0;
+        virtual const SpatialData& spatial_data() const = 0;
 
         [[nodiscard]]
         virtual std::vector<SpatialTiePoint> spatial_tie_points() const = 0;
