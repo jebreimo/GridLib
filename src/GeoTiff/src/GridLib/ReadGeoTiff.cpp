@@ -100,7 +100,7 @@ namespace GridLib
             }
 
             const auto tie_point = get_tie_point(*metadata);
-            result.set_model_tie_point(get_tie_point(*metadata));
+            result.set_tie_point(get_tie_point(*metadata));
 
             auto& model = result.model();
 

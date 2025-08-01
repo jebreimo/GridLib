@@ -34,7 +34,7 @@ TEST_CASE("PositionTransformer: Origin in top left corner")
 TEST_CASE("PositionTransformer: Offset tie-point")
 {
     GridLib::Grid grid(10, 10);
-    grid.set_model_tie_point({4.5, 3});
+    grid.set_tie_point({4.5, 3});
 
     const GridLib::PositionTransformer transformer(grid);
 

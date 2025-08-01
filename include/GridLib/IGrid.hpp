@@ -26,7 +26,7 @@ namespace GridLib
         virtual size_t col_count() const = 0;
 
         [[nodiscard]]
-        virtual const Xyz::Vector2D& model_tie_point() const = 0;
+        virtual const Xyz::Vector2D& tie_point() const = 0;
 
         [[nodiscard]]
         virtual const SpatialData& spatial_data() const = 0;

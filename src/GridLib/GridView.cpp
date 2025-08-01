@@ -16,7 +16,7 @@ namespace GridLib
     GridView::GridView(const Grid& grid) noexcept
         : GridView(grid,
                    grid.values(),
-                   grid.model_tie_point())
+                   grid.tie_point())
     {
     }
 
@@ -44,7 +44,7 @@ namespace GridLib
         return elevations_;
     }
 
-    const Xyz::Vector2D& GridView::model_tie_point() const
+    const Xyz::Vector2D& GridView::tie_point() const
     {
         return model_tie_point_;
     }
@@ -58,10 +58,10 @@ namespace GridLib
     std::vector<SpatialTiePoint> GridView::spatial_tie_points() const
     {
         assert_grid();
-        if (model_tie_point_ == grid_->model_tie_point())
+        if (model_tie_point_ == grid_->tie_point())
             return grid_->spatial_tie_points();
 
-        const auto delta = model_tie_point_ - grid_->model_tie_point();
+        const auto delta = model_tie_point_ - grid_->tie_point();
 
         std::vector<SpatialTiePoint> result;
         for (const auto& pt : grid_->spatial_tie_points())

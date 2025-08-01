@@ -64,24 +64,24 @@ namespace GridLib
         return {grid_.data(), grid_.row_count(), grid_.col_count()};
     }
 
-    const Xyz::Vector2D& Grid::model_tie_point() const
+    const Xyz::Vector2D& Grid::tie_point() const
     {
-        return model_tie_point_;
+        return tie_point_;
     }
 
-    void Grid::set_model_tie_point(const Xyz::Vector2D& value)
+    void Grid::set_tie_point(const Xyz::Vector2D& value)
     {
-        model_tie_point_ = value;
+        tie_point_ = value;
     }
 
     const SpatialData& Grid::spatial_data() const
     {
-        return model_;
+        return spatial_data_;
     }
 
     SpatialData& Grid::model()
     {
-        return model_;
+        return spatial_data_;
     }
 
     std::vector<SpatialTiePoint> Grid::spatial_tie_points() const
@@ -110,7 +110,7 @@ namespace GridLib
         if (&a == &b)
             return true;
         return a.values() == b.values()
-               && a.model_tie_point() == b.model_tie_point()
+               && a.tie_point() == b.tie_point()
                && a.spatial_data() == b.spatial_data()
                && a.spatial_tie_points() == b.spatial_tie_points();
     }

@@ -45,9 +45,9 @@ namespace GridLib
         Chorasmia::MutableArrayView2D<float> values();
 
         [[nodiscard]]
-        const Xyz::Vector2D& model_tie_point() const override;
+        const Xyz::Vector2D& tie_point() const override;
 
-        void set_model_tie_point(const Xyz::Vector2D& value);
+        void set_tie_point(const Xyz::Vector2D& value);
 
         [[nodiscard]]
         const SpatialData& spatial_data() const override;
@@ -68,8 +68,8 @@ namespace GridLib
         Chorasmia::Array2D<float> release();
     private:
         Chorasmia::Array2D<float> grid_;
-        SpatialData model_;
-        Xyz::Vector2D model_tie_point_;
+        SpatialData spatial_data_;
+        Xyz::Vector2D tie_point_;
         std::vector<SpatialTiePoint> spatial_tie_points_;
     };
 

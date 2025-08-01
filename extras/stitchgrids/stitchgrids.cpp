@@ -235,7 +235,7 @@ int main(int argc, char* argv[])
         std::cout << rows << "x" << cols << '\n';
 
         GridLib::Grid result(rows, cols);
-        result.set_model_tie_point(grids[0].model_tie_point());
+        result.set_tie_point(grids[0].tie_point());
         result.model() = grids[0].model();
         auto result_values = result.values();
         for (const auto& [grid, pos] : insertion_points)

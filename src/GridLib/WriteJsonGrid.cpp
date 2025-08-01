@@ -135,7 +135,7 @@ namespace GridLib
         writer.key("row_count").value(uint64_t(grid.row_count()));
         writer.key("column_count").value(uint64_t(grid.col_count()));
         writer.key("model_tie_point");
-        write_json(writer, grid.model_tie_point());
+        write_json(writer, grid.tie_point());
         writer.key("model");
         write_json(writer, grid.spatial_data());
         writer.key("spatial_tie_points");

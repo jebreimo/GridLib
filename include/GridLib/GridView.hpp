@@ -30,7 +30,7 @@ namespace GridLib
         size_t col_count() const override;
 
         [[nodiscard]]
-        const Xyz::Vector2D& model_tie_point() const override;
+        const Xyz::Vector2D& tie_point() const override;
 
         [[nodiscard]]
         const SpatialData& spatial_data() const override;
