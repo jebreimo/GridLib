@@ -16,7 +16,7 @@ namespace GridLib
         size_t row_count = 0;
         size_t col_count = 0;
         Xyz::Vector2D model_tie_point;
-        SpatialData model;
+        SpatialInfo model;
         std::vector<SpatialTiePoint> spatial_tie_points;
 
         Grid build();

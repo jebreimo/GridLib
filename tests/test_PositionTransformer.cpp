@@ -13,7 +13,7 @@
 TEST_CASE("PositionTransformer: Origin in top left corner")
 {
     GridLib::Grid grid(10, 10);
-    auto& model = grid.model();
+    auto& model = grid.spatial_info();
     model.set_column_axis({0, -10, 0});
     model.set_row_axis({10, 0, 0});
     model.set_vertical_axis({0, 0, 1});

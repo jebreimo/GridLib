@@ -89,7 +89,7 @@ namespace GridLib
                 return {};
 
             const auto cell_values = get_grid_cell_values(values, *cell);
-            const auto& unknown = grid.spatial_data().unknown_elevation;
+            const auto& unknown = grid.spatial_info().unknown_elevation;
             if (has_unknown_value(cell_values, unknown))
                 return get_edge_elevation(cell_values, grid_pos, *cell, unknown);
 

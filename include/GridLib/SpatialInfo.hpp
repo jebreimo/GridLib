@@ -13,7 +13,7 @@
 
 namespace GridLib
 {
-    struct SpatialData
+    struct SpatialInfo
     {
         Xyz::Matrix4D matrix = Xyz::Matrix4D::identity();
 
@@ -44,7 +44,7 @@ namespace GridLib
         void set_vertical_axis(const Xyz::Vector3D& v);
     };
 
-    bool operator==(const SpatialData& lhs, const SpatialData& rhs);
+    bool operator==(const SpatialInfo& lhs, const SpatialInfo& rhs);
 
-    bool operator!=(const SpatialData& lhs, const SpatialData& rhs);
+    bool operator!=(const SpatialInfo& lhs, const SpatialInfo& rhs);
 }

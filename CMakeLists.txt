@@ -103,7 +103,7 @@ add_library(GridLib
     include/GridLib/Rasterize.hpp
     include/GridLib/ReadGrid.hpp
     include/GridLib/ReadJsonGrid.hpp
-    include/GridLib/SpatialData.hpp
+    include/GridLib/SpatialInfo.hpp
     include/GridLib/Unit.hpp
     include/GridLib/WriteJsonGrid.hpp
     src/GridLib/Crs.cpp
@@ -118,7 +118,7 @@ add_library(GridLib
     src/GridLib/Rasterize.cpp
     src/GridLib/ReadGrid.cpp
     src/GridLib/ReadJsonGrid.cpp
-    src/GridLib/SpatialData.cpp
+    src/GridLib/SpatialInfo.cpp
     src/GridLib/Unit.cpp
     src/GridLib/Utilities/CoordinateSystem.cpp
     src/GridLib/Utilities/CoordinateSystem.hpp

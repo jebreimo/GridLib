@@ -49,10 +49,10 @@ namespace GridLib
         return model_tie_point_;
     }
 
-    const SpatialData& GridView::spatial_data() const
+    const SpatialInfo& GridView::spatial_info() const
     {
         assert_grid();
-        return grid_->spatial_data();
+        return grid_->spatial_info();
     }
 
     std::vector<SpatialTiePoint> GridView::spatial_tie_points() const

@@ -77,10 +77,10 @@ namespace GridLib
         return result;
     }
 
-    SpatialData read_model(Yson::Reader& reader, bool strict)
+    SpatialInfo read_model(Yson::Reader& reader, bool strict)
     {
         using Yson::read;
-        SpatialData result;
+        SpatialInfo result;
         for (const auto& key : keys(reader))
         {
             if (key == "location")

@@ -16,11 +16,11 @@ TEST_CASE("Read GeoTIFF file")
                                    GridLib::GridFileType::GEOTIFF);
     REQUIRE(grid.row_count() == 60);
     REQUIRE(grid.col_count() == 80);
-    REQUIRE(grid.model().horizontal_unit == GridLib::Unit::METER);
-    const auto& crs = grid.model().crs;
-    REQUIRE(Xyz::are_equal(grid.model().column_axis(), {0, -10, 0}));
-    REQUIRE(Xyz::are_equal(grid.model().row_axis(), {10, 0, 0}));
-    REQUIRE(Xyz::are_equal(grid.model().vertical_axis(), {0, 0, 1}));
+    REQUIRE(grid.spatial_info().horizontal_unit == GridLib::Unit::METER);
+    const auto& crs = grid.spatial_info().crs;
+    REQUIRE(Xyz::are_equal(grid.spatial_info().column_axis(), {0, -10, 0}));
+    REQUIRE(Xyz::are_equal(grid.spatial_info().row_axis(), {10, 0, 0}));
+    REQUIRE(Xyz::are_equal(grid.spatial_info().vertical_axis(), {0, 0, 1}));
     REQUIRE(crs.code == 25833);
     REQUIRE(crs.type == GridLib::CrsType::PROJECTED);
     REQUIRE(crs.library == GridLib::CrsLibrary::EPSG);

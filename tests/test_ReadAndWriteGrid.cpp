@@ -19,7 +19,7 @@ TEST_CASE("Test write_json_grid and read_grid")
     auto array = grid.values().array();
     std::iota(array.begin(), array.end(), 0.f);
     grid.set_tie_point({2, 3});
-    auto& model = grid.model();
+    auto& model = grid.spatial_info();
     model.crs = {
         3000, 1000,
         GridLib::CrsType::PROJECTED, GridLib::CrsLibrary::EPSG,

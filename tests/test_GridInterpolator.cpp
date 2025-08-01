@@ -38,7 +38,7 @@ TEST_CASE("GridInterpolator::at_grid_pos with missing elevation")
 {
     Chorasmia::Array2D<float> values({-1, 4, 3, -999, 1, -4}, 2, 3);
     GridLib::Grid grid(std::move(values));
-    grid.model().unknown_elevation = -999.f;
+    grid.spatial_info().unknown_elevation = -999.f;
     GridLib::GridInterpolator interpolator(grid);
 
     check_grid_pos(interpolator, {0, 0}, {0, 0, -1});
@@ -69,7 +69,7 @@ TEST_CASE("GridInterpolator::at_grid_pos with only left and top edges")
 {
     Chorasmia::Array2D<float> values({-1, 4, 3, -999}, 2, 2);
     GridLib::Grid grid(std::move(values));
-    grid.model().unknown_elevation = -999.f;
+    grid.spatial_info().unknown_elevation = -999.f;
     GridLib::GridInterpolator interpolator(grid);
 
     check_grid_pos(interpolator, {0, 0}, {0, 0, -1});
@@ -88,7 +88,7 @@ TEST_CASE("GridInterpolator::at_model_pos")
 {
     Chorasmia::Array2D<float> values({0, 10, 30, 40}, 2, 2);
     GridLib::Grid grid(std::move(values));
-    auto& model = grid.model();
+    auto& model = grid.spatial_info();
     model.set_column_axis({0, -10, 0});
     model.set_row_axis({10, 0, 0});
     model.set_vertical_axis({0, 0, 0.25});

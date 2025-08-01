@@ -181,8 +181,8 @@ namespace GridLib
     Chorasmia::Index2DMode
     get_index_mode_for_top_left_origin(const IGrid& grid)
     {
-        auto rv = grid.spatial_data().row_axis();
-        auto cv = grid.spatial_data().column_axis();
+        auto rv = grid.spatial_info().row_axis();
+        auto cv = grid.spatial_info().column_axis();
         const auto r_dir = get_cardinal_direction(Xyz::Vector2D(rv[0], rv[1]));
         const auto c_dir = get_cardinal_direction(Xyz::Vector2D(cv[0], cv[1]));
         return get_index_2d_mode(r_dir, c_dir,

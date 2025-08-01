@@ -23,7 +23,7 @@ namespace GridLib
     std::pair<float, float> get_min_max_elevation(const IGrid& grid)
     {
         const auto elevations = grid.values();
-        const auto no_value = grid.spatial_data().unknown_elevation;
+        const auto no_value = grid.spatial_info().unknown_elevation;
         auto min = FLT_MAX, max = FLT_TRUE_MIN;
         for (const auto row : elevations)
         {
@@ -46,7 +46,7 @@ namespace GridLib
 
     bool is_elevation_grid(const IGrid& grid)
     {
-        const auto& m = grid.spatial_data();
+        const auto& m = grid.spatial_info();
         return m.row_axis()[2] <= Xyz::Margin<double>::DEFAULT
                && m.column_axis()[2] <= Xyz::Margin<double>::DEFAULT;
     }
@@ -80,7 +80,7 @@ namespace GridLib
         const auto origin = transformer.grid_to_model({0, 0});
         const auto rows = grid.row_count();
         const auto cols = grid.col_count();
-        const auto& m = grid.spatial_data();
+        const auto& m = grid.spatial_info();
         const auto col_vec = double(rows - 1) * m.column_axis();
         const auto row_vec = double(cols - 1) * m.row_axis();
         return {origin, col_vec, row_vec};

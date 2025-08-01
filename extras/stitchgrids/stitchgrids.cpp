@@ -69,8 +69,8 @@ void sort_grids(std::vector<GridLib::Grid>& grids)
 {
     std::ranges::sort(grids, [](const auto& a, const auto& b)
     {
-        const auto& apc = a.spatial_data().location();
-        const auto& bpc = b.spatial_data().location();
+        const auto& apc = a.spatial_info().location();
+        const auto& bpc = b.spatial_info().location();
         if (apc[1] != bpc[1])
             return apc[1] > bpc[1];
         return apc[0] < bpc[0];
@@ -103,7 +103,7 @@ read_grids(const std::vector<std::filesystem::path>& filenames)
     {
         if (auto grid = GridLib::read_grid(filename); !grid.values().empty())
         {
-            if (grid.model().location() != Xyz::Vector3D())
+            if (grid.spatial_info().location() != Xyz::Vector3D())
             {
                 grids.push_back(grid);
             }
@@ -236,7 +236,7 @@ int main(int argc, char* argv[])
 
         GridLib::Grid result(rows, cols);
         result.set_tie_point(grids[0].tie_point());
-        result.model() = grids[0].model();
+        result.spatial_info() = grids[0].spatial_info();
         auto result_values = result.values();
         for (const auto& [grid, pos] : insertion_points)
         {

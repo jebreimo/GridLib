@@ -73,7 +73,7 @@ namespace GridLib
         auto crs = get_crs(a);
         auto z = a.vertical_datum_shift.value_or(0);
 
-        auto& model = grid.model();
+        auto& model = grid.spatial_info();
 
         std::vector<SpatialTiePoint> spatial_ties;
         if (a.longitude && a.latitude)

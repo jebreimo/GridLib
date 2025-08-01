@@ -74,14 +74,14 @@ namespace GridLib
         tie_point_ = value;
     }
 
-    const SpatialData& Grid::spatial_data() const
+    const SpatialInfo& Grid::spatial_info() const
     {
-        return spatial_data_;
+        return spatial_info_;
     }
 
-    SpatialData& Grid::model()
+    SpatialInfo& Grid::spatial_info()
     {
-        return spatial_data_;
+        return spatial_info_;
     }
 
     std::vector<SpatialTiePoint> Grid::spatial_tie_points() const
@@ -111,7 +111,7 @@ namespace GridLib
             return true;
         return a.values() == b.values()
                && a.tie_point() == b.tie_point()
-               && a.spatial_data() == b.spatial_data()
+               && a.spatial_info() == b.spatial_info()
                && a.spatial_tie_points() == b.spatial_tie_points();
     }
 

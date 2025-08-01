@@ -13,7 +13,7 @@ TEST_CASE("test get_min_max_elevation")
 {
     Chorasmia::Array2D<float> values({-999, -1, 4, 3, 1, -4}, 2, 3);
     GridLib::Grid grid(std::move(values));
-    grid.model().unknown_elevation = -999.f;
+    grid.spatial_info().unknown_elevation = -999.f;
     auto [min, max] = get_min_max_elevation(grid);
     REQUIRE(min == -4);
     REQUIRE(max == 4);
@@ -23,7 +23,7 @@ TEST_CASE("test get_bounding_rect")
 {
     Chorasmia::Array2D<float> values({-999, -1, 4, 3, 1, -4}, 2, 3);
     GridLib::Grid grid(std::move(values));
-    auto& model = grid.model();
+    auto& model = grid.spatial_info();
     model.set_location({500000, 6000000, 0});
     model.horizontal_unit = GridLib::Unit::METER;
     model.vertical_unit = GridLib::Unit::METER;

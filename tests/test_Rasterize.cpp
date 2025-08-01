@@ -17,7 +17,7 @@ TEST_CASE("Test get_index_mode_for_top_left_origin")
     auto grid = [](const Xyz::Vector2D& r, const Xyz::Vector2D& c)
     {
         GridLib::Grid grid(1, 1);
-        auto& model = grid.model();
+        auto& model = grid.spatial_info();
         model.set_row_axis(Xyz::make_vector3(r, 0.0));
         model.set_column_axis(Xyz::make_vector3(c, 0.0));
         model.horizontal_unit = GridLib::Unit::METER;

@@ -33,7 +33,7 @@ namespace GridLib
         const Xyz::Vector2D& tie_point() const override;
 
         [[nodiscard]]
-        const SpatialData& spatial_data() const override;
+        const SpatialInfo& spatial_info() const override;
 
         [[nodiscard]]
         std::vector<SpatialTiePoint> spatial_tie_points() const override;

@@ -72,7 +72,7 @@ TEST_CASE("Profile with transformation")
                                     },
                                     3, 3);
     GridLib::Grid grid(array);
-    auto& model = grid.model();
+    auto& model = grid.spatial_info();
     model.set_location({500.0, 1000.0, 0});
     model.horizontal_unit = GridLib::Unit::METER;
     model.vertical_unit = GridLib::Unit::METER;
