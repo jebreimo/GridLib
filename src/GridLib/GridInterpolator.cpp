@@ -36,19 +36,18 @@ namespace GridLib
             };
         }
 
-        bool has_unknown_value(const Xyz::Vector4F& values,
-                               const std::optional<float>& unknown)
+        bool has_unknown_value(const Xyz::Vector4F& values)
         {
-            return unknown
-                   && (values[0] == *unknown || values[1] == *unknown
-                       || values[2] == *unknown || values[3] == *unknown);
+            return values[0] == UNKNOWN_ELEVATION
+                   || values[1] == UNKNOWN_ELEVATION
+                   || values[2] == UNKNOWN_ELEVATION
+                   || values[3] == UNKNOWN_ELEVATION;
         }
 
         std::optional<float>
         get_edge_elevation(const Xyz::Vector4F& values,
                            const Xyz::Vector2D& grid_pos,
-                           const Xyz::Vector<size_t, 2>& cell,
-                           const std::optional<float>& unknown)
+                           const Xyz::Vector<size_t, 2>& cell)
         {
             double ri;
             const auto rf = std::modf(grid_pos[0], &ri);
@@ -61,20 +60,23 @@ namespace GridLib
             if (rf == 0 && cf == 0)
             {
                 auto v = values[r + c * 2];
-                if (v == *unknown)
+                if (v == UNKNOWN_ELEVATION)
                     return {};
                 return v;
             }
 
-            if (rf == 0)
+            if (rf == 0
+                && values[r] != UNKNOWN_ELEVATION
+                && values[2 + r] != UNKNOWN_ELEVATION)
             {
-                if (values[r] != *unknown && values[2 + r] != *unknown)
-                    return std::lerp(values[r], values[2 + r], float(cf));
+                return std::lerp(values[r], values[2 + r], float(cf));
             }
-            else if (cf == 0)
+
+            if (cf == 0
+                && values[2 * c] != UNKNOWN_ELEVATION
+                && values[2 * c + 1] != UNKNOWN_ELEVATION)
             {
-                if (values[2 * c] != *unknown && values[2 * c + 1] != *unknown)
-                    return std::lerp(values[2 * c], values[2 * c + 1], float(rf));
+                return std::lerp(values[2 * c], values[2 * c + 1], float(rf));
             }
 
             return {};
@@ -89,9 +91,8 @@ namespace GridLib
                 return {};
 
             const auto cell_values = get_grid_cell_values(values, *cell);
-            const auto& unknown = grid.spatial_info().unknown_elevation;
-            if (has_unknown_value(cell_values, unknown))
-                return get_edge_elevation(cell_values, grid_pos, *cell, unknown);
+            if (has_unknown_value(cell_values))
+                return get_edge_elevation(cell_values, grid_pos, *cell);
 
             const auto p1 = Xyz::vector_cast<double>(*cell);
             const auto p2 = p1 + Xyz::Vector2D(1, 1);

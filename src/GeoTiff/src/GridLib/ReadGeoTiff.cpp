@@ -17,6 +17,15 @@ namespace GridLib
 {
     namespace
     {
+        void replace_nans(Grid& grid, float value)
+        {
+            for (auto row : grid.values())
+            {
+                std::ranges::replace_if(row,
+                                        [](float f) { return isnan(f); }, value);
+            }
+        }
+
         Unit get_horizontal_unit(const Yimage::GeoTiffMetadata& metadata)
         {
             if (metadata.projected_linear_units)
@@ -98,6 +107,8 @@ namespace GridLib
                 const auto dst = result.values()[i];
                 std::copy(elevations.begin(), elevations.end(), dst.begin());
             }
+
+            replace_nans(result, UNKNOWN_ELEVATION);
 
             const auto tie_point = get_tie_point(*metadata);
             result.set_tie_point(get_tie_point(*metadata));

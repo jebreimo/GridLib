@@ -12,18 +12,6 @@
 
 namespace GridLib
 {
-    namespace
-    {
-        void replace_nans(std::vector<float>& values, float value)
-        {
-            for (auto& v : values)
-            {
-                if (std::isnan(v))
-                    v = value;
-            }
-        }
-    }
-
     Grid GridBuilder::build()
     {
         if (Xyz::get_length(model.row_axis()) == 0.0)
@@ -38,8 +26,6 @@ namespace GridLib
         try
         {
             auto vals = std::move(values);
-            if (model.unknown_elevation && !std::isnan(*model.unknown_elevation))
-                replace_nans(vals, *model.unknown_elevation);
 
             auto grid = vals.empty()
                             ? Grid(Chorasmia::Array2D<float>(row_count, col_count))

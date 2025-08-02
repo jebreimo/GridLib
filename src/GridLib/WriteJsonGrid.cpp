@@ -75,8 +75,6 @@ namespace GridLib
 
         writer.key("horizontal_unit").value(to_string(model.horizontal_unit));
         writer.key("vertical_unit").value(to_string(model.vertical_unit));
-        if (model.unknown_elevation)
-            writer.key("unknown_elevation").value(*model.unknown_elevation);
 
         writer.key("crs");
         write_json(writer, model.crs);
@@ -106,9 +104,9 @@ namespace GridLib
         }
         writer.endObject();
     }
+
     void write_json(Yson::Writer& writer,
-                    const Chorasmia::ArrayView2D<float>& values,
-                    std::optional<float> null_value)
+                    const Chorasmia::ArrayView2D<float>& values)
     {
         writer.beginArray();
         for (const auto& row : values)
@@ -119,7 +117,7 @@ namespace GridLib
             });
             for (const auto& value : row)
             {
-                if (!null_value || value != *null_value)
+                if (value != UNKNOWN_ELEVATION)
                     writer.value(value);
                 else
                     writer.null();
@@ -141,7 +139,7 @@ namespace GridLib
         writer.key("spatial_tie_points");
         write_json(writer, grid.spatial_tie_points());
         writer.key("elevations");
-        write_json(writer, grid.values(), grid.spatial_info().unknown_elevation);
+        write_json(writer, grid.values());
         writer.endObject();
     }
 

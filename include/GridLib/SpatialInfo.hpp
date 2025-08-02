@@ -23,8 +23,6 @@ namespace GridLib
 
         Crs crs;
 
-        std::optional<float> unknown_elevation;
-
         std::vector<std::pair<std::string, std::string>> information;
 
         [[nodiscard]] Xyz::Vector3D location() const;

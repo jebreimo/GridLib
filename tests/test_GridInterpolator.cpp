@@ -13,6 +13,8 @@
 
 namespace
 {
+    constexpr auto UNK = GridLib::UNKNOWN_ELEVATION;
+
     void check_grid_pos(const GridLib::GridInterpolator& interpolator,
                         const Xyz::Vector2D& pos,
                         const Xyz::Vector3D& expected)
@@ -24,8 +26,8 @@ namespace
     }
 
     void check_model_pos(const GridLib::GridInterpolator& interpolator,
-                        const Xyz::Vector3D& pos,
-                        const Xyz::Vector3D& expected)
+                         const Xyz::Vector3D& pos,
+                         const Xyz::Vector3D& expected)
     {
         CAPTURE(pos);
         const auto result = interpolator.at_model_pos(pos);
@@ -36,9 +38,8 @@ namespace
 
 TEST_CASE("GridInterpolator::at_grid_pos with missing elevation")
 {
-    Chorasmia::Array2D<float> values({-1, 4, 3, -999, 1, -4}, 2, 3);
+    Chorasmia::Array2D<float> values({-1, 4, 3, UNK, 1, -4}, 2, 3);
     GridLib::Grid grid(std::move(values));
-    grid.spatial_info().unknown_elevation = -999.f;
     GridLib::GridInterpolator interpolator(grid);
 
     check_grid_pos(interpolator, {0, 0}, {0, 0, -1});
@@ -67,9 +68,8 @@ TEST_CASE("GridInterpolator::at_grid_pos with missing elevation")
 
 TEST_CASE("GridInterpolator::at_grid_pos with only left and top edges")
 {
-    Chorasmia::Array2D<float> values({-1, 4, 3, -999}, 2, 2);
+    Chorasmia::Array2D<float> values({-1, 4, 3, UNK}, 2, 2);
     GridLib::Grid grid(std::move(values));
-    grid.spatial_info().unknown_elevation = -999.f;
     GridLib::GridInterpolator interpolator(grid);
 
     check_grid_pos(interpolator, {0, 0}, {0, 0, -1});

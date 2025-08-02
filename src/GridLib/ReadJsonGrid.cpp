@@ -140,7 +140,7 @@ namespace GridLib
             for (Yson::ArrayIterator col_it(reader); col_it.next();)
             {
                 if (reader.readNull())
-                    result.push_back(NAN);
+                    result.push_back(UNKNOWN_ELEVATION);
                 else
                     result.push_back(read<float>(reader));
             }

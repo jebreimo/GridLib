@@ -35,4 +35,6 @@ namespace GridLib
     constexpr double WEST = 1.5707963267948966;
     constexpr double SOUTH = 3.141592653589793;
     constexpr double EAST = 4.71238898038469;
+
+    constexpr float UNKNOWN_ELEVATION = -1.0e9f;
 }

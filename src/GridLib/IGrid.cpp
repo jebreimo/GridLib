@@ -23,13 +23,12 @@ namespace GridLib
     std::pair<float, float> get_min_max_elevation(const IGrid& grid)
     {
         const auto elevations = grid.values();
-        const auto no_value = grid.spatial_info().unknown_elevation;
         auto min = FLT_MAX, max = FLT_TRUE_MIN;
         for (const auto row : elevations)
         {
             for (const auto value : row)
             {
-                if (no_value && value == *no_value)
+                if (value == UNKNOWN_ELEVATION)
                     continue;
                 if (value < min)
                     min = value;

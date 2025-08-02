@@ -18,6 +18,16 @@ namespace GridLib
     constexpr float METERS_PER_FOOT = 0.3048;
     constexpr int16_t UNKNOWN = -32767;
 
+    float to_float(double value)
+    {
+        if (value > std::numeric_limits<float>::max() ||
+            value < -std::numeric_limits<float>::max())
+        {
+            GRIDLIB_THROW("Value out of range: " + std::to_string(value));
+        }
+        return static_cast<float>(value);
+    }
+
     Unit from_dem_unit(int16_t unit)
     {
         switch (unit)
@@ -54,7 +64,7 @@ namespace GridLib
         if (ref_sys == 1)
         {
             int zone = a.ref_sys_zone.value_or(0);
-            // Assuming northern hemisphere
+            // Assuming Northern Hemisphere
             return {32600 + zone, v, CrsType::PROJECTED, CrsLibrary::EPSG};
         }
 
@@ -125,7 +135,7 @@ namespace GridLib
         double r_res = a.y_resolution.value_or(1.0);
 
         auto v_unit = from_dem_unit(a.vertical_unit.value_or(0));
-        double v_res = a.z_resolution.value_or(1.0);
+        float v_res = to_float(a.z_resolution.value_or(1.0));
 
         auto rot = a.rotation_angle.value_or(0);
         auto row_axis = rotate(Xyz::Vector2D(0.0, r_res), rot);
@@ -135,7 +145,6 @@ namespace GridLib
         model.set_vertical_axis({0, 0, v_res});
         model.crs = crs;
 
-        model.unknown_elevation = UNKNOWN;
         model.horizontal_unit = h_unit;
         model.vertical_unit = v_unit;
 
@@ -156,7 +165,10 @@ namespace GridLib
                 for (int j = 0; j < b->rows; ++j)
                 {
                     auto elev = b->elevations[i * b->rows + j];
-                    values(i + b->column - 1, j + b->row - 1) = float(elev) * v_res;
+                    float value = elev == UNKNOWN
+                                      ? UNKNOWN_ELEVATION
+                                      : float(elev) * v_res;
+                    values(i + b->column - 1, j + b->row - 1) = value;
                 }
             }
         }
