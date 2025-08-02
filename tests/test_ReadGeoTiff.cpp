@@ -14,8 +14,7 @@ TEST_CASE("Read GeoTIFF file")
 {
     auto grid = GridLib::read_grid(GEOTIFF_FILE.data(), GEOTIFF_FILE.size(),
                                    GridLib::GridFileType::GEOTIFF);
-    REQUIRE(grid.row_count() == 60);
-    REQUIRE(grid.col_count() == 80);
+    REQUIRE(grid.size() == GridLib::Size(60, 80));
     REQUIRE(grid.spatial_info().horizontal_unit == GridLib::Unit::METER);
     const auto& crs = grid.spatial_info().crs;
     REQUIRE(Xyz::are_equal(grid.spatial_info().column_axis(), {0, -10, 0}));

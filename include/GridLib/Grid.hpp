@@ -18,7 +18,7 @@ namespace GridLib
     public:
         Grid();
 
-        Grid(size_t rows, size_t columns);
+        explicit Grid(const Size& size);
 
         explicit Grid(Chorasmia::Array2D<float> values);
 
@@ -31,12 +31,9 @@ namespace GridLib
         GridView view() const;
 
         [[nodiscard]]
-        size_t row_count() const override;
+        Size size() const override;
 
-        [[nodiscard]]
-        size_t col_count() const override;
-
-        void resize(size_t rows, size_t columns);
+        void resize(const Size& size);
 
         [[nodiscard]]
         Chorasmia::ArrayView2D<float> values() const override;
@@ -61,8 +58,7 @@ namespace GridLib
         void set_spatial_tie_points(std::vector<SpatialTiePoint> value);
 
         [[nodiscard]]
-        GridView subgrid(size_t row, size_t column,
-                         size_t n_rows, size_t n_cols) const override;
+        GridView subgrid(const Index& index, const Size& size) const override;
 
         [[nodiscard]]
         Chorasmia::Array2D<float> release();

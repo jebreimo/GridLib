@@ -14,8 +14,8 @@ namespace GridLib
     {
     }
 
-    Grid::Grid(size_t rows, size_t columns)
-        : Grid(Chorasmia::Array2D<float>(rows, columns))
+    Grid::Grid(const Size& size)
+        : Grid(Chorasmia::Array2D<float>(size.rows, size.cols))
     {
     }
 
@@ -39,19 +39,14 @@ namespace GridLib
         return GridView(*this);
     }
 
-    size_t Grid::row_count() const
+    Size Grid::size() const
     {
-        return grid_.row_count();
+        return {grid_.row_count(), grid_.col_count()};
     }
 
-    size_t Grid::col_count() const
+    void Grid::resize(const Size& size)
     {
-        return grid_.col_count();
-    }
-
-    void Grid::resize(size_t rows, size_t columns)
-    {
-        grid_.resize(rows, columns);
+        grid_.resize(size.rows, size.cols);
     }
 
     Chorasmia::ArrayView2D<float> Grid::values() const
@@ -94,10 +89,9 @@ namespace GridLib
         spatial_tie_points_ = std::move(value);
     }
 
-    GridView Grid::subgrid(size_t row, size_t column,
-                           size_t n_rows, size_t n_cols) const
+    GridView Grid::subgrid(const Index& index, const Size& size) const
     {
-        return GridView(*this).subgrid(row, column, n_rows, n_cols);
+        return GridView(*this).subgrid(index, size);
     }
 
     Chorasmia::Array2D<float> Grid::release()

@@ -15,7 +15,7 @@
 TEST_CASE("Test write_json_grid and read_grid")
 {
     GridLib::Grid grid;
-    grid.resize(6, 8);
+    grid.resize({6, 8});
     auto array = grid.values().array();
     std::iota(array.begin(), array.end(), 0.f);
     grid.set_tie_point({2, 3});

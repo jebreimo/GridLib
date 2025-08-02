@@ -12,7 +12,7 @@
 
 TEST_CASE("PositionTransformer: Origin in top left corner")
 {
-    GridLib::Grid grid(10, 10);
+    GridLib::Grid grid(GridLib::Size(10, 10));
     auto& model = grid.spatial_info();
     model.set_column_axis({0, -10, 0});
     model.set_row_axis({10, 0, 0});
@@ -33,7 +33,7 @@ TEST_CASE("PositionTransformer: Origin in top left corner")
 
 TEST_CASE("PositionTransformer: Offset tie-point")
 {
-    GridLib::Grid grid(10, 10);
+    GridLib::Grid grid(GridLib::Size(10, 10));
     grid.set_tie_point({4.5, 3});
 
     const GridLib::PositionTransformer transformer(grid);

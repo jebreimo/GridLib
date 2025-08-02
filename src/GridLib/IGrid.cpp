@@ -15,9 +15,9 @@
 
 namespace GridLib
 {
-    GridView IGrid::subgrid(size_t row, size_t column) const
+    GridView IGrid::subgrid(const Index& index) const
     {
-        return subgrid(row, column, SIZE_MAX, SIZE_MAX);
+        return subgrid(index, {SIZE_MAX, SIZE_MAX});
     }
 
     std::pair<float, float> get_min_max_elevation(const IGrid& grid)
@@ -77,8 +77,7 @@ namespace GridLib
 
         const PositionTransformer transformer(grid);
         const auto origin = transformer.grid_to_model({0, 0});
-        const auto rows = grid.row_count();
-        const auto cols = grid.col_count();
+        const auto [rows, cols] = grid.size();
         const auto& m = grid.spatial_info();
         const auto col_vec = double(rows - 1) * m.column_axis();
         const auto row_vec = double(cols - 1) * m.row_axis();

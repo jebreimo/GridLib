@@ -29,14 +29,9 @@ namespace GridLib
     {
     }
 
-    size_t GridView::row_count() const
+    Size GridView::size() const
     {
-        return elevations_.row_count();
-    }
-
-    size_t GridView::col_count() const
-    {
-        return elevations_.col_count();
+        return {elevations_.row_count(), elevations_.col_count()};
     }
 
     Chorasmia::ArrayView2D<float> GridView::values() const
@@ -80,10 +75,11 @@ namespace GridLib
         return grid_;
     }
 
-    GridView GridView::subgrid(size_t row, size_t column,
-                               size_t n_rows, size_t n_cols) const
+    GridView GridView::subgrid(const Index& index, const Size& size) const
     {
         assert_grid();
+        auto [row, column] = index;
+        auto [n_rows, n_cols] = size;
         return {
             *grid_,
             elevations_.subarray(row, column, n_rows, n_cols),

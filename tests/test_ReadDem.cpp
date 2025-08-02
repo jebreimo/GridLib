@@ -14,8 +14,7 @@ TEST_CASE("Read DEM file")
 {
     auto grid = GridLib::read_grid(DEM_FILE.data(), DEM_FILE.size(),
                                    GridLib::GridFileType::DEM);
-    REQUIRE(grid.row_count() == 370);
-    REQUIRE(grid.col_count() == 313);
+    REQUIRE(grid.size() == GridLib::Size(370, 313));
     REQUIRE(grid.spatial_info().horizontal_unit == GridLib::Unit::METER);
     REQUIRE(grid.spatial_info().vertical_unit == GridLib::Unit::METER);
     REQUIRE(grid.spatial_tie_points().size() == 4);

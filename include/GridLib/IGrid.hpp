@@ -9,6 +9,7 @@
 #include <Chorasmia/ArrayView2D.hpp>
 #include <Xyz/Pgram3.hpp>
 #include "GridLib/SpatialInfo.hpp"
+#include "GridLib/Index.hpp"
 
 namespace GridLib
 {
@@ -20,10 +21,7 @@ namespace GridLib
         virtual ~IGrid() = default;
 
         [[nodiscard]]
-        virtual size_t row_count() const = 0;
-
-        [[nodiscard]]
-        virtual size_t col_count() const = 0;
+        virtual Size size() const = 0;
 
         [[nodiscard]]
         virtual const Xyz::Vector2D& tie_point() const = 0;
@@ -38,11 +36,11 @@ namespace GridLib
         virtual Chorasmia::ArrayView2D<float> values() const = 0;
 
         [[nodiscard]]
-        GridView subgrid(size_t row, size_t column) const;
+        GridView subgrid(const Index& index) const;
 
         [[nodiscard]]
-        virtual GridView subgrid(size_t row, size_t column,
-                                 size_t n_rows, size_t n_cols) const = 0;
+        virtual GridView subgrid(const Index& index,
+                                 const Size& size) const = 0;
     };
 
     [[nodiscard]]

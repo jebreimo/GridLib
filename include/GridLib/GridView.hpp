@@ -24,10 +24,7 @@ namespace GridLib
                  const Xyz::Vector2D& model_tie_point = {}) noexcept;
 
         [[nodiscard]]
-        size_t row_count() const override;
-
-        [[nodiscard]]
-        size_t col_count() const override;
+        Size size() const override;
 
         [[nodiscard]]
         const Xyz::Vector2D& tie_point() const override;
@@ -45,8 +42,7 @@ namespace GridLib
         const Grid* base_grid() const;
 
         [[nodiscard]]
-        GridView subgrid(size_t row, size_t column,
-                         size_t n_rows, size_t n_cols) const override;
+        GridView subgrid(const Index& index, const Size& size) const override;
 
     private:
         void assert_grid() const;

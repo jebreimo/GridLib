@@ -130,8 +130,9 @@ namespace GridLib
     void write_json(Yson::Writer& writer, const IGrid& grid)
     {
         writer.beginObject();
-        writer.key("row_count").value(uint64_t(grid.row_count()));
-        writer.key("column_count").value(uint64_t(grid.col_count()));
+        auto [rows, cols] = grid.size();
+        writer.key("row_count").value(uint64_t(rows));
+        writer.key("column_count").value(uint64_t(cols));
         writer.key("model_tie_point");
         write_json(writer, grid.tie_point());
         writer.key("model");
