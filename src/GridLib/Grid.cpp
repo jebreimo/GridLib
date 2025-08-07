@@ -9,29 +9,27 @@
 
 namespace GridLib
 {
-    Grid::Grid()
-        : Grid(Chorasmia::Array2D<float>())
-    {
-    }
+    Grid::Grid() = default;
 
     Grid::Grid(const Size& size)
-        : Grid(Chorasmia::Array2D<float>(size.rows, size.cols))
+        : values_(size.rows, size.cols)
     {
+        values_.fill(UNKNOWN_ELEVATION);
     }
 
     Grid::Grid(Chorasmia::Array2D<float> values)
-        : grid_(std::move(values))
+        : values_(std::move(values))
     {
     }
 
     void Grid::clear()
     {
-        grid_.fill(0);
+        values_.fill(UNKNOWN_ELEVATION);
     }
 
     bool Grid::empty() const
     {
-        return grid_.empty();
+        return values_.empty();
     }
 
     GridView Grid::view() const
@@ -41,22 +39,25 @@ namespace GridLib
 
     Size Grid::size() const
     {
-        return {grid_.row_count(), grid_.col_count()};
+        return {
+            static_cast<int64_t>(values_.row_count()),
+            static_cast<int64_t>(values_.col_count())
+        };
     }
 
     void Grid::resize(const Size& size)
     {
-        grid_.resize(size.rows, size.cols);
+        values_.resize(size.rows, size.cols);
     }
 
     Chorasmia::ArrayView2D<float> Grid::values() const
     {
-        return grid_.view();
+        return values_.view();
     }
 
     Chorasmia::MutableArrayView2D<float> Grid::values()
     {
-        return {grid_.data(), grid_.row_count(), grid_.col_count()};
+        return {values_.data(), values_.row_count(), values_.col_count()};
     }
 
     const Xyz::Vector2D& Grid::tie_point() const
@@ -96,7 +97,7 @@ namespace GridLib
 
     Chorasmia::Array2D<float> Grid::release()
     {
-        return std::move(grid_);
+        return std::move(values_);
     }
 
     bool operator==(const Grid& a, const Grid& b)

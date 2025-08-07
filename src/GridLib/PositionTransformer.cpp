@@ -13,22 +13,27 @@
 namespace GridLib
 {
     PositionTransformer::PositionTransformer(const IGrid& grid)
-        : grid(grid),
-          cs(grid.spatial_info().matrix * Xyz::affine::translate3(make_vector3(-grid.tie_point(), 0.0)))
+        : PositionTransformer(grid.spatial_info().matrix, grid.tie_point())
     {
     }
 
-    Xyz::Vector2D PositionTransformer::model_to_grid(const Xyz::Vector3D& pos) const
+    PositionTransformer::PositionTransformer(const Xyz::Matrix4D& matrix,
+        const Xyz::Vector2D& tie_point)
+            : cs(matrix * Xyz::affine::translate3(make_vector3(-tie_point, 0.0)))
+    {
+    }
+
+    Xyz::Vector2D PositionTransformer::world_to_grid(const Xyz::Vector3D& pos) const
     {
         return cs.to_cs_xy(pos);
     }
 
-    Xyz::Vector3D PositionTransformer::grid_to_model(const Xyz::Vector2D& pos) const
+    Xyz::Vector3D PositionTransformer::grid_to_world(const Xyz::Vector2D& pos) const
     {
         return cs.from_cs_xy(pos);
     }
 
-    Xyz::Vector3D PositionTransformer::grid_to_model(const Xyz::Vector3D& pos) const
+    Xyz::Vector3D PositionTransformer::grid_to_world(const Xyz::Vector3D& pos) const
     {
         return cs.from_cs(pos);
     }

@@ -12,26 +12,23 @@
 
 namespace GridLib
 {
-    namespace
+    void write_json(Yson::Writer& writer, const Xyz::Vector2D& vec)
     {
-        void write_json(Yson::Writer& writer, const Xyz::Vector2D& vec)
-        {
-            using namespace Yson;
-            writer.beginArray(JsonParameters(JsonFormatting::FLAT))
-                .value(vec[0])
-                .value(vec[1])
-                .endArray();
-        }
+        using namespace Yson;
+        writer.beginArray(JsonParameters(JsonFormatting::FLAT))
+            .value(vec[0])
+            .value(vec[1])
+            .endArray();
+    }
 
-        void write_json(Yson::Writer& writer, const Xyz::Vector3D& vec)
-        {
-            using namespace Yson;
-            writer.beginArray(JsonParameters(JsonFormatting::FLAT))
-                .value(vec[0])
-                .value(vec[1])
-                .value(vec[2])
-                .endArray();
-        }
+    void write_json(Yson::Writer& writer, const Xyz::Vector3D& vec)
+    {
+        using namespace Yson;
+        writer.beginArray(JsonParameters(JsonFormatting::FLAT))
+            .value(vec[0])
+            .value(vec[1])
+            .value(vec[2])
+            .endArray();
     }
 
     void write_json(Yson::Writer& writer, const Crs& crs)

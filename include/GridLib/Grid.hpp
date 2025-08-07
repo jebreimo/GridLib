@@ -63,7 +63,7 @@ namespace GridLib
         [[nodiscard]]
         Chorasmia::Array2D<float> release();
     private:
-        Chorasmia::Array2D<float> grid_;
+        Chorasmia::Array2D<float> values_;
         SpatialInfo spatial_info_;
         Xyz::Vector2D tie_point_;
         std::vector<SpatialTiePoint> spatial_tie_points_;

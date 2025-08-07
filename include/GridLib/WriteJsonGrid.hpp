@@ -15,6 +15,12 @@ namespace Yson
 
 namespace GridLib
 {
+    void write_json(Yson::Writer& writer, const Xyz::Vector2D& vec);
+
+    void write_json(Yson::Writer& writer, const Xyz::Vector3D& vec);
+
+    void write_json(Yson::Writer& writer, const SpatialInfo& model);
+
     void write_json(std::ostream& stream, const IGrid& grid);
 
     void write_json(const std::string& file_name, const IGrid& grid);

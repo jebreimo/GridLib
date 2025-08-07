@@ -12,8 +12,8 @@ namespace GridLib
 {
     struct Index
     {
-        size_t row = 0;
-        size_t col = 0;
+        int64_t row = 0;
+        int64_t col = 0;
     };
 
     inline bool operator==(const Index& a, const Index& b)

@@ -21,13 +21,13 @@ TEST_CASE("PositionTransformer: Origin in top left corner")
 
     const GridLib::PositionTransformer transformer(grid);
 
-    auto p3 = transformer.grid_to_model({1, 2});
+    auto p3 = transformer.grid_to_world({1, 2});
     REQUIRE(p3 == Xyz::Vector3D(10'020, 99'990, 150));
 
-    p3 = transformer.grid_to_model({1, 2, 200});
+    p3 = transformer.grid_to_world({1, 2, 200});
     REQUIRE(p3 == Xyz::Vector3D(10'020, 99'990, 350));
 
-    auto p2 = transformer.model_to_grid({10'035, 99'935, 200});
+    auto p2 = transformer.world_to_grid({10'035, 99'935, 200});
     REQUIRE(p2 == Xyz::Vector2D(6.5, 3.5));
 }
 
@@ -38,12 +38,12 @@ TEST_CASE("PositionTransformer: Offset tie-point")
 
     const GridLib::PositionTransformer transformer(grid);
 
-    auto p3 = transformer.grid_to_model({1, 2});
+    auto p3 = transformer.grid_to_world({1, 2});
     REQUIRE(p3 == Xyz::Vector3D(-3.5, -1, 0));
 
-    p3 = transformer.grid_to_model({1, 2, 200});
+    p3 = transformer.grid_to_world({1, 2, 200});
     REQUIRE(p3 == Xyz::Vector3D(-3.5, -1, 200));
 
-    auto p2 = transformer.model_to_grid({6, 6, 100});
+    auto p2 = transformer.world_to_grid({6, 6, 100});
     REQUIRE(p2 == Xyz::Vector2D(10.5, 9));
 }

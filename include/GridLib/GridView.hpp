@@ -48,7 +48,7 @@ namespace GridLib
         void assert_grid() const;
 
         const Grid* grid_ = nullptr;
-        Chorasmia::ArrayView2D<float> elevations_;
+        Chorasmia::ArrayView2D<float> values_;
         Xyz::Vector2D model_tie_point_;
     };
 }

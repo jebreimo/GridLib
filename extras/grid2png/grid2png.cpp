@@ -35,9 +35,9 @@ void make_tiles(const GridLib::GridView& grid,
     auto extension = path.extension().string();
     auto prefix = path.replace_extension().string();
     auto index_mode = GridLib::get_index_mode_for_top_left_origin(grid);
-    for (size_t i = 0; i < grid.row_count(); i += rows)
+    for (size_t i = 0; i < grid.size().rows; i += rows)
     {
-        for (size_t j = 0; j < grid.col_count(); j += cols)
+        for (size_t j = 0; j < grid.size().cols; j += cols)
         {
             make_png(fmt::format("{}_{:04}_{:04}{}",
                                  prefix, i, j, extension),
@@ -72,8 +72,9 @@ int main(int argc, char* argv[])
     try
     {
         auto grid = GridLib::read_grid(in_file_name);
-        size[0] = std::min(size[0], unsigned(grid.row_count()));
-        size[1] = std::min(size[1], unsigned(grid.col_count()));
+        auto [rows, cols] = grid.size();
+        size[0] = std::min(size[0], unsigned(rows));
+        size[1] = std::min(size[1], unsigned(cols));
         std::cout << "\n";
         if (args.has("-p"))
         {

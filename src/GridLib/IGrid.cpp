@@ -17,7 +17,7 @@ namespace GridLib
 {
     GridView IGrid::subgrid(const Index& index) const
     {
-        return subgrid(index, {SIZE_MAX, SIZE_MAX});
+        return subgrid(index, {INT64_MAX, INT64_MAX});
     }
 
     std::pair<float, float> get_min_max_elevation(const IGrid& grid)
@@ -76,7 +76,7 @@ namespace GridLib
             GRIDLIB_THROW("Can not calculate bounding rectangle for non-planar grid.");
 
         const PositionTransformer transformer(grid);
-        const auto origin = transformer.grid_to_model({0, 0});
+        const auto origin = transformer.grid_to_world({0, 0});
         const auto [rows, cols] = grid.size();
         const auto& m = grid.spatial_info();
         const auto col_vec = double(rows - 1) * m.column_axis();

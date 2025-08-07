@@ -11,8 +11,8 @@ namespace GridLib
 {
     struct Size
     {
-        size_t rows = 0;
-        size_t cols = 0;
+        int64_t rows = 0;
+        int64_t cols = 0;
     };
 
     inline bool operator==(const Size& a, const Size& b)

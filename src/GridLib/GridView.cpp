@@ -24,19 +24,22 @@ namespace GridLib
                        const Chorasmia::ArrayView2D<float>& elevations,
                        const Xyz::Vector2D& model_tie_point) noexcept
         : grid_(&grid),
-          elevations_(elevations),
+          values_(elevations),
           model_tie_point_(model_tie_point)
     {
     }
 
     Size GridView::size() const
     {
-        return {elevations_.row_count(), elevations_.col_count()};
+        return {
+            static_cast<int64_t>(values_.row_count()),
+            static_cast<int64_t>(values_.col_count())
+        };
     }
 
     Chorasmia::ArrayView2D<float> GridView::values() const
     {
-        return elevations_;
+        return values_;
     }
 
     const Xyz::Vector2D& GridView::tie_point() const
@@ -82,7 +85,7 @@ namespace GridLib
         auto [n_rows, n_cols] = size;
         return {
             *grid_,
-            elevations_.subarray(row, column, n_rows, n_cols),
+            values_.subarray(row, column, n_rows, n_cols),
             model_tie_point_ - Xyz::Vector2D{double(row), double(column)}
         };
     }

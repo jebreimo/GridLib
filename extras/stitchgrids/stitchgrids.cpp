@@ -41,12 +41,12 @@ bool check_grids(const std::vector<GridLib::Grid>& grids)
     if (grids.empty())
         return false;
 
-    const std::pair size(grids[0].row_count(), grids[0].col_count());
+    const auto size = grids[0].size();
     const auto bounds = GridLib::get_bounds(grids[0]);
 
     for (const auto& grid : grids)
     {
-        std::pair grid_size(grid.row_count(), grid.col_count());
+        const auto grid_size = grid.size();
         if (grid_size != size)
         {
             std::cerr << "The grids must all have the same number of rows and columns.\n";
@@ -139,10 +139,11 @@ read_grids(const std::vector<std::filesystem::path>& filenames)
 
 Xyz::Vector2D get_dimensions(const GridLib::GridView& grid)
 {
-    return {double(grid.row_count()), double(grid.col_count())};
+    auto [rows, cols] = grid.size();
+    return {double(rows), double(cols)};
 }
 
-using Size = Xyz::Vector<size_t, 2>;
+using Size = GridLib::Size;
 
 [[nodiscard]]
 std::vector<std::pair<const GridLib::Grid*, Size>>
@@ -157,27 +158,27 @@ get_insertion_points(const std::vector<GridLib::Grid>& grids)
     for (const auto& grid : grids)
     {
         const GridLib::PositionTransformer src_trans(grid);
-        auto mp0 = src_trans.grid_to_model({0, 0});
-        auto gp0 = Xyz::vector_cast<size_t>(dst_trans.model_to_grid(mp0));
-        result.emplace_back(&grid, gp0);
+        auto mp0 = src_trans.grid_to_world({0, 0});
+        auto gp0 = Xyz::vector_cast<int64_t>(dst_trans.world_to_grid(mp0));
+        result.push_back({&grid, {gp0.x(), gp0.y()}});
     }
 
     return result;
 }
 
-std::pair<size_t, size_t>
+Size
 get_combined_grid_size(const std::vector<std::pair<const GridLib::Grid*, Size>>& insertion_points)
 {
     if (insertion_points.empty())
         return {0, 0};
 
-    size_t max_row = 0;
-    size_t max_col = 0;
+    int64_t max_row = 0;
+    int64_t max_col = 0;
 
     for (const auto& [grid, pos] : insertion_points)
     {
-        max_row = std::max(max_row, pos[0] + grid->row_count());
-        max_col = std::max(max_col, pos[1] + grid->col_count());
+        max_row = std::max(max_row, pos.rows + grid->size().rows);
+        max_col = std::max(max_col, pos.cols + grid->size().cols);
     }
 
     return {max_row, max_col};
@@ -234,14 +235,14 @@ int main(int argc, char* argv[])
         auto [rows, cols] = get_combined_grid_size(insertion_points);
         std::cout << rows << "x" << cols << '\n';
 
-        GridLib::Grid result(rows, cols);
+        GridLib::Grid result(GridLib::Size{rows, cols});
         result.set_tie_point(grids[0].tie_point());
         result.spatial_info() = grids[0].spatial_info();
         auto result_values = result.values();
         for (const auto& [grid, pos] : insertion_points)
         {
-            auto subview = result_values.subarray(pos[0], pos[1], grid->row_count(),
-                                                  grid->col_count());
+            auto [rows, cols] = grid->size();
+            auto subview = result_values.subarray(pos.rows, pos.cols, rows, cols);
             Chorasmia::copy(grid->values(), subview, Chorasmia::Index2DMode::ROWS);
         }
 

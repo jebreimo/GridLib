@@ -15,18 +15,20 @@ namespace GridLib
     class PositionTransformer
     {
     public:
-        const IGrid& grid;
         Xyz::CoordinateSystem<double> cs;
 
         explicit PositionTransformer(const IGrid& grid);
 
-        [[nodiscard]]
-        Xyz::Vector2D model_to_grid(const Xyz::Vector3D& pos) const;
+        PositionTransformer(const Xyz::Matrix4D& matrix,
+                            const Xyz::Vector2D& tie_point);
 
         [[nodiscard]]
-        Xyz::Vector3D grid_to_model(const Xyz::Vector2D& pos) const;
+        Xyz::Vector2D world_to_grid(const Xyz::Vector3D& pos) const;
 
         [[nodiscard]]
-        Xyz::Vector3D grid_to_model(const Xyz::Vector3D& pos) const;
+        Xyz::Vector3D grid_to_world(const Xyz::Vector2D& pos) const;
+
+        [[nodiscard]]
+        Xyz::Vector3D grid_to_world(const Xyz::Vector3D& pos) const;
     };
 }

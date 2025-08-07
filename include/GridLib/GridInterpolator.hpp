@@ -14,6 +14,7 @@ namespace GridLib
     {
     public:
         PositionTransformer transformer;
+        const IGrid* grid = nullptr;
 
         explicit GridInterpolator(const IGrid& grid);
 
