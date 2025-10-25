@@ -7,6 +7,7 @@
 //****************************************************************************
 #include "GridLib/ReadGeoTiff.hpp"
 
+#include <cmath>
 #include <Yimage/ReadImage.hpp>
 #include <Yimage/Tiff/GeoTiffMetadata.hpp>
 #include <Yimage/Tiff/ReadTiff.hpp>
