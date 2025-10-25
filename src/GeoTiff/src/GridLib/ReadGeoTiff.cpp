@@ -23,7 +23,7 @@ namespace GridLib
             for (auto row : grid.values())
             {
                 std::ranges::replace_if(row,
-                                        [](float f) { return isnan(f); }, value);
+                                        [](float f) { return std::isnan(f); }, value);
             }
         }
 
