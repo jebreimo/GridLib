@@ -177,8 +177,8 @@ get_combined_grid_size(const std::vector<std::pair<const GridLib::Grid*, Size>>&
 
     for (const auto& [grid, pos] : insertion_points)
     {
-        max_row = std::max(max_row, pos.rows + grid->size().rows);
-        max_col = std::max(max_col, pos.cols + grid->size().cols);
+        max_row = std::max(max_row, pos[0] + grid->size()[0]);
+        max_col = std::max(max_col, pos[1] + grid->size()[1]);
     }
 
     return {max_row, max_col};
@@ -236,13 +236,12 @@ int main(int argc, char* argv[])
         std::cout << rows << "x" << cols << '\n';
 
         GridLib::Grid result(GridLib::Size{rows, cols});
-        result.set_tie_point(grids[0].tie_point());
         result.spatial_info() = grids[0].spatial_info();
         auto result_values = result.values();
         for (const auto& [grid, pos] : insertion_points)
         {
-            auto [rows, cols] = grid->size();
-            auto subview = result_values.subarray(pos.rows, pos.cols, rows, cols);
+            auto [n_rows, n_cols] = grid->size();
+            auto subview = result_values.subarray(pos[0], pos[1], n_rows, n_cols);
             Chorasmia::copy(grid->values(), subview, Chorasmia::Index2DMode::ROWS);
         }
 

@@ -18,8 +18,8 @@ TEST_CASE("Test write_json_grid and read_grid")
     grid.resize({6, 8});
     auto array = grid.values().array();
     std::iota(array.begin(), array.end(), 0.f);
-    grid.set_tie_point({2, 3});
     auto& model = grid.spatial_info();
+    model.tie_point = {2, 3};
     model.crs = {
         3000, 1000,
         GridLib::CrsType::PROJECTED, GridLib::CrsLibrary::EPSG,
@@ -33,11 +33,11 @@ TEST_CASE("Test write_json_grid and read_grid")
     model.set_vertical_axis({0, 0, 1});
     std::vector<GridLib::SpatialTiePoint> tie_points;
     tie_points.push_back({
-        grid.tie_point(),
+        model.tie_point,
         model.location(),
         model.crs
     });
-    grid.set_spatial_tie_points(std::move(tie_points));
+    model.extra_tie_points = std::move(tie_points);
     std::stringstream ss;
     GridLib::write_json(ss, grid);
     ss.seekg(0);

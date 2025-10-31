@@ -112,9 +112,10 @@ namespace GridLib
             replace_nans(result, UNKNOWN_ELEVATION);
 
             const auto tie_point = get_tie_point(*metadata);
-            result.set_tie_point(get_tie_point(*metadata));
 
             auto& model = result.spatial_info();
+
+            model.tie_point = get_tie_point(*metadata);
 
             const auto location = get_location(*metadata);
             model.set_location(location);
@@ -125,7 +126,7 @@ namespace GridLib
             model.crs = crs;
             spatial_ties.push_back({tie_point, location, crs});
 
-            result.set_spatial_tie_points(std::move(spatial_ties));
+            model.extra_tie_points = std::move(spatial_ties);
 
             auto xs = metadata->model_pixel_scale[0];
             if (xs == 0)

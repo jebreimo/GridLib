@@ -93,7 +93,7 @@ TEST_CASE("GridInterpolator::at_model_pos")
     model.set_row_axis({10, 0, 0});
     model.set_vertical_axis({0, 0, 0.25});
     model.set_location({10'000, 100'000, 150});
-    grid.set_tie_point({1, 1});
+    model.tie_point = {1, 1};
 
     const GridLib::GridInterpolator interpolator(grid);
     check_model_pos(interpolator, {9'995, 100'005, 0}, {9'995, 100'005, 155});

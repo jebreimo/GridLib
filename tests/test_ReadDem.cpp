@@ -17,7 +17,7 @@ TEST_CASE("Read DEM file")
     REQUIRE(grid.size() == GridLib::Size(370, 313));
     REQUIRE(grid.spatial_info().horizontal_unit == GridLib::Unit::METER);
     REQUIRE(grid.spatial_info().vertical_unit == GridLib::Unit::METER);
-    REQUIRE(grid.spatial_tie_points().size() == 4);
+    REQUIRE(grid.spatial_info().extra_tie_points.size() == 4);
     REQUIRE(Xyz::are_equal(grid.spatial_info().column_axis(), {1, 0, 0}));
     REQUIRE(Xyz::are_equal(grid.spatial_info().row_axis(), {0, 1, 0}));
     REQUIRE(Xyz::are_equal(grid.spatial_info().vertical_axis(), {0, 0, 0.1}));

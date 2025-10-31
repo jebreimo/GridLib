@@ -9,11 +9,13 @@
 #include <Chorasmia/ArrayView2D.hpp>
 #include <Xyz/Pgram3.hpp>
 #include "GridLib/SpatialInfo.hpp"
-#include "GridLib/Index.hpp"
 
 namespace GridLib
 {
     class GridView;
+
+    using Size = Xyz::Vector<int64_t, 2>;
+    using Index = Xyz::Vector<int64_t, 2>;
 
     class IGrid
     {
@@ -24,13 +26,10 @@ namespace GridLib
         virtual Size size() const = 0;
 
         [[nodiscard]]
-        virtual const Xyz::Vector2D& tie_point() const = 0;
+        virtual Xyz::Vector2D tie_point() const = 0;
 
         [[nodiscard]]
         virtual const SpatialInfo& spatial_info() const = 0;
-
-        [[nodiscard]]
-        virtual std::vector<SpatialTiePoint> spatial_tie_points() const = 0;
 
         [[nodiscard]]
         virtual Chorasmia::ArrayView2D<float> values() const = 0;

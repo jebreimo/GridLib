@@ -18,8 +18,8 @@ namespace GridLib
     }
 
     PositionTransformer::PositionTransformer(const Xyz::Matrix4D& matrix,
-        const Xyz::Vector2D& tie_point)
-            : cs(matrix * Xyz::affine::translate3(make_vector3(-tie_point, 0.0)))
+                                             const Xyz::Vector2D& tie_point)
+        : cs(matrix * Xyz::affine::translate3(make_vector3(-tie_point, 0.0)))
     {
     }
 

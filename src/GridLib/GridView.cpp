@@ -16,16 +16,16 @@ namespace GridLib
     GridView::GridView(const Grid& grid) noexcept
         : GridView(grid,
                    grid.values(),
-                   grid.tie_point())
+                   Size{0, 0})
     {
     }
 
     GridView::GridView(const Grid& grid,
                        const Chorasmia::ArrayView2D<float>& elevations,
-                       const Xyz::Vector2D& model_tie_point) noexcept
+                       const Size& offset) noexcept
         : grid_(&grid),
           values_(elevations),
-          model_tie_point_(model_tie_point)
+          grid_offset_(offset)
     {
     }
 
@@ -42,35 +42,21 @@ namespace GridLib
         return values_;
     }
 
-    const Xyz::Vector2D& GridView::tie_point() const
+    const Size& GridView::grid_offset() const
     {
-        return model_tie_point_;
+        return grid_offset_;
+    }
+
+    Xyz::Vector2D GridView::tie_point() const
+    {
+        assert_grid();
+        return grid_->tie_point() + vector_cast<double>(grid_offset_);
     }
 
     const SpatialInfo& GridView::spatial_info() const
     {
         assert_grid();
         return grid_->spatial_info();
-    }
-
-    std::vector<SpatialTiePoint> GridView::spatial_tie_points() const
-    {
-        assert_grid();
-        if (model_tie_point_ == grid_->tie_point())
-            return grid_->spatial_tie_points();
-
-        const auto delta = model_tie_point_ - grid_->tie_point();
-
-        std::vector<SpatialTiePoint> result;
-        for (const auto& pt : grid_->spatial_tie_points())
-        {
-            result.push_back({
-                pt.grid_point + delta,
-                pt.location,
-                pt.crs
-            });
-        }
-        return result;
     }
 
     const Grid* GridView::base_grid() const
@@ -86,7 +72,7 @@ namespace GridLib
         return {
             *grid_,
             values_.subarray(row, column, n_rows, n_cols),
-            model_tie_point_ - Xyz::Vector2D{double(row), double(column)}
+            grid_offset_ + index
         };
     }
 

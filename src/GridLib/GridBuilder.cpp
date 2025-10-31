@@ -31,9 +31,7 @@ namespace GridLib
                             ? Grid(Chorasmia::Array2D<float>(row_count, col_count))
                             : Grid(Chorasmia::Array2D(std::move(vals),
                                                       row_count, col_count));
-            grid.set_tie_point(model_tie_point);
             grid.spatial_info() = model;
-            grid.set_spatial_tie_points(std::move(spatial_tie_points));
             return grid;
         }
         catch (Chorasmia::ChorasmiaException&)

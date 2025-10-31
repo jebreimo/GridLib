@@ -63,7 +63,9 @@ namespace GridLib
                && lhs.horizontal_unit == rhs.horizontal_unit
                && lhs.vertical_unit == rhs.vertical_unit
                && lhs.crs == rhs.crs
-               && lhs.information == rhs.information;
+               && lhs.information == rhs.information
+               && lhs.tie_point == rhs.tie_point
+               && lhs.extra_tie_points == rhs.extra_tie_points;
     }
 
     bool operator!=(const SpatialInfo& lhs, const SpatialInfo& rhs)

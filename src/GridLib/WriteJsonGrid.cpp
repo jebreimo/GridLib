@@ -57,31 +57,6 @@ namespace GridLib
         writer.endObject();
     }
 
-    void write_json(Yson::Writer& writer, const SpatialInfo& model)
-    {
-        writer.beginObject();
-        writer.key("location");
-        write_json(writer, model.location());
-
-        writer.key("column_axis");
-        write_json(writer, model.column_axis());
-        writer.key("row_axis");
-        write_json(writer, model.row_axis());
-        writer.key("vertical_axis");
-        write_json(writer, model.vertical_axis());
-
-        writer.key("horizontal_unit").value(to_string(model.horizontal_unit));
-        writer.key("vertical_unit").value(to_string(model.vertical_unit));
-
-        writer.key("crs");
-        write_json(writer, model.crs);
-
-        writer.key("information");
-        write_json(writer, model.information);
-
-        writer.endObject();
-    }
-
     void write_json(Yson::Writer& writer, const std::vector<SpatialTiePoint>& points)
     {
         if (points.empty())
@@ -99,6 +74,37 @@ namespace GridLib
             write_json(writer, point.crs);
             writer.endObject();
         }
+        writer.endObject();
+    }
+
+    void write_json(Yson::Writer& writer, const SpatialInfo& model)
+    {
+        writer.beginObject();
+        writer.key("location");
+        write_json(writer, model.location());
+
+        writer.key("column_axis");
+        write_json(writer, model.column_axis());
+        writer.key("row_axis");
+        write_json(writer, model.row_axis());
+        writer.key("vertical_axis");
+        write_json(writer, model.vertical_axis());
+
+        writer.key("tie_point");
+        write_json(writer, model.tie_point);
+
+        writer.key("additional_tie_points");
+        write_json(writer, model.extra_tie_points);
+
+        writer.key("horizontal_unit").value(to_string(model.horizontal_unit));
+        writer.key("vertical_unit").value(to_string(model.vertical_unit));
+
+        writer.key("crs");
+        write_json(writer, model.crs);
+
+        writer.key("information");
+        write_json(writer, model.information);
+
         writer.endObject();
     }
 
@@ -130,12 +136,8 @@ namespace GridLib
         auto [rows, cols] = grid.size();
         writer.key("row_count").value(uint64_t(rows));
         writer.key("column_count").value(uint64_t(cols));
-        writer.key("model_tie_point");
-        write_json(writer, grid.tie_point());
         writer.key("model");
         write_json(writer, grid.spatial_info());
-        writer.key("spatial_tie_points");
-        write_json(writer, grid.spatial_tie_points());
         writer.key("elevations");
         write_json(writer, grid.values());
         writer.endObject();

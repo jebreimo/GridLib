@@ -25,6 +25,10 @@ namespace GridLib
 
         std::vector<std::pair<std::string, std::string>> information;
 
+        Xyz::Vector2D tie_point;
+
+        std::vector<SpatialTiePoint> extra_tie_points;
+
         [[nodiscard]] Xyz::Vector3D location() const;
 
         void set_location(const Xyz::Vector3D& v);

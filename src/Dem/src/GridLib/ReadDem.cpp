@@ -128,7 +128,7 @@ namespace GridLib
             });
         }
 
-        grid.set_spatial_tie_points(std::move(spatial_ties));
+        model.extra_tie_points = std::move(spatial_ties);
 
         auto h_unit = from_dem_unit(a.horizontal_unit.value_or(0));
         double c_res = a.x_resolution.value_or(1.0);

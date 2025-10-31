@@ -41,21 +41,13 @@ namespace GridLib
         [[nodiscard]]
         Chorasmia::MutableArrayView2D<float> values();
 
-        [[nodiscard]]
-        const Xyz::Vector2D& tie_point() const override;
-
-        void set_tie_point(const Xyz::Vector2D& value);
+        [[nodiscard]] Xyz::Vector2D tie_point() const override;
 
         [[nodiscard]]
         const SpatialInfo& spatial_info() const override;
 
         [[nodiscard]]
         SpatialInfo& spatial_info();
-
-        [[nodiscard]]
-        std::vector<SpatialTiePoint> spatial_tie_points() const override;
-
-        void set_spatial_tie_points(std::vector<SpatialTiePoint> value);
 
         [[nodiscard]]
         GridView subgrid(const Index& index, const Size& size) const override;
@@ -65,8 +57,6 @@ namespace GridLib
     private:
         Chorasmia::Array2D<float> values_;
         SpatialInfo spatial_info_;
-        Xyz::Vector2D tie_point_;
-        std::vector<SpatialTiePoint> spatial_tie_points_;
     };
 
     bool operator==(const Grid& a, const Grid& b);

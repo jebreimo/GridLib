@@ -12,7 +12,7 @@ namespace GridLib
     Grid::Grid() = default;
 
     Grid::Grid(const Size& size)
-        : values_(size.rows, size.cols)
+        : values_(size[0], size[1])
     {
         values_.fill(UNKNOWN_ELEVATION);
     }
@@ -47,7 +47,7 @@ namespace GridLib
 
     void Grid::resize(const Size& size)
     {
-        values_.resize(size.rows, size.cols);
+        values_.resize(size[0], size[1]);
     }
 
     Chorasmia::ArrayView2D<float> Grid::values() const
@@ -60,14 +60,9 @@ namespace GridLib
         return {values_.data(), values_.row_count(), values_.col_count()};
     }
 
-    const Xyz::Vector2D& Grid::tie_point() const
+    Xyz::Vector2D Grid::tie_point() const
     {
-        return tie_point_;
-    }
-
-    void Grid::set_tie_point(const Xyz::Vector2D& value)
-    {
-        tie_point_ = value;
+        return spatial_info_.tie_point;
     }
 
     const SpatialInfo& Grid::spatial_info() const
@@ -78,16 +73,6 @@ namespace GridLib
     SpatialInfo& Grid::spatial_info()
     {
         return spatial_info_;
-    }
-
-    std::vector<SpatialTiePoint> Grid::spatial_tie_points() const
-    {
-        return spatial_tie_points_;
-    }
-
-    void Grid::set_spatial_tie_points(std::vector<SpatialTiePoint> value)
-    {
-        spatial_tie_points_ = std::move(value);
     }
 
     GridView Grid::subgrid(const Index& index, const Size& size) const
@@ -105,9 +90,7 @@ namespace GridLib
         if (&a == &b)
             return true;
         return a.values() == b.values()
-               && a.tie_point() == b.tie_point()
-               && a.spatial_info() == b.spatial_info()
-               && a.spatial_tie_points() == b.spatial_tie_points();
+               && a.spatial_info() == b.spatial_info();
     }
 
     bool operator!=(const Grid& a, const Grid& b)

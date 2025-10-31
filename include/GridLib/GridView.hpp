@@ -21,19 +21,19 @@ namespace GridLib
 
         GridView(const Grid& grid,
                  const Chorasmia::ArrayView2D<float>& elevations,
-                 const Xyz::Vector2D& model_tie_point = {}) noexcept;
+                 const Size& offset = {}) noexcept;
 
         [[nodiscard]]
         Size size() const override;
 
         [[nodiscard]]
-        const Xyz::Vector2D& tie_point() const override;
+        const Size& grid_offset() const;
+
+        [[nodiscard]]
+        Xyz::Vector2D tie_point() const override;
 
         [[nodiscard]]
         const SpatialInfo& spatial_info() const override;
-
-        [[nodiscard]]
-        std::vector<SpatialTiePoint> spatial_tie_points() const override;
 
         [[nodiscard]]
         Chorasmia::ArrayView2D<float> values() const override;
@@ -49,6 +49,6 @@ namespace GridLib
 
         const Grid* grid_ = nullptr;
         Chorasmia::ArrayView2D<float> values_;
-        Xyz::Vector2D model_tie_point_;
+        Size grid_offset_;
     };
 }

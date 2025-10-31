@@ -98,13 +98,11 @@ add_library(GridLib
     include/GridLib/GridMemberTypes.hpp
     include/GridLib/GridView.hpp
     include/GridLib/IGrid.hpp
-    include/GridLib/Index.hpp
     include/GridLib/PositionTransformer.hpp
     include/GridLib/Profile.hpp
     include/GridLib/Rasterize.hpp
     include/GridLib/ReadGrid.hpp
     include/GridLib/ReadJsonGrid.hpp
-    include/GridLib/Size.hpp
     include/GridLib/SpatialInfo.hpp
     include/GridLib/Unit.hpp
     include/GridLib/WriteJsonGrid.hpp

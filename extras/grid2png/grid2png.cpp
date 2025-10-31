@@ -35,9 +35,9 @@ void make_tiles(const GridLib::GridView& grid,
     auto extension = path.extension().string();
     auto prefix = path.replace_extension().string();
     auto index_mode = GridLib::get_index_mode_for_top_left_origin(grid);
-    for (size_t i = 0; i < grid.size().rows; i += rows)
+    for (size_t i = 0; i < grid.size()[0]; i += rows)
     {
-        for (size_t j = 0; j < grid.size().cols; j += cols)
+        for (size_t j = 0; j < grid.size()[1]; j += cols)
         {
             make_png(fmt::format("{}_{:04}_{:04}{}",
                                  prefix, i, j, extension),

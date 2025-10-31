@@ -77,34 +77,6 @@ namespace GridLib
         return result;
     }
 
-    SpatialInfo read_model(Yson::Reader& reader, bool strict)
-    {
-        using Yson::read;
-        SpatialInfo result;
-        for (const auto& key : keys(reader))
-        {
-            if (key == "location")
-                result.set_location(read_vector<double, 3>(reader));
-            else if (key == "row_axis")
-                result.set_row_axis(read_vector<double, 3>(reader));
-            else if (key == "column_axis")
-                result.set_column_axis(read_vector<double, 3>(reader));
-            else if (key == "vertical_axis")
-                result.set_vertical_axis(read_vector<double, 3>(reader));
-            else if (key == "horizontal_unit")
-                result.horizontal_unit = read_unit(reader);
-            else if (key == "vertical_unit")
-                result.vertical_unit = read_unit(reader);
-            else if (key == "crs")
-                result.crs = read_crs(reader, strict);
-            else if (key == "information")
-                result.information = read_dictionary(reader);
-            else if (strict)
-                GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
-        }
-        return result;
-    }
-
     std::vector<SpatialTiePoint>
     read_spatial_tie_points(Yson::Reader& reader, bool strict)
     {
@@ -128,6 +100,38 @@ namespace GridLib
             result.push_back(point);
         }
         reader.leave();
+        return result;
+    }
+
+    SpatialInfo read_model(Yson::Reader& reader, bool strict)
+    {
+        using Yson::read;
+        SpatialInfo result;
+        for (const auto& key : keys(reader))
+        {
+            if (key == "location")
+                result.set_location(read_vector<double, 3>(reader));
+            else if (key == "row_axis")
+                result.set_row_axis(read_vector<double, 3>(reader));
+            else if (key == "column_axis")
+                result.set_column_axis(read_vector<double, 3>(reader));
+            else if (key == "vertical_axis")
+                result.set_vertical_axis(read_vector<double, 3>(reader));
+            else if (key == "horizontal_unit")
+                result.horizontal_unit = read_unit(reader);
+            else if (key == "vertical_unit")
+                result.vertical_unit = read_unit(reader);
+            else if (key == "crs")
+                result.crs = read_crs(reader, strict);
+            else if (key == "information")
+                result.information = read_dictionary(reader);
+            else if (key == "tie_point")
+                result.tie_point = read_vector<double, 2>(reader);
+            else if (key == "additional_tie_points")
+                result.extra_tie_points = read_spatial_tie_points(reader, strict);
+            else if (strict)
+                GRIDLIB_THROW("Unknown key: '" + key + "'" + get_reader_position(reader));
+        }
         return result;
     }
 
@@ -157,12 +161,8 @@ namespace GridLib
                 builder.row_count = read<uint32_t>(reader);
             else if (key == "column_count")
                 builder.col_count = read<uint32_t>(reader);
-            else if (key == "model_tie_point")
-                builder.model_tie_point = read_vector<double, 2>(reader);
             else if (key == "model")
                 builder.model = read_model(reader, strict);
-            else if (key == "spatial_tie_points")
-                builder.spatial_tie_points = read_spatial_tie_points(reader, strict);
             else if (key == "elevations")
                 builder.values = read_elevations(reader);
             else if (strict)
