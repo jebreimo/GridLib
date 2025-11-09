@@ -48,7 +48,7 @@ if (GridLib_INSTALL)
 endif ()
 FetchContent_Declare(xyz
     GIT_REPOSITORY "https://github.com/jebreimo/Xyz.git"
-    GIT_TAG v0.8.2)
+    GIT_TAG v0.9.0)
 
 if (GridLib_GEOTIFF_SUPPORT)
     set(YIMAGE_TIFF ON)

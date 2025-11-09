@@ -14,8 +14,14 @@ namespace GridLib
 {
     class GridView;
 
-    using Size = Xyz::Vector<int64_t, 2>;
-    using Index = Xyz::Vector<int64_t, 2>;
+    using Size = Xyz::Vector<size_t, 2>;
+
+    constexpr size_t to_array_size(const Size& size)
+    {
+        return size[0] * size[1];
+    }
+
+    using Index = Xyz::Vector<size_t, 2>;
 
     class IGrid
     {

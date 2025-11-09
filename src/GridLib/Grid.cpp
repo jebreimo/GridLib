@@ -39,10 +39,7 @@ namespace GridLib
 
     Size Grid::size() const
     {
-        return {
-            static_cast<int64_t>(values_.row_count()),
-            static_cast<int64_t>(values_.col_count())
-        };
+        return {values_.row_count(), values_.col_count()};
     }
 
     void Grid::resize(const Size& size)

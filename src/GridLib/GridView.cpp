@@ -11,19 +11,25 @@
 
 namespace GridLib
 {
-    GridView::GridView() noexcept = default;
+    namespace
+    {
+        const SpatialInfo DEFAULT_SPATIAL_INFO;
+    }
+
+    GridView::GridView() noexcept
+        : GridView({}, nullptr, {})
+    {
+    };
 
     GridView::GridView(const Grid& grid) noexcept
-        : GridView(grid,
-                   grid.values(),
-                   Size{0, 0})
+        : GridView(grid.values(), &grid.spatial_info(), {})
     {
     }
 
-    GridView::GridView(const Grid& grid,
-                       const Chorasmia::ArrayView2D<float>& elevations,
-                       const Size& offset) noexcept
-        : grid_(&grid),
+    GridView::GridView(const Chorasmia::ArrayView2D<float>& elevations,
+                       const SpatialInfo* spatial_info,
+                       const Index& offset) noexcept
+        : spatial_info_(spatial_info ? spatial_info : &DEFAULT_SPATIAL_INFO),
           values_(elevations),
           grid_offset_(offset)
     {
@@ -31,10 +37,7 @@ namespace GridLib
 
     Size GridView::size() const
     {
-        return {
-            static_cast<int64_t>(values_.row_count()),
-            static_cast<int64_t>(values_.col_count())
-        };
+        return {values_.row_count(), values_.col_count()};
     }
 
     Chorasmia::ArrayView2D<float> GridView::values() const
@@ -42,26 +45,19 @@ namespace GridLib
         return values_;
     }
 
-    const Size& GridView::grid_offset() const
+    const Index& GridView::grid_offset() const
     {
         return grid_offset_;
     }
 
     Xyz::Vector2D GridView::tie_point() const
     {
-        assert_grid();
-        return grid_->tie_point() + vector_cast<double>(grid_offset_);
+        return spatial_info_->tie_point + vector_cast<double>(grid_offset_);
     }
 
     const SpatialInfo& GridView::spatial_info() const
     {
-        assert_grid();
-        return grid_->spatial_info();
-    }
-
-    const Grid* GridView::base_grid() const
-    {
-        return grid_;
+        return *spatial_info_;
     }
 
     GridView GridView::subgrid(const Index& index, const Size& size) const
@@ -69,16 +65,16 @@ namespace GridLib
         assert_grid();
         auto [row, column] = index;
         auto [n_rows, n_cols] = size;
-        return {
-            *grid_,
+        return GridView(
             values_.subarray(row, column, n_rows, n_cols),
+            spatial_info_,
             grid_offset_ + index
-        };
+        );
     }
 
     void GridView::assert_grid() const
     {
-        if (!grid_)
+        if (!spatial_info_)
             GRIDLIB_THROW("grid is NULL");
     }
 }

@@ -34,7 +34,7 @@ void make_tiles(const GridLib::GridView& grid,
     std::filesystem::path path(filename);
     auto extension = path.extension().string();
     auto prefix = path.replace_extension().string();
-    auto index_mode = GridLib::get_index_mode_for_top_left_origin(grid);
+    auto index_mode = GridLib::get_index_mode_for_top_left_origin(grid.spatial_info());
     for (size_t i = 0; i < grid.size()[0]; i += rows)
     {
         for (size_t j = 0; j < grid.size()[1]; j += cols)
@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
         if (args.has("-p"))
         {
             const auto pos = args.value("--position").split(',', 2, 2).as_uints();
-            const auto index_mode = GridLib::get_index_mode_for_top_left_origin(grid.view());
+            const auto index_mode = GridLib::get_index_mode_for_top_left_origin(grid.spatial_info());
             make_png(out_file_name,
                      grid.values().subarray(pos[0], pos[1], size[0], size[1]).view(),
                      index_mode);

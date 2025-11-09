@@ -17,7 +17,7 @@ namespace GridLib
 {
     GridView IGrid::subgrid(const Index& index) const
     {
-        return subgrid(index, {INT64_MAX, INT64_MAX});
+        return subgrid(index, {SIZE_MAX, SIZE_MAX});
     }
 
     std::pair<float, float> get_min_max_elevation(const IGrid& grid)

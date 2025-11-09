@@ -100,7 +100,7 @@ namespace GridLib
 
             std::vector<float> elevations(img.width());
 
-            Grid result(Size{int64_t(img.height()), int64_t(img.width())});
+            Grid result(Size{img.height(), img.width()});
             for (size_t i = 0; i < img.height(); ++i)
             {
                 auto [src, src_end] = img.row(i);

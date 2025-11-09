@@ -157,7 +157,7 @@ namespace GridLib
                     rows = b->rows;
                 // DEM files uses columns as the primary dimension, while Grid
                 // uses rows.
-                grid.resize({int64_t(cols), int64_t(rows)});
+                grid.resize({size_t(cols), size_t(rows)});
                 values = grid.values();
             }
             for (int i = 0; i < b->columns; ++i)

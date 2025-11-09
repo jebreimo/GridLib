@@ -6,9 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include <optional>
 #include <Chorasmia/Array2D.hpp>
-#include "GridMemberTypes.hpp"
 #include "GridView.hpp"
 
 namespace GridLib
@@ -40,6 +38,18 @@ namespace GridLib
 
         [[nodiscard]]
         Chorasmia::MutableArrayView2D<float> values();
+
+        [[nodiscard]]
+        float operator[](Index index) const
+        {
+            return values_(index.x(), index.y());
+        }
+
+        [[nodiscard]]
+        float& operator[](Index index)
+        {
+            return values_(index.x(), index.y());
+        }
 
         [[nodiscard]] Xyz::Vector2D tie_point() const override;
 

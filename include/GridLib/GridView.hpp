@@ -19,15 +19,15 @@ namespace GridLib
 
         explicit GridView(const Grid& grid) noexcept;
 
-        GridView(const Grid& grid,
-                 const Chorasmia::ArrayView2D<float>& elevations,
-                 const Size& offset = {}) noexcept;
+        explicit GridView(const Chorasmia::ArrayView2D<float>& elevations,
+                          const SpatialInfo* spatial_info = nullptr,
+                          const Index& offset = {}) noexcept;
 
         [[nodiscard]]
         Size size() const override;
 
         [[nodiscard]]
-        const Size& grid_offset() const;
+        const Index& grid_offset() const;
 
         [[nodiscard]]
         Xyz::Vector2D tie_point() const override;
@@ -39,7 +39,10 @@ namespace GridLib
         Chorasmia::ArrayView2D<float> values() const override;
 
         [[nodiscard]]
-        const Grid* base_grid() const;
+        float operator[](Index index) const
+        {
+            return values_(index.x(), index.y());
+        }
 
         [[nodiscard]]
         GridView subgrid(const Index& index, const Size& size) const override;
@@ -47,8 +50,8 @@ namespace GridLib
     private:
         void assert_grid() const;
 
-        const Grid* grid_ = nullptr;
+        const SpatialInfo* spatial_info_;
         Chorasmia::ArrayView2D<float> values_;
-        Size grid_offset_;
+        Index grid_offset_;
     };
 }

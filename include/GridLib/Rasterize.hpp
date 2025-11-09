@@ -90,5 +90,5 @@ namespace GridLib
      *  origin in its top left corner.
      */
     Chorasmia::Index2DMode
-    get_index_mode_for_top_left_origin(const IGrid& grid);
+    get_index_mode_for_top_left_origin(const SpatialInfo& grid);
 }

@@ -14,36 +14,35 @@ TEST_CASE("Test get_index_mode_for_top_left_origin")
     using GridLib::get_index_mode_for_top_left_origin;
     using Chorasmia::Index2DMode;
 
-    auto grid = [](const Xyz::Vector2D& r, const Xyz::Vector2D& c)
+    auto info = [](const Xyz::Vector2D& r, const Xyz::Vector2D& c)
     {
-        GridLib::Grid grid(GridLib::Size(1, 1));
-        auto& model = grid.spatial_info();
-        model.set_row_axis(Xyz::make_vector3(r, 0.0));
-        model.set_column_axis(Xyz::make_vector3(c, 0.0));
-        model.horizontal_unit = GridLib::Unit::METER;
-        model.vertical_unit = GridLib::Unit::METER;
-        return grid;
+        GridLib::SpatialInfo result;
+        result.set_row_axis(Xyz::make_vector3(r, 0.0));
+        result.set_column_axis(Xyz::make_vector3(c, 0.0));
+        result.horizontal_unit = GridLib::Unit::METER;
+        result.vertical_unit = GridLib::Unit::METER;
+        return result;
     };
 
-    REQUIRE(get_index_mode_for_top_left_origin(grid({1, 0}, {0, -1}))
+    REQUIRE(get_index_mode_for_top_left_origin(info({1, 0}, {0, -1}))
         == Chorasmia::Index2DMode::ROWS);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({1, 0}, {0, 1}))
+    REQUIRE(get_index_mode_for_top_left_origin(info({1, 0}, {0, 1}))
         == Chorasmia::Index2DMode::ROWS_REVERSED_ORDER);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({-1, 0}, {0, -1}))
+    REQUIRE(get_index_mode_for_top_left_origin(info({-1, 0}, {0, -1}))
         == Chorasmia::Index2DMode::REVERSED_ROWS);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({-1, 0}, {0, 1}))
+    REQUIRE(get_index_mode_for_top_left_origin(info({-1, 0}, {0, 1}))
         == Chorasmia::Index2DMode::REVERSED_ROWS_REVERSED_ORDER);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({0, -1}, {1, 0}))
+    REQUIRE(get_index_mode_for_top_left_origin(info({0, -1}, {1, 0}))
         == Chorasmia::Index2DMode::COLUMNS);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({0, 1}, {1, 0}))
+    REQUIRE(get_index_mode_for_top_left_origin(info({0, 1}, {1, 0}))
         == Chorasmia::Index2DMode::COLUMNS_REVERSED_ORDER);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({0, -1}, {-1, 0}))
+    REQUIRE(get_index_mode_for_top_left_origin(info({0, -1}, {-1, 0}))
         == Chorasmia::Index2DMode::REVERSED_COLUMNS);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({0, 1}, {-1, 0}))
+    REQUIRE(get_index_mode_for_top_left_origin(info({0, 1}, {-1, 0}))
         == Chorasmia::Index2DMode::REVERSED_COLUMNS_REVERSED_ORDER);
 
-    REQUIRE(get_index_mode_for_top_left_origin(grid({1, 0.99}, {0.99, -1}))
+    REQUIRE(get_index_mode_for_top_left_origin(info({1, 0.99}, {0.99, -1}))
         == Chorasmia::Index2DMode::ROWS);
-    REQUIRE(get_index_mode_for_top_left_origin(grid({1, 1.01}, {1.01, -1}))
+    REQUIRE(get_index_mode_for_top_left_origin(info({1, 1.01}, {1.01, -1}))
         == Chorasmia::Index2DMode::COLUMNS_REVERSED_ORDER);
 }
