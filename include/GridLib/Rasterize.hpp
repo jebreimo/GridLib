@@ -23,6 +23,8 @@ namespace GridLib
 
         uint32_t operator()(float elevation) const
         {
+            if (elevation == UNKNOWN_ELEVATION)
+                return 0;
             if (auto it = color_map_.find(elevation); it != color_map_.end())
                 return it->second;
             return 0;

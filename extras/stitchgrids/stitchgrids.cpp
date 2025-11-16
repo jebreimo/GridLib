@@ -20,13 +20,6 @@
 #include "GridLib/GridLibException.hpp"
 #include "GridLib/PositionTransformer.hpp"
 
-struct GridFileName
-{
-    std::string fileName;
-    unsigned row;
-    unsigned column;
-};
-
 argos::ParsedArguments parse_arguments(int argc, char* argv[])
 {
     using namespace argos;
@@ -181,26 +174,6 @@ read_grids(const std::vector<std::filesystem::path>& filenames)
     return grids;
 }
 
-// Xyz::Pgram3<double> get_grid_bounds(const std::vector<GridLib::Grid>& grids)
-// {
-//     if (grids.empty())
-//         return {};
-//
-//     Xyz::Vector2D min(DBL_MAX, DBL_MAX);
-//     Xyz::Vector2D max(DBL_TRUE_MIN, DBL_TRUE_MIN);
-//
-//     for (const auto& grid : grids)
-//     {
-//         auto rect = GridLib::get_bounding_rect(grid.view());
-//         auto rect_min = Xyz::get_min(rect);
-//         min = {std::min(min[0], rect_min[0]), std::min(min[1], rect_min[1])};
-//         auto rect_max = Xyz::get_max(rect);
-//         max = {std::max(max[0], rect_max[0]), std::max(max[1], rect_max[1])};
-//     }
-//
-//     return Xyz::Pgram3<double>{min, max - min};
-// }
-
 Xyz::Vector2D get_dimensions(const GridLib::GridView& grid)
 {
     auto [rows, cols] = grid.size();
@@ -233,39 +206,44 @@ T get_fraction(T value)
     return std::modf(value, &int_part);
 }
 
-using Index = Xyz::Vector<int64_t, 2>;
+using SignedIndex = Xyz::Vector<int64_t, 2>;
+
+std::optional<SignedIndex> get_insertion_point(const GridData& grid,
+                                         const GridLib::PositionTransformer& dst_trans)
+{
+    const GridLib::PositionTransformer src_trans(grid.spatial_info.matrix,
+                                                 grid.tie_point);
+    const auto wp = src_trans.grid_to_world({0, 0});
+    const auto gp = dst_trans.world_to_grid(wp);
+
+    if (std::abs(get_fraction(gp.x())) > 1e-6
+        || std::abs(get_fraction(gp.y())) > 1e-6)
+    {
+        std::cerr << "Grid " << grid.filename
+            << " has a non-integer grid point at ("
+            << gp.x() << ", " << gp.y() << ").\n";
+        return std::nullopt;
+    }
+
+    return SignedIndex(static_cast<int64_t>(std::round(gp.x())),
+                 static_cast<int64_t>(std::round(gp.y())));
+}
 
 [[nodiscard]]
-std::vector<std::pair<const GridData*, Index>>
+std::vector<std::pair<const GridData*, SignedIndex>>
 get_insertion_points(const std::vector<GridData>& grids)
 {
     if (grids.empty())
         return {};
 
-    std::vector<std::pair<const GridData*, Index>> result;
+    std::vector<std::pair<const GridData*, SignedIndex>> result;
 
     const GridLib::PositionTransformer dst_trans(grids[0].spatial_info.matrix,
                                                  grids[0].tie_point);
     for (const auto& grid : grids)
     {
-        const GridLib::PositionTransformer src_trans(grid.spatial_info.matrix,
-                                                     grid.tie_point);
-
-        auto wp = src_trans.grid_to_world({0, 0});
-        auto gp = dst_trans.world_to_grid(wp);
-
-        if (std::abs(get_fraction(gp.x())) > 1e-6
-            || std::abs(get_fraction(gp.y())) > 1e-6)
-        {
-            std::cerr << "Grid " << grid.filename
-                << " has a non-integer grid point at ("
-                << gp.x() << ", " << gp.y() << ").\n";
-            continue;
-        }
-
-        Index i(static_cast<int64_t>(std::round(gp.x())),
-                static_cast<int64_t>(std::round(gp.y())));
-        result.emplace_back(&grid, i);
+        if (auto index = get_insertion_point(grid, dst_trans))
+            result.emplace_back(&grid, *index);
     }
 
     return result;
@@ -283,7 +261,7 @@ void write_png(const std::filesystem::path& path,
 }
 
 GridLib::Size rearrange_grids(
-    std::vector<std::pair<const GridData*, Index>>& insertion_points)
+    std::vector<std::pair<const GridData*, SignedIndex>>& insertion_points)
 {
     if (insertion_points.empty())
         return {0, 0};
@@ -380,7 +358,8 @@ int main(int argc, char* argv[])
         std::filesystem::path filename(args.value("--output").as_string());
         if (filename.extension() == ".png")
         {
-            const auto index_mode = GridLib::get_index_mode_for_top_left_origin(result.spatial_info());
+            const auto index_mode = GridLib::get_index_mode_for_top_left_origin(
+                result.spatial_info());
             write_png(filename, result.view(), index_mode);
         }
         else
