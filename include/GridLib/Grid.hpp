@@ -42,13 +42,13 @@ namespace GridLib
         [[nodiscard]]
         float operator[](Index index) const
         {
-            return values_(index.x(), index.y());
+            return values_[index];
         }
 
         [[nodiscard]]
         float& operator[](Index index)
         {
-            return values_(index.x(), index.y());
+            return values_[index];
         }
 
         [[nodiscard]] Xyz::Vector2D tie_point() const override;

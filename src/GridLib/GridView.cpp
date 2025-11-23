@@ -52,7 +52,7 @@ namespace GridLib
 
     Xyz::Vector2D GridView::tie_point() const
     {
-        return spatial_info_->tie_point + vector_cast<double>(grid_offset_);
+        return spatial_info_->tie_point + to_vector<double>(grid_offset_);
     }
 
     const SpatialInfo& GridView::spatial_info() const
@@ -66,7 +66,7 @@ namespace GridLib
         auto [row, column] = index;
         auto [n_rows, n_cols] = size;
         return GridView(
-            values_.subarray(row, column, n_rows, n_cols),
+            values_.subarray({{row, column}, {n_rows, n_cols}}),
             spatial_info_,
             grid_offset_ + index
         );

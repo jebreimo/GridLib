@@ -29,10 +29,10 @@ namespace GridLib
                                            const Xyz::Vector<size_t, 2>& cell)
         {
             return {
-                values(cell[0], cell[1]),
-                values(cell[0] + 1, cell[1]),
-                values(cell[0], cell[1] + 1),
-                values(cell[0] + 1, cell[1] + 1)
+                values[{cell[0], cell[1]}],
+                values[{cell[0] + 1, cell[1]}],
+                values[{cell[0], cell[1] + 1}],
+                values[{cell[0] + 1, cell[1] + 1}]
             };
         }
 

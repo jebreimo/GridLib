@@ -41,7 +41,7 @@ if (GridLib_INSTALL)
 endif ()
 FetchContent_Declare(chorasmia
     GIT_REPOSITORY "https://github.com/jebreimo/Chorasmia.git"
-    GIT_TAG v0.3.0)
+    GIT_TAG v0.4.1)
 
 if (GridLib_INSTALL)
     set(XYZ_INSTALL ON)

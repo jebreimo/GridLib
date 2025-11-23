@@ -41,7 +41,7 @@ namespace GridLib
         [[nodiscard]]
         float operator[](Index index) const
         {
-            return values_(index.x(), index.y());
+            return values_[index];
         }
 
         [[nodiscard]]

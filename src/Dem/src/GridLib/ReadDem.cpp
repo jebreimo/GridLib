@@ -168,7 +168,8 @@ namespace GridLib
                     float value = elev == UNKNOWN
                                       ? UNKNOWN_ELEVATION
                                       : float(elev) * v_res;
-                    values(i + b->column - 1, j + b->row - 1) = value;
+                    Index index(i + b->column - 1, j + b->row - 1);
+                    values[index] = value;
                 }
             }
         }

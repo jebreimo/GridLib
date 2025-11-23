@@ -9,17 +9,12 @@
 #include <iostream>
 #include <random>
 #include <Argos/Argos.hpp>
-#include <Chorasmia/Index2DMap.hpp>
 #include <GridLib/MultiGridReader.hpp>
 #include <GridLib/Rasterize.hpp>
 #include <GridLib/ReadGrid.hpp>
 #include <GridLib/WriteJsonGrid.hpp>
-#include <Xyz/Pgram3.hpp>
 #include <Yglob/Yglob.hpp>
 #include <Yimage/Png/WritePng.hpp>
-
-#include "GridLib/GridLibException.hpp"
-#include "GridLib/PositionTransformer.hpp"
 
 argos::ParsedArguments parse_arguments(int argc, char* argv[])
 {

@@ -90,10 +90,7 @@ namespace GridLib
 
     Size MultiGridReader::size() const
     {
-        return {
-            static_cast<size_t>(data_->max_index.x() - data_->min_index.x()),
-            static_cast<size_t>(data_->max_index.y() - data_->min_index.y())
-        };
+        return cast<size_t>(data_->max_index - data_->min_index);
     }
 
     void MultiGridReader::read_grid(const std::filesystem::path& filename)
@@ -133,7 +130,7 @@ namespace GridLib
 
                 data_->min_index = get_min(data_->min_index, origin);
                 data_->max_index = get_max(data_->max_index,
-                                           origin + vector_cast<int64_t>(grid.size()));
+                                           origin + cast<int64_t>(grid.size()));
             }
         }
         catch (const std::exception& e)
@@ -149,18 +146,18 @@ namespace GridLib
     {
         const auto grid_min_index = grid_data.origin;
         const auto grid_max_index = grid_min_index
-                                    + vector_cast<int64_t>(grid_data.size);
-        return (grid_min_index.x() < max_index.x()
-                && grid_max_index.x() > min_index.x()
-                && grid_min_index.y() < max_index.y()
-                && grid_max_index.y() > min_index.y());
+                                    + cast<int64_t>(grid_data.size);
+        return (grid_min_index.row < max_index.row
+                && grid_max_index.row > min_index.row
+                && grid_min_index.column < max_index.column
+                && grid_max_index.column > min_index.column);
     }
 
     bool MultiGridReader::has_data(Index index, Size size) const
     {
         assert_data();
-        const auto min_index = vector_cast<int64_t>(index) + data_->min_index;
-        const auto max_index = min_index + vector_cast<int64_t>(size);
+        const auto min_index = cast<int64_t>(index) + data_->min_index;
+        const auto max_index = min_index + cast<int64_t>(size);
         for (const auto& grid_data : data_->grids)
         {
             if (overlaps(min_index, max_index, grid_data))
@@ -172,13 +169,13 @@ namespace GridLib
     Grid MultiGridReader::get_grid(Index index, Size size) const
     {
         assert_data();
-        const auto min_index = vector_cast<int64_t>(index) + data_->min_index;
+        const auto min_index = cast<int64_t>(index) + data_->min_index;
         const auto grid_size = data_->max_index - min_index;
-        const auto result_size = vector_cast<
-            int64_t>(get_min(size, vector_cast<size_t>(grid_size)));
+        const auto result_size = cast<
+            int64_t>(get_min(size, cast<size_t>(grid_size)));
         const auto max_index = min_index + result_size;
 
-        Grid result(Xyz::vector_cast<size_t>(max_index - min_index));
+        Grid result(cast<size_t>(max_index - min_index));
 
         for (const auto& grid_data : data_->grids)
             load_and_copy_grid_data(result, grid_data, min_index, max_index);
@@ -196,23 +193,19 @@ namespace GridLib
 
         const auto min = get_max(min_index, grid_data.origin);
         const auto max = get_min(max_index,
-                                 grid_data.origin + vector_cast<int64_t>(grid_data.size));
-        const auto src_start = vector_cast<size_t>(min - grid_data.origin);
-        const auto dst_start = vector_cast<size_t>(min - min_index);
-        const auto copy_size = vector_cast<size_t>(max - min);
-        data_->buffer.resize(grid_data.size[0] * grid_data.size[1]);
+                                 grid_data.origin + cast<int64_t>(grid_data.size));
+        const auto src_start = cast<size_t>(min - grid_data.origin);
+        const auto dst_start = cast<size_t>(min - min_index);
+        const auto copy_size = cast<size_t>(max - min);
+        data_->buffer.resize(grid_data.size.rows * grid_data.size.columns);
         data_->temp_file.stream().seekg(grid_data.temp_file_offset);
         auto buffer_size = std::streamsize(
-            grid_data.size[0] * grid_data.size[1] * sizeof(float));
+            grid_data.size.row * grid_data.size.column * sizeof(float));
         data_->temp_file.stream().read(reinterpret_cast<char*>(data_->buffer.data()), buffer_size);
 
-        auto src = Chorasmia::ArrayView2D(
-            data_->buffer.data(),
-            grid_data.size[0],
-            grid_data.size[1]).subarray(src_start[0], src_start[1],
-                                        copy_size[0], copy_size[1]);
-        auto dst = result.values().subarray(dst_start[0], dst_start[1],
-                                            copy_size[0], copy_size[1]);
+        auto src = Chorasmia::ArrayView2D(data_->buffer.data(), grid_data.size)
+            .subarray({src_start, copy_size});
+        auto dst = result.values().subarray({dst_start, copy_size});
         Chorasmia::copy(src, dst, Chorasmia::Index2DMode::ROWS);
     }
 

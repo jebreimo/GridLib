@@ -28,9 +28,9 @@ namespace GridLib
             auto vals = std::move(values);
 
             auto grid = vals.empty()
-                            ? Grid(Chorasmia::Array2D<float>(row_count, col_count))
+                            ? Grid(Chorasmia::Array2D<float>({row_count, col_count}))
                             : Grid(Chorasmia::Array2D(std::move(vals),
-                                                      row_count, col_count));
+                                                      {row_count, col_count}));
             grid.spatial_info() = model;
             return grid;
         }

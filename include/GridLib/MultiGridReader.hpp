@@ -15,7 +15,7 @@ namespace GridLib
 {
     class Grid;
 
-    using SignedIndex = Xyz::Vector<int64_t, 2>;
+    using SignedIndex = Chorasmia::Index2D<int64_t>;
     struct GridData;
 
     class MultiGridReader

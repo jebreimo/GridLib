@@ -12,7 +12,7 @@ namespace GridLib
     Grid::Grid() = default;
 
     Grid::Grid(const Size& size)
-        : values_(size[0], size[1])
+        : values_(size)
     {
         values_.fill(UNKNOWN_ELEVATION);
     }
@@ -44,7 +44,7 @@ namespace GridLib
 
     void Grid::resize(const Size& size)
     {
-        values_.resize(size[0], size[1]);
+        values_.resize(size);
     }
 
     Chorasmia::ArrayView2D<float> Grid::values() const
@@ -54,7 +54,7 @@ namespace GridLib
 
     Chorasmia::MutableArrayView2D<float> Grid::values()
     {
-        return {values_.data(), values_.row_count(), values_.col_count()};
+        return {values_.data(), {values_.row_count(), values_.col_count()}};
     }
 
     Xyz::Vector2D Grid::tie_point() const

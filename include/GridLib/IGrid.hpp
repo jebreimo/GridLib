@@ -14,14 +14,20 @@ namespace GridLib
 {
     class GridView;
 
-    using Size = Xyz::Vector<size_t, 2>;
+    using Size = Chorasmia::Size2D<size_t>;
 
     constexpr size_t to_array_size(const Size& size)
     {
-        return size[0] * size[1];
+        return size.rows * size.columns;
     }
 
-    using Index = Xyz::Vector<size_t, 2>;
+    template <typename T>
+    constexpr Xyz::Vector<T, 2> to_vector(const Size& size)
+    {
+        return {static_cast<T>(size.rows), static_cast<T>(size.columns)};
+    }
+
+    using Index = Chorasmia::Index2D<size_t>;
 
     class IGrid
     {

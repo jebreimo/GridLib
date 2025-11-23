@@ -8,7 +8,7 @@
 #pragma once
 #include <cfloat>
 #include <concepts>
-#include <Chorasmia/Index2DMap.hpp>
+#include <Chorasmia/Index2DMapping.hpp>
 #include <Chorasmia/IntervalMap.hpp>
 #include <Yimage/Image.hpp>
 #include "IGrid.hpp"
@@ -58,7 +58,7 @@ namespace GridLib
                    ColorFunc color_func,
                    Chorasmia::Index2DMode mode)
     {
-        Chorasmia::Index2DMap mapping(grid.dimensions(), mode);
+        Chorasmia::Index2DMapping mapping(grid.dimensions(), mode);
         auto [rows, cols] = mapping.get_to_size();
         Yimage::Image result(Yimage::PixelType::RGBA_8, cols, rows);
         auto* out_it = result.data();
@@ -66,7 +66,7 @@ namespace GridLib
         {
             for (size_t j = 0; j < cols; ++j)
             {
-                auto rgba = color_func(grid(mapping.get_from_indices(i, j)));
+                auto rgba = color_func(grid[mapping.get_from_index({i, j})]);
                 *out_it++ = rgba & 0xFF;
                 *out_it++ = (rgba >> 8) & 0xFF;
                 *out_it++ = (rgba >> 16) & 0xFF;
