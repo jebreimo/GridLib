@@ -17,11 +17,14 @@ namespace GridLib
     };
 }
 
-#define GRIDLIB_THROW_3_(file, line, msg) \
-    throw ::GridLib::GridLibException(file ":" #line ": " msg)
+#define GRIDLIB_EX_3_(file, line, msg) \
+    ::GridLib::GridLibException(file ":" #line ": " msg)
 
-#define GRIDLIB_THROW_2_(file, line, msg) \
-    GRIDLIB_THROW_3_(file, line, msg)
+#define GRIDLIB_EX_2_(file, line, msg) \
+    GRIDLIB_EX_3_(file, line, msg)
+
+#define GRIDLIB_EXCEPTION(msg) \
+    GRIDLIB_EX_2_(__FILE__, __LINE__, msg)
 
 #define GRIDLIB_THROW(msg) \
-    GRIDLIB_THROW_2_(__FILE__, __LINE__, msg)
+    throw GRIDLIB_EX_2_(__FILE__, __LINE__, msg)

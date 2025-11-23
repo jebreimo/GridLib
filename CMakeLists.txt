@@ -48,7 +48,7 @@ if (GridLib_INSTALL)
 endif ()
 FetchContent_Declare(xyz
     GIT_REPOSITORY "https://github.com/jebreimo/Xyz.git"
-    GIT_TAG v0.9.0)
+    GIT_TAG v0.9.1)
 
 if (GridLib_GEOTIFF_SUPPORT)
     set(YIMAGE_TIFF ON)
@@ -123,6 +123,10 @@ add_library(GridLib
     src/GridLib/Utilities/CoordinateSystem.cpp
     src/GridLib/Utilities/CoordinateSystem.hpp
     src/GridLib/WriteJsonGrid.cpp
+    src/GridLib/MultiGridReader.cpp
+    include/GridLib/MultiGridReader.hpp
+    src/GridLib/Utilities/TemporaryFile.cpp
+    src/GridLib/Utilities/TemporaryFile.hpp
 )
 
 target_include_directories(GridLib
