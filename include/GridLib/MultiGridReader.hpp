@@ -16,6 +16,7 @@ namespace GridLib
     class Grid;
 
     using SignedIndex = Chorasmia::Index2D<int64_t>;
+    using SignedExtent = Chorasmia::Extent2D<int64_t>;
     struct GridData;
 
     class MultiGridReader
@@ -33,9 +34,9 @@ namespace GridLib
 
         void read_grid(const std::filesystem::path& filename);
 
-        [[nodiscard]] bool has_data(Index index, Size size) const;
+        [[nodiscard]] bool has_data(const Extent& extent) const;
 
-        [[nodiscard]] Grid get_grid(Index index = {}, Size size = {SIZE_MAX, SIZE_MAX}) const;
+        [[nodiscard]] Grid get_grid(Extent extent) const;
     private:
         void assert_data() const;
 
@@ -43,8 +44,7 @@ namespace GridLib
 
         void load_and_copy_grid_data(Grid& result,
                                      const GridData& grid_data,
-                                     const SignedIndex& min_index,
-                                     const SignedIndex& max_index) const;
+                                     const SignedExtent& extent) const;
 
         struct Data;
         std::unique_ptr<Data> data_;

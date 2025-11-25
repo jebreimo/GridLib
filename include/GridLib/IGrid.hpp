@@ -16,18 +16,20 @@ namespace GridLib
 
     using Size = Chorasmia::Size2D<size_t>;
 
-    constexpr size_t to_array_size(const Size& size)
+    template <std::floating_point FT,  std::integral IT>
+    constexpr Xyz::Vector<FT, 2> to_vector(const Chorasmia::Size2D<IT>& size)
+    {
+        return {static_cast<FT>(size.rows), static_cast<FT>(size.columns)};
+    }
+
+    using Index = Chorasmia::Index2D<size_t>;
+
+    constexpr size_t get_array_size(const Size& size)
     {
         return size.rows * size.columns;
     }
 
-    template <typename T>
-    constexpr Xyz::Vector<T, 2> to_vector(const Size& size)
-    {
-        return {static_cast<T>(size.rows), static_cast<T>(size.columns)};
-    }
-
-    using Index = Chorasmia::Index2D<size_t>;
+    using Extent = Chorasmia::Extent2D<size_t>;
 
     class IGrid
     {
