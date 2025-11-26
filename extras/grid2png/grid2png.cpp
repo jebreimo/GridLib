@@ -10,7 +10,7 @@
 #include <filesystem>
 #include <Argos/Argos.hpp>
 #include <fmt/format.h>
-#include <Chorasmia/Index2DMap.hpp>
+#include <Chorasmia/Index2DMapping.hpp>
 #include <GridLib/Rasterize.hpp>
 #include <GridLib/ReadGrid.hpp>
 #include <Yimage/Png/WritePng.hpp>
@@ -35,13 +35,13 @@ void make_tiles(const GridLib::GridView& grid,
     auto extension = path.extension().string();
     auto prefix = path.replace_extension().string();
     auto index_mode = GridLib::get_index_mode_for_top_left_origin(grid.spatial_info());
-    for (size_t i = 0; i < grid.size()[0]; i += rows)
+    for (size_t i = 0; i < grid.size().rows; i += rows)
     {
-        for (size_t j = 0; j < grid.size()[1]; j += cols)
+        for (size_t j = 0; j < grid.size().columns; j += cols)
         {
             make_png(fmt::format("{}_{:04}_{:04}{}",
                                  prefix, i, j, extension),
-                     grid.values().subarray(i, j, rows, cols),
+                     grid.values().subarray({{i, j}, {rows, cols}}),
                      index_mode);
         }
     }
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
             const auto pos = args.value("--position").split(',', 2, 2).as_uints();
             const auto index_mode = GridLib::get_index_mode_for_top_left_origin(grid.spatial_info());
             make_png(out_file_name,
-                     grid.values().subarray(pos[0], pos[1], size[0], size[1]).view(),
+                     grid.values().subarray({{pos[0], pos[1]}, {size[0], size[1]}}).view(),
                      index_mode);
         }
         else

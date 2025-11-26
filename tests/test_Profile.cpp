@@ -20,7 +20,7 @@ TEST_CASE("Profile without clipping")
                                          4, 5, 6,
                                          7, 8, 9
                                      },
-                                     3, 3);
+                                     {3, 3});
     GridLib::Grid grid(std::move(values));
     auto contour = GridLib::make_profile(grid, {0, 2, 0}, {2, 0, 0}, 2);
     REQUIRE(contour.size() == 3);
@@ -36,7 +36,7 @@ TEST_CASE("Profile with clipping")
                                          4, 5, 6,
                                          7, 8, 9
                                      },
-                                     3, 3);
+                                     {3, 3});
     GridLib::Grid grid(std::move(values));
     auto contour = GridLib::make_profile(grid, {4.5, 3, 0}, {-2.5, -0.5, 0}, 7);
     REQUIRE(contour.size() == 4);
@@ -53,7 +53,7 @@ TEST_CASE("Profile with clipping where clipping coincides with grid edge")
                                          4, 5, 6,
                                          7, 8, 9
                                      },
-                                     3, 3);
+                                     {3, 3});
     GridLib::Grid grid(std::move(values));
     auto contour = GridLib::make_profile(grid, {4.5, 3, 0}, {-2.5, -0.5, 0}, 7);
     REQUIRE(contour.size() == 4);
@@ -70,7 +70,7 @@ TEST_CASE("Profile with transformation")
                                         4, 5, 6,
                                         7, 8, 9
                                     },
-                                    3, 3);
+                                    {3, 3});
     GridLib::Grid grid(array);
     auto& model = grid.spatial_info();
     model.set_location({500.0, 1000.0, 0});

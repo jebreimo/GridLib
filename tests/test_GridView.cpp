@@ -16,7 +16,7 @@ namespace
 
 TEST_CASE("test get_min_max_elevation")
 {
-    Chorasmia::Array2D<float> values({UNK, -1, 4, 3, 1, -4}, 2, 3);
+    Chorasmia::Array2D<float> values({UNK, -1, 4, 3, 1, -4}, {2, 3});
     GridLib::Grid grid(std::move(values));
     auto [min, max] = get_min_max_elevation(grid);
     REQUIRE(min == -4);
@@ -25,7 +25,7 @@ TEST_CASE("test get_min_max_elevation")
 
 TEST_CASE("test get_bounding_rect")
 {
-    Chorasmia::Array2D<float> values({UNK, -1, 4, 3, 1, -4}, 2, 3);
+    Chorasmia::Array2D<float> values({UNK, -1, 4, 3, 1, -4}, {2, 3});
     GridLib::Grid grid(std::move(values));
     auto& model = grid.spatial_info();
     model.set_location({500000, 6000000, 0});

@@ -38,7 +38,7 @@ namespace
 
 TEST_CASE("GridInterpolator::at_grid_pos with missing elevation")
 {
-    Chorasmia::Array2D<float> values({-1, 4, 3, UNK, 1, -4}, 2, 3);
+    Chorasmia::Array2D<float> values({-1, 4, 3, UNK, 1, -4}, {2, 3});
     GridLib::Grid grid(std::move(values));
     GridLib::GridInterpolator interpolator(grid);
 
@@ -68,7 +68,7 @@ TEST_CASE("GridInterpolator::at_grid_pos with missing elevation")
 
 TEST_CASE("GridInterpolator::at_grid_pos with only left and top edges")
 {
-    Chorasmia::Array2D<float> values({-1, 4, 3, UNK}, 2, 2);
+    Chorasmia::Array2D<float> values({-1, 4, 3, UNK}, {2, 2});
     GridLib::Grid grid(std::move(values));
     GridLib::GridInterpolator interpolator(grid);
 
@@ -86,7 +86,7 @@ TEST_CASE("GridInterpolator::at_grid_pos with only left and top edges")
 
 TEST_CASE("GridInterpolator::at_model_pos")
 {
-    Chorasmia::Array2D<float> values({0, 10, 30, 40}, 2, 2);
+    Chorasmia::Array2D<float> values({0, 10, 30, 40}, {2, 2});
     GridLib::Grid grid(std::move(values));
     auto& model = grid.spatial_info();
     model.set_column_axis({0, -10, 0});
