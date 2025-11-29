@@ -5,7 +5,7 @@
 # This file is distributed under the Zero-Clause BSD License.
 # License text is included with the source distribution.
 # ===========================================================================
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 4.0)
 
 include(FetchContent)
 FetchContent_Declare(catch
@@ -14,7 +14,7 @@ FetchContent_Declare(catch
 )
 FetchContent_Declare(cppembed
     GIT_REPOSITORY "https://github.com/jebreimo/cppembed.git"
-    GIT_TAG "v0.1.9"
+    GIT_TAG "v0.1.10"
 )
 FetchContent_MakeAvailable(catch cppembed)
 
@@ -31,6 +31,8 @@ add_executable(GridLibTest
     test_ReadGeoTiff.cpp
     test_PositionTransformer.cpp
     test_GridInterpolator.cpp
+    test_MultiGridReader.cpp
+    TestData.hpp
 )
 
 target_link_libraries(GridLibTest
@@ -41,8 +43,7 @@ target_link_libraries(GridLibTest
 
 target_embed_cpp_data(GridLibTest
     FILES
-        dem_file.hpp.in
-        geotiff_file.hpp.in
+        TestData.cpp.in
 )
 
 target_include_directories(GridLibTest

@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "Grid.hpp"
+#include "ReadGrid.hpp"
 
 namespace GridLib
 {
@@ -34,7 +35,11 @@ namespace GridLib
 
         void read_grid(const std::filesystem::path& filename);
 
-        [[nodiscard]] bool has_data(const Extent& extent) const;
+        void read_grid(const void* buffer, size_t size, GridFileType file_type);
+
+        void add_grid(const Grid& grid, const std::filesystem::path& filename = {});
+
+        [[nodiscard]] bool has_data(Extent extent) const;
 
         [[nodiscard]] Grid get_grid(Extent extent) const;
     private:

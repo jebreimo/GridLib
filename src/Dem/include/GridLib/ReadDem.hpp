@@ -18,5 +18,5 @@ namespace GridLib
 
     Grid read_dem(const std::filesystem::path& filename);
 
-    bool is_dem(const std::filesystem::path& filename);
+    [[nodiscard]] bool is_dem(const std::filesystem::path& filename);
 }

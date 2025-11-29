@@ -186,4 +186,9 @@ namespace GridLib
     {
         return Yimage::get_image_format(path) == Yimage::ImageFormat::TIFF;
     }
+
+    bool is_tiff(const void* buffer, size_t size)
+    {
+        return Yimage::get_image_format(buffer, size) == Yimage::ImageFormat::TIFF;
+    }
 }

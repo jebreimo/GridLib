@@ -96,40 +96,7 @@ namespace GridLib
         assert_data();
         try
         {
-            auto grid = GridLib::read_grid(filename, GridFileType::AUTO_DETECT);
-            if (!grid.values().empty())
-            {
-                assert_compatible_grid(grid);
-
-                auto& stream = data_->temp_file.stream();
-                const auto temp_file_pos = stream.tellp();
-                auto [rows, cols] = grid.size();
-                stream.write(reinterpret_cast<const char*>(grid.values().data()),
-                             std::streamsize(rows * cols * sizeof(float)));
-                SignedIndex origin;
-                if (!data_->grids.empty())
-                {
-                    const auto& first = data_->grids.front();
-                    origin = get_insertion_point(
-                        grid.spatial_info(),
-                        PositionTransformer(
-                            first.spatial_info.matrix,
-                            first.tie_point));
-                }
-                data_->grids.push_back({
-                    filename,
-                    temp_file_pos,
-                    {origin, cast<int64_t>(grid.size())},
-                    grid.tie_point(),
-                    grid.spatial_info(),
-                    data_->grids.size()
-                });
-
-                const auto min = get_min(data_->extent.min_index(), origin);
-                const auto max = get_max(data_->extent.max_index(),
-                                         origin + cast<int64_t>(grid.size()));
-                data_->extent = {min, max - min};
-            }
+            add_grid(GridLib::read_grid(filename, GridFileType::AUTO_DETECT), filename);
         }
         catch (const std::exception&)
         {
@@ -138,9 +105,61 @@ namespace GridLib
         }
     }
 
-    bool MultiGridReader::has_data(const Extent& extent) const
+    void MultiGridReader::read_grid(const void* buffer, size_t size, GridFileType file_type)
     {
         assert_data();
+        try
+        {
+            add_grid(GridLib::read_grid(buffer, size, file_type));
+        }
+        catch (const std::exception&)
+        {
+            std::throw_with_nested(GRIDLIB_EXCEPTION("Error reading grid from buffer."));
+        }
+    }
+
+    void MultiGridReader::add_grid(const Grid& grid,
+                                   const std::filesystem::path& filename)
+    {
+        if (grid.values().empty())
+            return;
+
+        assert_compatible_grid(grid);
+
+        auto& stream = data_->temp_file.stream();
+        const auto temp_file_pos = stream.tellp();
+        auto [rows, cols] = grid.size();
+        stream.write(reinterpret_cast<const char*>(grid.values().data()),
+                     std::streamsize(rows * cols * sizeof(float)));
+        SignedIndex origin;
+        if (!data_->grids.empty())
+        {
+            const auto& first = data_->grids.front();
+            origin = get_insertion_point(
+                grid.spatial_info(),
+                PositionTransformer(
+                    first.spatial_info.matrix,
+                    first.tie_point));
+        }
+        data_->grids.push_back({
+            filename,
+            temp_file_pos,
+            {origin, cast<int64_t>(grid.size())},
+            grid.tie_point(),
+            grid.spatial_info(),
+            data_->grids.size()
+        });
+
+        const auto min = get_min(data_->extent.min_index(), origin);
+        const auto max = get_max(data_->extent.max_index(),
+                                 origin + cast<int64_t>(grid.size()));
+        data_->extent = {min, max - min};
+    }
+
+    bool MultiGridReader::has_data(Extent extent) const
+    {
+        assert_data();
+        extent = clamp(extent, cast<size_t>(data_->extent.size));
         auto internal_extent = cast<int64_t>(extent);
         internal_extent.origin += data_->extent.origin;
         for (const auto& grid_data : data_->grids)

@@ -16,6 +16,8 @@
 #include <Yglob/Yglob.hpp>
 #include <Yimage/Png/WritePng.hpp>
 
+namespace fs = std::filesystem;
+
 argos::ParsedArguments parse_arguments(int argc, char* argv[])
 {
     using namespace argos;
@@ -23,6 +25,9 @@ argos::ParsedArguments parse_arguments(int argc, char* argv[])
         .add(Argument("FILE").count(1, UINT16_MAX))
         .add(Option("-o", "--output").argument("FILE")
             .help("File name for output. stdout is used by default."))
+        .add(Option("-t", "--tile").argument("<ROWS>x<COLS>")
+            .help("Divide the input grids into tiles of the given size "
+                "after stitching them together. Tiles without data are not output."))
         .parse(argc, argv);
 }
 
@@ -31,10 +36,10 @@ std::u8string to_u8(const std::string& str)
     return {reinterpret_cast<const char8_t*>(str.data()), str.size()};
 }
 
-std::vector<std::filesystem::path>
+std::vector<fs::path>
 get_filenames(const std::vector<std::string>& raw_paths)
 {
-    std::vector<std::filesystem::path> filenames;
+    std::vector<fs::path> filenames;
     const auto flags = Yglob::PathIteratorFlags::CASE_INSENSITIVE_PATHS
                        | Yglob::PathIteratorFlags::NO_DIRECTORIES;
     for (const auto& raw_path : raw_paths)
@@ -45,7 +50,7 @@ get_filenames(const std::vector<std::string>& raw_paths)
     return filenames;
 }
 
-void write_json(const std::filesystem::path& path, const GridLib::Grid& grid)
+void write_json(const fs::path& path, const GridLib::Grid& grid)
 {
     std::ostream* stream = &std::cout;
     std::ofstream ofs;
@@ -62,7 +67,7 @@ void write_json(const std::filesystem::path& path, const GridLib::Grid& grid)
     GridLib::write_json(*stream, grid);
 }
 
-void write_png(const std::filesystem::path& path,
+void write_png(const fs::path& path,
                const GridLib::IGrid& grid,
                Chorasmia::Index2DMode index_mode)
 {
@@ -88,20 +93,40 @@ int main(int argc, char* argv[])
             reader.read_grid(filename);
         }
 
-        const auto result = reader.get_grid(GridLib::Extent{{0, 0}});
-        if (result.empty())
-            return 1;
+        auto tile_arg = args.value("--tile")
+            .split_n('x', 2)
+            .as_ulongs({ULONG_MAX, ULONG_MAX});
+        GridLib::Size tile_size{tile_arg[0], tile_arg[1]};
+        fs::path filename(args.value("--output").as_string());
+        const auto extension = filename.extension();
 
-        std::filesystem::path filename(args.value("--output").as_string());
-        if (filename.extension() == ".png")
+        auto total_size = reader.size();
+        for (size_t row = 0; row < total_size.rows; row += tile_size.rows)
         {
-            const auto index_mode = GridLib::get_index_mode_for_top_left_origin(
-                result.spatial_info());
-            write_png(filename, result.view(), index_mode);
-        }
-        else
-        {
-            write_json(filename, result);
+            for (size_t col = 0; col < total_size.columns; col += tile_size.columns)
+            {
+                const auto extent = GridLib::Extent({row, col}, tile_size);
+                if (!reader.has_data(extent))
+                    continue;
+                const auto grid = reader.get_grid(extent);
+                auto grid_name = filename;
+                if (!grid_name.empty())
+                {
+                    grid_name.replace_extension("")
+                        .concat("_" + std::to_string(row) + "_" + std::to_string(col))
+                        .replace_extension(extension);
+                }
+                if (extension == ".png")
+                {
+                    const auto index_mode = GridLib::get_index_mode_for_top_left_origin(
+                        grid.spatial_info());
+                    write_png(grid_name, grid, index_mode);
+                }
+                else
+                {
+                    write_json(filename, grid);
+                }
+            }
         }
     }
     catch (const std::exception& e)

@@ -18,4 +18,6 @@ namespace GridLib
     [[nodiscard]] Grid read_geotiff(const std::filesystem::path& path);
 
     [[nodiscard]] bool is_tiff(const std::filesystem::path& path);
+
+    [[nodiscard]]bool is_tiff(const void* buffer, size_t size);
 }

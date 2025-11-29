@@ -1,6 +1,6 @@
 //****************************************************************************
 // Copyright © 2025 Jan Erik Breimo. All rights reserved.
-// Created by Jan Erik Breimo on 2025-05-09.
+// Created by Jan Erik Breimo on 2025-11-26.
 //
 // This file is distributed under the Zero-Clause BSD License.
 // License text is included with the source distribution.
@@ -8,6 +8,6 @@
 #pragma once
 #include <string_view>
 
-const char DEM_FILE_STR[] = #embed "../misc/examples/dom1.dem";
-
-std::string_view DEM_FILE(DEM_FILE_STR, sizeof(DEM_FILE_STR) - 1);
+extern const std::string_view DEM_FILE;
+extern const std::string_view GEOTIFF_FILE_1;
+extern const std::string_view GEOTIFF_FILE_2;

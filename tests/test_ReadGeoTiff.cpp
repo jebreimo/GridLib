@@ -5,14 +5,14 @@
 // This file is distributed under the Zero-Clause BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "geotiff_file.hpp"
+#include "TestData.hpp"
 #include "GridLib/ReadGrid.hpp"
 
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("Read GeoTIFF file")
 {
-    auto grid = GridLib::read_grid(GEOTIFF_FILE.data(), GEOTIFF_FILE.size(),
+    auto grid = GridLib::read_grid(GEOTIFF_FILE_1.data(), GEOTIFF_FILE_1.size(),
                                    GridLib::GridFileType::GEOTIFF);
     REQUIRE(grid.size() == GridLib::Size(60, 80));
     REQUIRE(grid.spatial_info().horizontal_unit == GridLib::Unit::METER);

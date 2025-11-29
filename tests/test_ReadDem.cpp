@@ -5,7 +5,7 @@
 // This file is distributed under the Zero-Clause BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "dem_file.hpp"
+#include "TestData.hpp"
 #include "GridLib/ReadGrid.hpp"
 
 #include <catch2/catch_test_macros.hpp>
